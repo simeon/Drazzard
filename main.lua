@@ -1,17 +1,25 @@
 function love.load()
 	require 'entity'
+
 	debug = true
+	player = Entity.create("Me!", 200, 200)
+
 end
 
 function love.update(dt)
 	checkKeys(dt)
+	player:update(dt)
 end
 
 function love.draw(dt)
+	player:draw(dt)
+
 	-- GUI
+	love.graphics.circle("line", 0,0,5)
 
 	-- DEBUG
 	love.graphics.print("FPS: "..love.timer.getFPS(), 800, 0)
+
 end
 
 function love.mousepressed(x, y, button)
@@ -26,12 +34,13 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
-
+	if key == 'escape' then
+		debug = not debug
+	end
 end
 
 function love.keyreleased(key)
-   if key == 'b' then
-   end
+
 end
 
 function love.focus(f)
@@ -58,19 +67,19 @@ function mouseHoversOver(thing)
 end
 
 function checkKeys(dt)
-	local speed = 200
+	local speed = 100
 
 	if love.keyboard.isDown("d") then
-		player.x = player.x + speed*dt
+		player.x = player.x + speed * dt
 	end
 	if love.keyboard.isDown("a") then
-		player.x = player.x - speed*dt
+		player.x = player.x - speed * dt
 	end
 	if love.keyboard.isDown("s") then
-		player.y = player.y + speed*dt
+		player.y = player.y + speed * dt
 	end
 	if love.keyboard.isDown("w") then
-		player.y = player.y - speed*dt
+		player.y = player.y - speed * dt
 	end
 end
 
