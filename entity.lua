@@ -13,13 +13,25 @@ function Entity.create(n, x, y, w, h)
    e.dx = 0
    e.dy = 0
 
-   e.friction = 10
-
+   e.speed = 100
    return e
 end
 
 function Entity:draw(dt)
 	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+
+	if self:collidingLeft() then
+		love.graphics.circle("fill", self.x, self.y + self.h/2, 3)
+	end
+	if self:collidingRight() then
+		love.graphics.circle("fill", self.x + self.w, self.y + self.h/2, 3)
+	end
+	if self:collidingTop() then
+		love.graphics.circle("fill", self.x + self.w/2, self.y, 3)
+	end
+	if self:collidingBottom() then
+		love.graphics.circle("fill", self.x + self.w/2, self.y + self.h, 3)
+	end
 
 	if debug then
 		love.graphics.print(self.name, self.x + self.w + 5, self.y)
@@ -29,5 +41,44 @@ function Entity:draw(dt)
 end
 
 function Entity:update(dt)
+	self.x = self.x + self.dx * dt
+	self.y = self.y + self.dy * dt
+end
 
+
+function Entity:colliding()
+	return self:collidingRight()
+end
+
+
+function Entity:collidingLeft()
+	for k,v in ipairs(walls) do
+		if checkCollision(self.x-5, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
+end
+
+function Entity:collidingRight()
+	for k,v in ipairs(walls) do
+		if checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
+end
+
+function Entity:collidingTop()
+	for k,v in ipairs(walls) do
+		if checkCollision(self.x, self.y - 5, self.w, 5, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
+end
+
+function Entity:collidingBottom()
+	for k,v in ipairs(walls) do
+		if checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
 end
