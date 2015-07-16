@@ -14,6 +14,10 @@ function Entity.create(n, x, y, w, h)
    e.dy = 0
 
    e.speed = 100
+
+   e.xScreen = x
+   e.yScreen = y
+
    return e
 end
 
@@ -35,14 +39,17 @@ function Entity:draw(dt)
 
 	if debug then
 		love.graphics.print(self.name, self.x + self.w + 5, self.y)
-		love.graphics.print(self.x, self.x + self.w + 5, self.y+15)
-		love.graphics.print(self.y, self.x + self.w + 5, self.y+30)
+		love.graphics.print("A:"..math.floor(self.x)..","..math.floor(self.y), self.x + self.w + 5, self.y+15)
+		love.graphics.print("S:"..math.floor(self.xScreen)..","..math.floor(self.yScreen), self.x + self.w + 5, self.y+30)
 	end
 end
 
 function Entity:update(dt)
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
+
+	self.xScreen = self.x + translateX
+	self.yScreen = self.y + translateY
 end
 
 
@@ -57,11 +64,21 @@ function Entity:collidingLeft()
 			return true
 		end
 	end
+	for k,v in ipairs(entities) do
+		if self ~= v and checkCollision(self.x-5, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
 end
 
 function Entity:collidingRight()
 	for k,v in ipairs(walls) do
 		if checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
+	for k,v in ipairs(entities) do
+		if self ~= v and checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
 			return true
 		end
 	end
@@ -73,11 +90,21 @@ function Entity:collidingTop()
 			return true
 		end
 	end
+	for k,v in ipairs(entities) do
+		if self ~= v and checkCollision(self.x, self.y - 5, self.w, 5, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
 end
 
 function Entity:collidingBottom()
 	for k,v in ipairs(walls) do
 		if checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
+			return true
+		end
+	end
+	for k,v in ipairs(entities) do
+		if self ~= v and checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
 			return true
 		end
 	end

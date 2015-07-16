@@ -1,14 +1,17 @@
 function love.load()
 	require 'entity'
 	require 'wall'
+	require 'camera'
 
 	debug = true
+
+	translateX = 0
+	translateY = 0
+
 	player = Entity.create("Me!", 200, 200)
-	enemy = Entity.create("Enemy!", 400, 200)
+	enemy = Entity.create("Enemy!", 400, 500)
 
-	entities = { player, enemy }
-
-	
+	entities = { player, enemy }	
 	walls = { Wall.create(500, 200, 20, 100), Wall.create(500, 300, 20, 100), Wall.create(300, 200, 200, 20) }	
 
 	var = "none"
@@ -21,6 +24,13 @@ function love.update(dt)
 end
 
 function love.draw(dt)
+	love.graphics.push()
+	translateX = love.graphics.getWidth()/2-player.x-player.w/2
+	translateY = love.graphics.getHeight()/2-player.y-player.h/2
+	var = translateX
+	love.graphics.translate(translateX, translateY)
+	-----------------------------------
+
 	player:draw(dt)
 	enemy:draw(dt)
 
@@ -30,17 +40,18 @@ function love.draw(dt)
 
 	-- GUI
 	love.graphics.circle("line", 0,0,5)
-	love.graphics.circle("line", love.mouse.getX(), love.mouse.getY(), 5)
+	love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
 
 
 	-- DEBUG
+	love.graphics.pop()
 	love.graphics.print("FPS: "..love.timer.getFPS(), 800, 0)
 	if debug then
 		love.graphics.print("Var: "..var, 800, 15)
 		love.graphics.print("Entities: "..#entities, 800, 30)
 
-
-		love.graphics.print(love.mouse.getX()..","..love.mouse.getY(), love.mouse.getX() + 15, love.mouse.getY() - 7)
+		love.graphics.print("Actual:"..math.floor(love.mouse.getX()-translateX)..","..math.floor(love.mouse.getY()-translateY), love.mouse.getX() + 15, love.mouse.getY()-15)
+		love.graphics.print("Screen:"..love.mouse.getX()..","..love.mouse.getY(), love.mouse.getX() + 15, love.mouse.getY())
 	end
 
 end
@@ -92,6 +103,7 @@ end
 function checkKeys(dt)
 	local speed = 100
 	player.dx = 0
+	player.dy = 0
 
 	if love.keyboard.isDown("d") and not player:collidingRight() then
 		player.dx = speed
@@ -100,10 +112,10 @@ function checkKeys(dt)
 		player.dx = -speed
 	end
 	if love.keyboard.isDown("s") and not player:collidingBottom() then
-		player.y = player.y + player.speed * dt
+		player.dy = speed
 	end
 	if love.keyboard.isDown("w") and not player:collidingTop() then
-		player.y = player.y - player.speed * dt
+		player.dy = -speed
 	end
 end
 
