@@ -2,14 +2,18 @@ function love.load()
 	require 'entity'
 	require 'wall'
 	require 'camera'
+	require 'weapon'
 
 	debug = true
 
 	translateX = 0
 	translateY = 0
 
-	player = Entity.create("Me!", 200, 200)
+	staff = Weapon.create("Lightning Staff")
+
+	player = Entity.create("Me!", 200, 200, staff)
 	enemy = Entity.create("Enemy!", 400, 500)
+
 
 	entities = { player, enemy }	
 	walls = { Wall.create(500, 200, 20, 100), Wall.create(500, 300, 20, 100), Wall.create(300, 200, 200, 20) }	
@@ -21,13 +25,14 @@ function love.update(dt)
 	checkKeys(dt)
 	player:update(dt)
 	enemy:update(dt)
+
+	var = player.weapon.name
 end
 
 function love.draw(dt)
 	love.graphics.push()
 	translateX = love.graphics.getWidth()/2-player.x-player.w/2
 	translateY = love.graphics.getHeight()/2-player.y-player.h/2
-	var = translateX
 	love.graphics.translate(translateX, translateY)
 	-----------------------------------
 
@@ -58,7 +63,7 @@ end
 
 function love.mousepressed(x, y, button)
    if button == 'l' then
-
+   	
    end
 end
 
@@ -104,7 +109,11 @@ function checkKeys(dt)
 	local speed = 100
 	player.dx = 0
 	player.dy = 0
-
+	player.sprinting = false
+	if love.keyboard.isDown("lshift") and player.mana > 0 then 
+		player.sprinting = true
+		speed = 150
+	end
 	if love.keyboard.isDown("d") and not player:collidingRight() then
 		player.dx = speed
 	end

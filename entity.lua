@@ -1,7 +1,7 @@
 Entity = {}
 Entity.__index = Entity
 
-function Entity.create(n, x, y, w, h)
+function Entity.create(n, x, y, weapon)
    local e = {}             -- our new object
    setmetatable(e, Entity)  -- make Account handle lookup
    e.name = n
@@ -18,11 +18,24 @@ function Entity.create(n, x, y, w, h)
    e.xScreen = x
    e.yScreen = y
 
+   e.health = 100
+   e.mana = 100
+
+   e.sprinting = false
+
+   e.weapon = weapon or nil
+
    return e
 end
 
 function Entity:draw(dt)
 	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+	love.graphics.setColor(0, 255, 0)
+	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/100), 5)
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
+	love.graphics.setColor(255, 255, 255)
+
 
 	if self:collidingLeft() then
 		love.graphics.circle("fill", self.x, self.y + self.h/2, 3)
@@ -45,6 +58,14 @@ function Entity:draw(dt)
 end
 
 function Entity:update(dt)
+	if self.health < 100 then self.health = self.health + 1 * dt end
+	if self.mana < 100 then self.mana = self.mana + 10 * dt end
+
+	if self.sprinting then
+		self.mana = self.mana - 20 * dt
+	end
+
+
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
 
@@ -54,7 +75,16 @@ end
 
 
 function Entity:colliding()
-	return self:collidingRight()
+	return self:collidingRight() or
+	self:collidingRight() or
+	self:collidingTop() or
+	self:collidingBottom()
+end
+
+function Entity:attack()
+	if self.weapon ~= nil then
+		
+	end
 end
 
 
