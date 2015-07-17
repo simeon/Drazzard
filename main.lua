@@ -10,6 +10,7 @@ function love.load()
 	translateX = 0
 	translateY = 0
 
+	isPaused = false
 	score = 0
 
 	-- initial class instances
@@ -20,31 +21,41 @@ function love.load()
 	entities = { player, enemy }	
 	walls = { Wall.create("stone", 500, 200, 20, 100), Wall.create("damage", 500, 300, 20, 100), Wall.create("stone", 300, 200, 200, 20) }	
 	blocks = { fireball }
+	
 	var = fireball.name
-
+	notice = ""
 end
 
 function love.update(dt)
-	score = score + 1
+	if not isPaused then
+		notice = ""
+		score = score + 1
 
-	checkKeys(dt)
-	for k,v in ipairs(entities) do
-		v:update(dt)
-		if v ~= player then
-			if distance(v.x, v.y, player.x, player.y) < 100 then
-				player.health = player.health - 20 * dt
+		checkKeys(dt)
+		for k,v in ipairs(entities) do
+			v:update(dt)
+			if v ~= player then
+				if distance(v.x, v.y, player.x, player.y) < 100 then
+					player.health = player.health - 20 * dt
+				end
 			end
 		end
-	end
 
-	for k,v in ipairs(entities) do
-		v:update(dt)
-	end
-	for k,v in ipairs(walls) do
-		v:update(dt)
-	end
-	for k,v in ipairs(blocks) do
-		v:update(dt)
+		for k,v in ipairs(entities) do
+			v:update(dt)
+		end
+		for k,v in ipairs(walls) do
+			v:update(dt)
+		end
+		for k,v in ipairs(blocks) do
+			v:update(dt)
+		end
+
+	else
+		notice = "PAUSED"
+		if (player.health <= 0) then
+			notice = "GAME OVER, BUB!\nHit 'R' to try again!"
+		end
 	end
 end
 
@@ -69,10 +80,10 @@ function love.draw(dt)
 	love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
 	love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 
-
 	-- DEBUG
 	love.graphics.pop()
 	love.graphics.print("Score: "..score, 5, 5)
+	love.graphics.print(notice, 5, 20)
 
 	love.graphics.print("FPS: "..love.timer.getFPS(), 800, 0)
 	if debug then
@@ -86,9 +97,10 @@ function love.draw(dt)
 end
 
 function love.mousepressed(x, y, button)
-	if button == 'l' then
+	if button == 'l' and player.mana >= 5 and not isPaused then
 		local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
-   		table.insert(blocks, Block.create("damage", player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
+   		table.insert(blocks, Block.create("damage", player, player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
+   		player.mana = player.mana - 5
     end
 end
 
@@ -100,6 +112,14 @@ end
 function love.keypressed(key)
 	if key == 'escape' then
 		debug = not debug
+	end
+
+	if key == 'p' and player.health > 0 then
+		isPaused = not isPaused
+	end
+
+	if key == 'r' and player.health <= 0 then 
+		love.load()
 	end
 end
 

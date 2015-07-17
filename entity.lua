@@ -20,6 +20,8 @@ function Entity.create(n, x, y, weapon)
    e.health = 100
    e.mana = 100
 
+   e.isShooting = false
+
    -- graphics
    e.image = love.graphics.newImage("sprites/entities/knight.png")
    e.image:setFilter("nearest")
@@ -27,6 +29,12 @@ function Entity.create(n, x, y, weapon)
 end
 
 function Entity:draw(dt)
+	if self ~= player then
+		love.graphics.setColor(255, 0, 0, 50)
+		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, 50)
+		love.graphics.setColor(255, 255, 255, 255)
+	end
+
 	if self ~= player and (player.xScreen+player.w/2 < self.xScreen+self.w/2) then 
 		love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
 	elseif self == player and (love.mouse.getX() < self.xScreen+self.w/2) then 
@@ -55,11 +63,11 @@ function Entity:draw(dt)
 		love.graphics.circle("fill", self.x + self.w/2, self.y + self.h, 3)
 	end
 
-
+	-- damage within radius
 	for k,v in ipairs(entities) do
 		if v ~= player then
-			if distance(v.x, v.y, player.x, player.y) < 100 then
-				love.graphics.line(self.x, self.y, player.x, player.y)
+			if distance(v.x, v.y, player.x, player.y) < 50 then
+				love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+self.w/2, player.y+self.h/2)
 			end
 		end
 	end
@@ -76,8 +84,12 @@ function Entity:draw(dt)
 end
 
 function Entity:update(dt)
-	if self.health < 100 then self.health = self.health + 10 * dt end
-	if self.mana < 100 then self.mana = self.mana + 10 * dt end
+	if self.health <= 0 then
+		isPaused = true
+	end
+
+	if self.health < 100 then self.health = self.health + 5 * dt end
+	if self.mana < 100 then self.mana = self.mana + 5 * dt end
 
 	if self.sprinting then
 		self.mana = self.mana - 20 * dt
@@ -85,7 +97,7 @@ function Entity:update(dt)
 
 	-- checks if hit by damage wall
 	for k,v in ipairs(blocks) do
-		if v.name == "damage" and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
+		if v.name == "damage" and v.owner ~= self and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
 			self.health = self.health - 30 *dt
 		end
 	end
