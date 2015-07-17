@@ -3,30 +3,49 @@ function love.load()
 	require 'wall'
 	require 'camera'
 	require 'weapon'
+	require 'block'
 
+	-- global variables
 	debug = true
-
 	translateX = 0
 	translateY = 0
 
-	staff = Weapon.create("Lightning Staff")
+	score = 0
 
-	player = Entity.create("Me!", 200, 200, staff)
+	-- initial class instances
+	player = Entity.create("Me!", 200, 200)
 	enemy = Entity.create("Enemy!", 400, 500)
-
+	fireball = Block.create("damage")
 
 	entities = { player, enemy }	
-	walls = { Wall.create(500, 200, 20, 100), Wall.create(500, 300, 20, 100), Wall.create(300, 200, 200, 20) }	
+	walls = { Wall.create("stone", 500, 200, 20, 100), Wall.create("damage", 500, 300, 20, 100), Wall.create("stone", 300, 200, 200, 20) }	
+	blocks = { fireball }
+	var = fireball.name
 
-	var = "none"
 end
 
 function love.update(dt)
-	checkKeys(dt)
-	player:update(dt)
-	enemy:update(dt)
+	score = score + 1
 
-	var = player.weapon.name
+	checkKeys(dt)
+	for k,v in ipairs(entities) do
+		v:update(dt)
+		if v ~= player then
+			if distance(v.x, v.y, player.x, player.y) < 100 then
+				player.health = player.health - 20 * dt
+			end
+		end
+	end
+
+	for k,v in ipairs(entities) do
+		v:update(dt)
+	end
+	for k,v in ipairs(walls) do
+		v:update(dt)
+	end
+	for k,v in ipairs(blocks) do
+		v:update(dt)
+	end
 end
 
 function love.draw(dt)
@@ -36,20 +55,25 @@ function love.draw(dt)
 	love.graphics.translate(translateX, translateY)
 	-----------------------------------
 
-	player:draw(dt)
-	enemy:draw(dt)
-
-	for k,v in ipairs(walls) do
-		v:draw()
+	for k,v in ipairs(entities) do
+		v:draw(dt)
 	end
-
+	for k,v in ipairs(walls) do
+		v:draw(dt)
+	end
+	for k,v in ipairs(blocks) do
+		v:draw(dt)
+	end
 	-- GUI
 	love.graphics.circle("line", 0,0,5)
 	love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
+	love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 
 
 	-- DEBUG
 	love.graphics.pop()
+	love.graphics.print("Score: "..score, 5, 5)
+
 	love.graphics.print("FPS: "..love.timer.getFPS(), 800, 0)
 	if debug then
 		love.graphics.print("Var: "..var, 800, 15)
@@ -62,9 +86,10 @@ function love.draw(dt)
 end
 
 function love.mousepressed(x, y, button)
-   if button == 'l' then
-   	
-   end
+	if button == 'l' then
+		local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+   		table.insert(blocks, Block.create("damage", player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
+    end
 end
 
 function love.mousereleased(x, y, button)

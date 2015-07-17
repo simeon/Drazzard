@@ -12,7 +12,6 @@ function Entity.create(n, x, y, weapon)
 
    e.dx = 0
    e.dy = 0
-
    e.speed = 100
 
    e.xScreen = x
@@ -21,18 +20,24 @@ function Entity.create(n, x, y, weapon)
    e.health = 100
    e.mana = 100
 
-   e.sprinting = false
-
-   e.weapon = weapon or nil
-
+   -- graphics
+   e.image = love.graphics.newImage("sprites/entities/knight.png")
+   e.image:setFilter("nearest")
    return e
 end
 
 function Entity:draw(dt)
-	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
-	love.graphics.setColor(0, 255, 0)
-	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/100), 5)
+	if self ~= player and (player.xScreen+player.w/2 < self.xScreen+self.w/2) then 
+		love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
+	elseif self == player and (love.mouse.getX() < self.xScreen+self.w/2) then 
+		love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
+	else
+		love.graphics.draw(self.image, self.x, self.y, 0, 3, 3)
+	end
+
 	love.graphics.setColor(255, 0, 0)
+	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/100), 5)
+	love.graphics.setColor(0, 200, 200)
 	love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
 	love.graphics.setColor(255, 255, 255)
 
@@ -50,21 +55,40 @@ function Entity:draw(dt)
 		love.graphics.circle("fill", self.x + self.w/2, self.y + self.h, 3)
 	end
 
+
+	for k,v in ipairs(entities) do
+		if v ~= player then
+			if distance(v.x, v.y, player.x, player.y) < 100 then
+				love.graphics.line(self.x, self.y, player.x, player.y)
+			end
+		end
+	end
+
+
 	if debug then
+		love.graphics.setColor(255, 255, 255, 100)
+		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print(self.name, self.x + self.w + 5, self.y)
 		love.graphics.print("A:"..math.floor(self.x)..","..math.floor(self.y), self.x + self.w + 5, self.y+15)
 		love.graphics.print("S:"..math.floor(self.xScreen)..","..math.floor(self.yScreen), self.x + self.w + 5, self.y+30)
+		love.graphics.setColor(255, 255, 255, 255)
 	end
 end
 
 function Entity:update(dt)
-	if self.health < 100 then self.health = self.health + 1 * dt end
+	if self.health < 100 then self.health = self.health + 10 * dt end
 	if self.mana < 100 then self.mana = self.mana + 10 * dt end
 
 	if self.sprinting then
 		self.mana = self.mana - 20 * dt
 	end
 
+	-- checks if hit by damage wall
+	for k,v in ipairs(blocks) do
+		if v.name == "damage" and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
+			self.health = self.health - 30 *dt
+		end
+	end
 
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
@@ -80,13 +104,6 @@ function Entity:colliding()
 	self:collidingTop() or
 	self:collidingBottom()
 end
-
-function Entity:attack()
-	if self.weapon ~= nil then
-		
-	end
-end
-
 
 function Entity:collidingLeft()
 	for k,v in ipairs(walls) do

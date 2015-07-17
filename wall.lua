@@ -1,9 +1,10 @@
 Wall = {}
 Wall.__index = Wall
 
-function Wall.create(x, y, w, h)
+function Wall.create(n, x, y, w, h)
    local v = {}             -- our new object
    setmetatable(v, Wall)  -- make Account handle lookup
+   v.name = n or "NO NAME"
    v.x = x or 100
    v.y = y or 100
    v.w = w or 32
@@ -22,5 +23,5 @@ function Wall:draw(dt)
 end
 
 function Wall:update(dt)
-
+   
 end
