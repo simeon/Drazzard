@@ -29,7 +29,6 @@ end
 function love.update(dt)
 	if not isPaused then
 		notice = ""
-		score = score + 1
 
 		checkKeys(dt)
 		for k,v in ipairs(entities) do

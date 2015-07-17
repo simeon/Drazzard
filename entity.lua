@@ -84,8 +84,10 @@ function Entity:draw(dt)
 end
 
 function Entity:update(dt)
-	if self.health <= 0 then
+	if self == player and self.health <= 0 then
 		isPaused = true
+	elseif self ~= player and self.health <= 0 then
+		self:destroy()
 	end
 
 	if self.health < 100 then self.health = self.health + 5 * dt end
@@ -166,5 +168,13 @@ function Entity:collidingBottom()
 		if self ~= v and checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
 			return true
 		end
+	end
+end
+
+function Entity:destroy()
+	for i = #entities, 1, -1 do
+	    if entities[i] == self then
+	        table.remove(entities, i)
+	    end
 	end
 end
