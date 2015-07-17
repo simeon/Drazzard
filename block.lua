@@ -34,9 +34,23 @@ function Block:draw(dt)
 end
 
 function Block:update(dt)
+   for k,v in ipairs(walls) do
+      if checkCollision(v.x, v.y, v.w, v.h, self.x, self.y, self.w/4, self.h/4) then
+         self:destroy()  
+      end
+   end
+
    self.x = self.x + self.dx * dt
    self.y = self.y + self.dy * dt
 
    self.xScreen = self.x + translateX
    self.yScreen = self.y + translateY
+end
+
+function Block:destroy()
+   for i = #blocks, 1, -1 do
+       if blocks[i] == self then
+           table.remove(blocks, i)
+       end
+   end
 end

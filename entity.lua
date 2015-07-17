@@ -11,8 +11,8 @@ function Entity.create(n, x, y, weapon)
    e.h = h or 32
 
    e.dx = 0
-   e.dy = 0
-   e.speed = 100
+   e.dy = -50
+   e.speed = 50
 
    e.xScreen = x
    e.yScreen = y
@@ -22,6 +22,7 @@ function Entity.create(n, x, y, weapon)
 
    e.isShooting = false
 
+   e.level = 1
    -- graphics
    e.image = love.graphics.newImage("sprites/entities/knight.png")
    e.image:setFilter("nearest")
@@ -84,12 +85,14 @@ function Entity:draw(dt)
 end
 
 function Entity:update(dt)
+	-- death condition
 	if self == player and self.health <= 0 then
 		isPaused = true
 	elseif self ~= player and self.health <= 0 then
 		self:destroy()
 	end
 
+	-- health & mana regeneration
 	if self.health < 100 then self.health = self.health + 5 * dt end
 	if self.mana < 100 then self.mana = self.mana + 5 * dt end
 
@@ -97,11 +100,16 @@ function Entity:update(dt)
 		self.mana = self.mana - 20 * dt
 	end
 
-	-- checks if hit by damage wall
+	-- checks if hit by damaging block
 	for k,v in ipairs(blocks) do
 		if v.name == "damage" and v.owner ~= self and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
-			self.health = self.health - 30 *dt
+			self.health = self.health - 100 *dt
 		end
+	end
+
+	-- AI & Collision for non-players
+	if self ~= player then
+		self:AI()
 	end
 
 	self.x = self.x + self.dx * dt
@@ -178,3 +186,25 @@ function Entity:destroy()
 	    end
 	end
 end
+
+function Entity:AI(level)
+	self.dx = 0
+	self.dy = 0
+
+	local angle = math.atan2(player.y - self.y, player.x - self.x)
+	if not self:collidingLeft() and math.cos(angle) < 0 then
+		self.dx = self.speed*math.cos(angle)
+	end
+	if not self:collidingRight() and math.cos(angle) > 0 then
+		self.dx = self.speed*math.cos(angle)
+	end
+	if not self:collidingTop() and math.sin(angle) < 0 then
+		self.dy = self.speed*math.sin(angle)
+	end
+	if not self:collidingBottom() and math.sin(angle) > 0 then
+		self.dy = self.speed*math.sin(angle)
+	end
+end
+
+
+

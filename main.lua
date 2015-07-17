@@ -31,14 +31,6 @@ function love.update(dt)
 		notice = ""
 
 		checkKeys(dt)
-		for k,v in ipairs(entities) do
-			v:update(dt)
-			if v ~= player then
-				if distance(v.x, v.y, player.x, player.y) < 100 then
-					player.health = player.health - 20 * dt
-				end
-			end
-		end
 
 		for k,v in ipairs(entities) do
 			v:update(dt)
@@ -119,6 +111,10 @@ function love.keypressed(key)
 
 	if key == 'r' and player.health <= 0 then 
 		love.load()
+	end
+
+	if key == '1' then
+		table.insert(entities, Entity.create("Enemy!", math.random(0, 500), math.random(0, 500)))
 	end
 end
 
