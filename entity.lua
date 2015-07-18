@@ -21,10 +21,13 @@ function Entity.create(n, x, y, weapon)
    e.mana = 100
 
    e.isShooting = false
+   if self == player then e.range = 75 else e.range = 50 end
+   e.damage = 20
+   e.fov = .5
 
    e.level = 1
    -- graphics
-   e.image = love.graphics.newImage("sprites/entities/knight.png")
+   e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
    e.image:setFilter("nearest")
    return e
 end
@@ -32,7 +35,7 @@ end
 function Entity:draw(dt)
 	if self ~= player then
 		love.graphics.setColor(255, 0, 0, 50)
-		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, 50)
+		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
 		love.graphics.setColor(255, 255, 255, 255)
 	end
 
@@ -64,16 +67,6 @@ function Entity:draw(dt)
 		love.graphics.circle("fill", self.x + self.w/2, self.y + self.h, 3)
 	end
 
-	-- damage within radius
-	for k,v in ipairs(entities) do
-		if v ~= player then
-			if distance(v.x, v.y, player.x, player.y) < 50 then
-				love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+self.w/2, player.y+self.h/2)
-			end
-		end
-	end
-
-
 	if debug then
 		love.graphics.setColor(255, 255, 255, 100)
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
@@ -90,11 +83,12 @@ function Entity:update(dt)
 		isPaused = true
 	elseif self ~= player and self.health <= 0 then
 		self:destroy()
+		score = score + 100
 	end
 
 	-- health & mana regeneration
 	if self.health < 100 then self.health = self.health + 5 * dt end
-	if self.mana < 100 then self.mana = self.mana + 5 * dt end
+	if self.mana < 100 then self.mana = self.mana + 10 * dt end
 
 	if self.sprinting then
 		self.mana = self.mana - 20 * dt
@@ -103,7 +97,7 @@ function Entity:update(dt)
 	-- checks if hit by damaging block
 	for k,v in ipairs(blocks) do
 		if v.name == "damage" and v.owner ~= self and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
-			self.health = self.health - 100 *dt
+			self.health = self.health - 100*dt
 		end
 	end
 

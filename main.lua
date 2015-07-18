@@ -24,6 +24,53 @@ function love.load()
 	
 	var = fireball.name
 	notice = ""
+
+	-- audio
+	
+	do
+	    -- will hold the currently playing sources
+	    local sources = {}
+	 
+	    -- check for sources that finished playing and remove them
+	    -- add to love.update
+	    function love.audio.update()
+	        local remove = {}
+	        for _,s in pairs(sources) do
+	            if s:isStopped() then
+	                remove[#remove + 1] = s
+	            end
+	        end
+	 
+	        for i,s in ipairs(remove) do
+	            sources[s] = nil
+	        end
+	    end
+	 
+	    -- overwrite love.audio.play to create and register source if needed
+	    local play = love.audio.play
+	    function love.audio.play(what, how, loop)
+	        local src = what
+	        if type(what) ~= "userdata" or not what:typeOf("Source") then
+	            src = love.audio.newSource(what, how)
+	            src:setLooping(loop or false)
+	        end
+	 
+	        play(src)
+	        sources[src] = src
+	        return src
+	    end
+	 
+	    -- stops a source
+	    local stop = love.audio.stop
+	    function love.audio.stop(src)
+	        if not src then return end
+	        stop(src)
+	        sources[src] = nil
+	    end
+	end
+	sword_sound = love.audio.newSource("assets/sounds/powerup.wav", "static")
+
+
 end
 
 function love.update(dt)
@@ -34,6 +81,9 @@ function love.update(dt)
 
 		for k,v in ipairs(entities) do
 			v:update(dt)
+			if v ~= player and distance(v.x+v.w/2, v.y+v.h/2, player.x+player.w/2, player.y+player.h/2) < v.range then
+				player.health = player.health - v.damage * dt
+			end
 		end
 		for k,v in ipairs(walls) do
 			v:update(dt)
@@ -56,9 +106,20 @@ function love.draw(dt)
 	translateY = love.graphics.getHeight()/2-player.y-player.h/2
 	love.graphics.translate(translateX, translateY)
 	-----------------------------------
+	local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+	love.graphics.setColor(255, 255, 255, 60)
+	love.graphics.arc("line", player.x+player.w/2, player.y+player.h/2, player.range, angle-player.fov, angle+player.fov)
+	love.graphics.setColor(255, 255, 255, 255)
 
 	for k,v in ipairs(entities) do
 		v:draw(dt)
+		local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+		local entity_angle = math.atan2( (v.y+v.h/2) - (player.y+player.h/2), (v.x+v.w/2) - (player.x+player.w/2))
+		if v ~= player and distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < player.range and math.abs(mouse_angle-entity_angle) < player.fov then
+			--love.graphics.setColor(255, 100, 100, 255)
+			--love.graphics.arc("fill", player.x+player.w/2, player.y+player.h/2, player.range, entity_angle-.01, entity_angle+.01)
+			--love.graphics.setColor(255, 255, 255, 255)
+		end
 	end
 	for k,v in ipairs(walls) do
 		v:draw(dt)
@@ -89,8 +150,30 @@ end
 
 function love.mousepressed(x, y, button)
 	if button == 'l' and player.mana >= 5 and not isPaused then
-		local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
-   		table.insert(blocks, Block.create("damage", player, player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
+		for k,v in ipairs(entities) do
+			local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+			local entity_angle = math.atan2( (v.y+v.h/2) - (player.y+player.h/2), (v.x+v.w/2) - (player.x+player.w/2))
+			if v ~= player then
+				if distance(v.x+v.w/2, v.y+v.h/2, player.x+player.w/2, player.y+player.h/2) < player.range and math.abs(mouse_angle-entity_angle) < player.fov then
+					v.health = v.health - player.damage
+					love.audio.play("assets/sounds/sword_hit.wav")
+				else
+					love.audio.play("assets/sounds/sword_swing.wav")
+				end
+			end
+		end
+	end
+
+	if button == 'r' and player.mana >= 5 and not isPaused then
+		--local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+   		--table.insert(blocks, Block.create("damage", player, player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
+   		
+   		for k,v in ipairs(entities) do
+   			if v ~= player and distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < player.range then
+   				v.x = -10000
+   				v.y = -10000
+   			end
+   		end
    		player.mana = player.mana - 5
     end
 end
@@ -101,11 +184,11 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
-	if key == 'escape' then
+	if key == '2' then
 		debug = not debug
 	end
 
-	if key == 'p' and player.health > 0 then
+	if key == 'escape' and player.health > 0 then
 		isPaused = not isPaused
 	end
 

@@ -8,8 +8,8 @@ function Block.create(n, o, x, y, dx, dy, w, h)
    b.owner = o or "NO OWNER"
    b.x = x or 100
    b.y = y or 100
-   b.w = w or 16
-   b.h = h or 16
+   b.w = w or 32
+   b.h = h or 32
 
    b.dx = dx or 0
    b.dy = dy or 0
@@ -17,7 +17,7 @@ function Block.create(n, o, x, y, dx, dy, w, h)
    b.xScreen = x
    b.yScreen = y
 
-
+   b.damage = 1000
    return b
 end
 
@@ -36,7 +36,7 @@ end
 function Block:update(dt)
    for k,v in ipairs(walls) do
       if checkCollision(v.x, v.y, v.w, v.h, self.x, self.y, self.w/4, self.h/4) then
-         self:destroy()  
+         --self:destroy()  
       end
    end
 
