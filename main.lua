@@ -174,7 +174,8 @@ function love.draw(dt)
 	love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
 	love.graphics.print("Score: "..score, 700, 30)
-	love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 45)
+	love.graphics.print("Gold: "..player.gold, 700, 45)
+	love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 60)
 	love.graphics.print(notice, 5, 20)
 
 
@@ -208,14 +209,19 @@ function love.mousepressed(x, y, button)
 		elseif gamestate == "shop" then
 			for k,v in ipairs(buttons) do
 				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
-					if v.path == "FOV" then
-						player.fov = player.fov + .1
-					end
-					if v.path == "RANGE" then
-						player.range = player.range + 10
-					end
-					if v.path == "DAMAGE" then
-						player.damage = player.damage + 10
+					if player.gold >= v.cost then
+						if v.path == "FOV" then
+							player.fov = player.fov + .1
+						end
+						if v.path == "RANGE" then
+							player.range = player.range + 10
+						end
+						if v.path == "DAMAGE" then
+							player.damage = player.damage + 10
+						end
+						player.gold = player.gold - v.cost
+					else
+						notice = "Not enough $$$"
 					end
 				end
 			end

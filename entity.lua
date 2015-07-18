@@ -34,6 +34,8 @@ function Entity.create(n, x, y, weapon)
 		e.damage = 20
 	end
 	e.fov = .5
+
+	e.gold = 0
 	-- graphics
 	e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
 	e.image:setFilter("nearest")
@@ -93,6 +95,7 @@ function Entity:update(dt)
 		self:destroy()
 		enemies_killed = enemies_killed + 1
 		score = score + 100
+		player.gold = player.gold + 100
 	end
 
 	-- health & mana regeneration
