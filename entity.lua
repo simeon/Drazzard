@@ -2,34 +2,42 @@ Entity = {}
 Entity.__index = Entity
 
 function Entity.create(n, x, y, weapon)
-   local e = {}             -- our new object
-   setmetatable(e, Entity)  -- make Account handle lookup
-   e.name = n
-   e.x = x or 100
-   e.y = y or 100
-   e.w = w or 32
-   e.h = h or 32
+	local e = {}             -- our new object
+	setmetatable(e, Entity)  -- make Account handle lookup
+	e.level = 1.1 * enemies_killed
 
-   e.dx = 0
-   e.dy = -50
-   e.speed = 50
+	e.name = n
+	e.x = x or 100
+	e.y = y or 100
+	e.w = w or 32
+	e.h = h or 32
 
-   e.xScreen = x
-   e.yScreen = y
+	e.dx = 0
+	e.dy = -50
+	e.speed = 50
 
-   e.health = 100
-   e.mana = 100
+	e.xScreen = x
+	e.yScreen = y
 
-   e.isShooting = false
-   if self == player then e.range = 75 else e.range = 50 end
-   e.damage = 20
-   e.fov = .5
+	e.total_health = 100 * e.level
+	e.health = e.total_health
+	e.total_mana = 100
+	e.mana = 100
 
-   e.level = 1
-   -- graphics
-   e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
-   e.image:setFilter("nearest")
-   return e
+	e.isShooting = false
+
+	if self == player then 
+		e.range = 75 
+		e.damage = 20
+	else 
+		e.range = 50
+		e.damage = 20
+	end
+	e.fov = .5
+	-- graphics
+	e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
+	e.image:setFilter("nearest")
+	return e
 end
 
 function Entity:draw(dt)
@@ -48,7 +56,7 @@ function Entity:draw(dt)
 	end
 
 	love.graphics.setColor(255, 0, 0)
-	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/100), 5)
+	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
 	love.graphics.setColor(0, 200, 200)
 	love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
 	love.graphics.setColor(255, 255, 255)
@@ -83,6 +91,7 @@ function Entity:update(dt)
 		isPaused = true
 	elseif self ~= player and self.health <= 0 then
 		self:destroy()
+		enemies_killed = enemies_killed + 1
 		score = score + 100
 	end
 
