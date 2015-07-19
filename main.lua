@@ -30,6 +30,19 @@ function love.load()
 	how_to_play_button = Button.create("How To Play", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75)
 	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75 + 75)
 
+	-- items/perks
+	items = { 
+		Item.create("+ FOV", "eye", "FOV", 5, 100, 200),
+		Item.create("+ Range", "range", "RANGE", 5, 375, 200),
+		Item.create("+ Gold", "gold", "GOLD", 5, 650, 200),
+
+		Item.create("+ Health", "health", "HEALTH", 99999, 100, 400),
+		Item.create("+ Damage", "damage", "DAMAGE", 99999, 375, 400),
+		Item.create("+ Stamina", "boots", "MANA", 99999, 650, 400)
+	 }
+
+
+
 	entities = { player, enemy }	
 	walls = {
 		Wall.create("stone", 0, 0, 5, 1),
@@ -198,7 +211,7 @@ function love.draw(dt)
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", 10, 10, player.health * (100/player.total_health), 10)
 		love.graphics.setColor(0, 200, 200)
-		love.graphics.rectangle("fill", 10, 25, player.mana * (player.mana/100), 10)
+		love.graphics.rectangle("fill", 10, 25, player.mana * (100/player.total_mana), 10)
 		love.graphics.setColor(255, 255, 255)
 		
 		love.graphics.print("Score: "..score, 10, 40)
@@ -214,6 +227,10 @@ function love.draw(dt)
 
 		love.graphics.printf("Welcome to the shop!", 0, 25, love.graphics.getWidth(), 'center')
 		love.graphics.printf("Gold: "..player.gold, 0, 40, love.graphics.getWidth(), 'center')
+
+		for k,v in ipairs(items) do
+			v:draw(dt)
+		end
 
 	elseif gamestate == "howtoplay" then
 
@@ -304,6 +321,39 @@ function love.mousepressed(x, y, button)
 				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
 					gamestate = v.path
 					if isPaused then isPaused = not isPaused end
+				end
+			end	
+
+			for k,v in ipairs(items) do
+				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
+					if player.gold >= v.cost and v.level < v.max_level then
+						player.gold = player.gold - v.cost
+						v.level = v.level + 1
+						if v.var == "FOV" then
+							player.fov = player.fov + .3
+							v.cost = v.cost + 50
+						elseif v.var == "RANGE" then
+							player.range = player.range + 20
+							v.cost = v.cost + 50
+						elseif v.var == "DAMAGE" then
+							player.damage = player.damage * 2
+							v.cost = v.cost + 300
+						elseif v.var == "HEALTH" then
+							player.total_health = player.total_health * 1.3
+							player.health = player.total_health
+							player.regen = player.regen + 5
+							v.cost = v.cost + 300
+						elseif v.var == "MANA" then
+							player.total_mana = player.total_mana * 1.3
+							player.mana = player.total_mana
+							v.cost = v.cost + 300
+						elseif v.var == "GOLD" then
+							player.gold_boost = player.gold_boost + .5
+							v.cost = v.cost + 300
+						end
+					else
+						notice = "Not enough gold!"
+					end
 				end
 			end	
 		end

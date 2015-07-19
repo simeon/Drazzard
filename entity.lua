@@ -21,7 +21,10 @@ function Entity.create(n, x, y, weapon)
 
 	e.total_health = 100 * e.level
 	e.health = e.total_health
-	e.mana = 100
+	e.total_mana = 100 * e.level
+	e.mana = e.total_mana
+
+	e.regen = 5
 
 	e.isShooting = false
 
@@ -34,7 +37,8 @@ function Entity.create(n, x, y, weapon)
 	end
 	e.fov = .5
 
-	e.gold = 0
+	e.gold = 9999999999
+	e.gold_boost = 1
 	-- graphics
 	e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
 	e.image:setFilter("nearest")
@@ -60,7 +64,7 @@ function Entity:draw(dt)
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
 		love.graphics.setColor(0, 200, 200)
-		love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
+		love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/self.total_mana), 5)
 		love.graphics.setColor(255, 255, 255)
 	end
 
@@ -96,12 +100,12 @@ function Entity:update(dt)
 		self:destroy()
 		enemies_killed = enemies_killed + 1
 		score = score + math.floor(100*self.level)
-		player.gold = player.gold + math.floor(100*self.level/4)
+		player.gold = player.gold + math.floor(100*player.gold_boost*self.level/4)
 	end
 
 	-- health & mana regeneration
-	if self.health < self.total_health then self.health = self.health + 5 * dt end
-	if self.mana < 100 then self.mana = self.mana + 10 * dt end
+	if self.health < self.total_health then self.health = self.health + self.regen * dt end
+	if self.mana < self.total_mana then self.mana = self.mana + 10 * dt end
 
 	if self.sprinting then
 		self.mana = self.mana - 20 * dt
