@@ -8,21 +8,29 @@ function Button.create(n, p, x, y, w, h)
    b.path = p or "NO PATH"
    b.x = x or 100
    b.y = y or 100
-   b.w = w or 50
+   b.w = w or 200
    b.h = h or 50
    b.cost = 50
 
    b.xScreen = x
    b.yScreen = y
 
+   b.image = love.graphics.newImage("assets/sprites/GUI/base_button.png")
    return b
 end
 
 function Button:draw(dt)
+   love.graphics.draw(self.image, self.x, self.y)
    love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
-   love.graphics.print(self.name, self.x, self.y)
-   love.graphics.print(self.path, self.x, self.y+15)
 
+   if self.path == "FOV" then
+      love.graphics.print("Field of View: "..player.fov, self.x, self.y-20)
+      love.graphics.print(" +10 Field of View", self.x+10, self.y+20)
+   elseif self.path == "RANGE" then
+      love.graphics.print("Range: "..player.range, self.x, self.y)
+   elseif self.path == "DAMAGE" then
+      love.graphics.print("Damage: "..player.damage, self.x, self.y)
+   end
 
 	if debug then
 		love.graphics.print(self.x, self.x + self.w + 5, self.y+15)

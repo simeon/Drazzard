@@ -35,6 +35,11 @@ function love.load()
 	-- visuals
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogo.png")
 	
+
+	-- font
+	font = love.graphics.newFont("assets/misc/pf_tempesta_five.ttf", 14)
+    love.graphics.setFont(font)
+
 	do
 	    -- will hold the currently playing sources
 	    local sources = {}
@@ -162,9 +167,8 @@ function love.draw(dt)
 			love.graphics.print("Screen:"..love.mouse.getX()..","..love.mouse.getY(), love.mouse.getX() + 15, love.mouse.getY())
 		end
 	elseif gamestate == "shop" then
-		love.graphics.print("FOV: "..player.fov, 100, 100)
-		love.graphics.print("Range: "..player.range, 100, 200)
-		love.graphics.print("Damage: "..player.damage, 100, 300)
+
+		love.graphics.printf("Welcome to the shop!", 0, 15, love.graphics.getWidth(), 'center')
 	end
 
 	for k,v in ipairs(buttons) do
@@ -176,7 +180,7 @@ function love.draw(dt)
 	love.graphics.print("Score: "..score, 700, 30)
 	love.graphics.print("Gold: "..player.gold, 700, 45)
 	love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 60)
-	love.graphics.print(notice, 5, 20)
+	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
 
 
 end
@@ -221,7 +225,7 @@ function love.mousepressed(x, y, button)
 						end
 						player.gold = player.gold - v.cost
 					else
-						notice = "Not enough $$$"
+						notice = "Not enough gold"
 					end
 				end
 			end

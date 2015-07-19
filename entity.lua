@@ -27,7 +27,7 @@ function Entity.create(n, x, y, weapon)
 	e.isShooting = false
 
 	if self == player then 
-		e.range = 75 
+		e.range = 75
 		e.damage = 20
 	else 
 		e.range = 50
