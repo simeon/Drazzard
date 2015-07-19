@@ -5,10 +5,10 @@ function Wall.create(n, x, y, w, h)
    local v = {}             -- our new object
    setmetatable(v, Wall)  -- make Account handle lookup
    v.name = n or "NO NAME"
-   v.x = x or 100
-   v.y = y or 100
-   v.w = w or 32
-   v.h = h or 32
+   v.x = x * tilesize or 0
+   v.y = y * tilesize or 0
+   v.w = w * tilesize or 0
+   v.h = h * tilesize or 0
 
    return v
 end

@@ -7,9 +7,10 @@ function love.load()
 
 	-- global variables
 	enemies_killed = 1
-	debug = true
+	debug = false
 	translateX = 0
 	translateY = 0
+	tilesize = 32
 
 	gamestate = "mainmenu"
 	isPaused = false
@@ -18,28 +19,45 @@ function love.load()
 	-- initial class instances
 	player = Entity.create("Me!", 200, 200)
 	enemy = Entity.create("Enemy!", 400, 500)
-	fireball = Block.create("damage")
 
+	-- buttons
 	game_button = Button.create("Start Game!", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2)
-	boost_fov_button = Button.create("+ FOV", "FOV", 200, 100)
-	boost_range_button = Button.create(" + Range", "RANGE", 200, 200)
-	boost_damage_button = Button.create(" + Damage", "DAMAGE", 200, 300)
+	boost_fov_button = Button.create("+ FOV", "FOV", 200, 100, 50, 50)
+	boost_range_button = Button.create(" + Range", "RANGE", 200, 200, 50, 50)
+	boost_damage_button = Button.create(" + Damage", "DAMAGE", 200, 300, 50, 50)
 
-	buttons = { game_button }
 	entities = { player, enemy }	
-	walls = { Wall.create("stone", 500, 200, 20, 100), Wall.create("damage", 500, 300, 20, 100), Wall.create("stone", 300, 200, 200, 20) }	
-	blocks = { fireball }
-
+	walls = {
+		Wall.create("stone", 0, 0, 5, 1),
+		Wall.create("stone", 0, 0, 1, 10),
+		Wall.create("stone", 3, 3, 2, 1) 
+	}	
+	
+	blocks = {}
 	notice = ""
 
 	-- visuals
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogo.png")
 	
+	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
+
+	canvas = love.graphics.newCanvas(800, 600)
+	love.graphics.setCanvas(canvas)
+		canvas:clear()
+		for k,v in ipairs(walls) do
+			for i=0,v.w/tilesize-1 do
+		        for j=0,v.h/tilesize-1 do
+		        	love.graphics.draw(stone_tile, v.x + tilesize*i, v.y + tilesize*j)
+		       	end
+		   	end
+		end
+	love.graphics.setCanvas()
 
 	-- font
 	font = love.graphics.newFont("assets/misc/pf_tempesta_five.ttf", 14)
     love.graphics.setFont(font)
 
+    -- audio
 	do
 	    -- will hold the currently playing sources
 	    local sources = {}
@@ -82,7 +100,6 @@ function love.load()
 	    end
 	end
 	sword_sound = love.audio.newSource("assets/sounds/powerup.wav", "static")
-
 	love.audio.play("assets/sounds/bg_music.mp3")
 end
 
@@ -132,6 +149,8 @@ function love.draw(dt)
 		translateY = love.graphics.getHeight()/2-player.y-player.h/2
 		love.graphics.translate(translateX, translateY)
 		-----------------------------------
+		love.graphics.draw(canvas)
+
 		local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
 		love.graphics.setColor(255, 255, 255, 60)
 		love.graphics.arc("line", player.x+player.w/2, player.y+player.h/2, player.range, angle-player.fov, angle+player.fov)
@@ -168,7 +187,8 @@ function love.draw(dt)
 		end
 	elseif gamestate == "shop" then
 
-		love.graphics.printf("Welcome to the shop!", 0, 15, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Welcome to the shop!", 0, 25, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Gold: "..player.gold, 0, 40, love.graphics.getWidth(), 'center')
 	end
 
 	for k,v in ipairs(buttons) do
@@ -211,24 +231,7 @@ function love.mousepressed(x, y, button)
 				end
 			end
 		elseif gamestate == "shop" then
-			for k,v in ipairs(buttons) do
-				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
-					if player.gold >= v.cost then
-						if v.path == "FOV" then
-							player.fov = player.fov + .1
-						end
-						if v.path == "RANGE" then
-							player.range = player.range + 10
-						end
-						if v.path == "DAMAGE" then
-							player.damage = player.damage + 10
-						end
-						player.gold = player.gold - v.cost
-					else
-						notice = "Not enough gold"
-					end
-				end
-			end
+			
 		end
 	end
 
