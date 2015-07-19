@@ -12,6 +12,8 @@ function love.load()
 	translateY = 0
 	tilesize = 32
 
+	music_started = false
+
 	gamestate = "mainmenu"
 	isPaused = false
 	score = 0
@@ -21,10 +23,10 @@ function love.load()
 	enemy = Entity.create("Enemy!", 400, 500)
 
 	-- buttons
+	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
+	back_to_game_button = Button.create("<- Back to Game", "game", 10, 10)
 	game_button = Button.create("Start Game!", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2)
-	boost_fov_button = Button.create("+ FOV", "FOV", 200, 100, 50, 50)
-	boost_range_button = Button.create(" + Range", "RANGE", 200, 200, 50, 50)
-	boost_damage_button = Button.create(" + Damage", "DAMAGE", 200, 300, 50, 50)
+	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75)
 
 	entities = { player, enemy }	
 	walls = {
@@ -38,7 +40,8 @@ function love.load()
 
 	-- visuals
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogo.png")
-	
+
+
 	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
 
 	canvas = love.graphics.newCanvas(800, 600)
@@ -100,13 +103,18 @@ function love.load()
 	    end
 	end
 	sword_sound = love.audio.newSource("assets/sounds/powerup.wav", "static")
-	love.audio.play("assets/sounds/bg_music.mp3")
 end
 
 function love.update(dt)
 	if gamestate == "mainmenu" then
-		buttons = { game_button }
+		buttons = { game_button, credits_button }
 	elseif gamestate == "game" then
+
+		if not music_started then
+			love.audio.play("assets/sounds/bg_music.mp3")
+			music_started = true
+		end
+
 		buttons = {  }
 		if not isPaused then
 			notice = ""
@@ -135,7 +143,9 @@ function love.update(dt)
 			end
 		end
 	elseif gamestate == "shop" then
-		buttons = { boost_fov_button, boost_range_button, boost_damage_button}
+		buttons = { back_to_game_button }
+	elseif gamestate == "credits" then
+		buttons = { main_menu_button }
 	end
 end
 
@@ -179,9 +189,20 @@ function love.draw(dt)
 
 		-- DEBUG
 		love.graphics.pop()
+
+		-- GUI
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.rectangle("fill", 10, 10, player.health * (100/player.total_health), 10)
+		love.graphics.setColor(0, 200, 200)
+		love.graphics.rectangle("fill", 10, 25, player.mana * (player.mana/100), 10)
+		love.graphics.setColor(255, 255, 255)
+		
+		love.graphics.print("Score: "..score, 10, 40)
+		love.graphics.print("Gold: "..player.gold, 10, 55)
+		love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 60)
+		
 		if debug then
 			love.graphics.print("Entities: "..#entities, 800, 30)
-
 			love.graphics.print("Actual:"..math.floor(love.mouse.getX()-translateX)..","..math.floor(love.mouse.getY()-translateY), love.mouse.getX() + 15, love.mouse.getY()-15)
 			love.graphics.print("Screen:"..love.mouse.getX()..","..love.mouse.getY(), love.mouse.getX() + 15, love.mouse.getY())
 		end
@@ -189,6 +210,39 @@ function love.draw(dt)
 
 		love.graphics.printf("Welcome to the shop!", 0, 25, love.graphics.getWidth(), 'center')
 		love.graphics.printf("Gold: "..player.gold, 0, 40, love.graphics.getWidth(), 'center')
+
+	elseif gamestate == "credits" then
+
+		love.graphics.printf("Credits", 0, 25, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("-- Code/Art --", 0, 150, love.graphics.getWidth(), "center")
+		love.graphics.printf("Simeon Videnov", 0, 170, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://simeon.io)", 0, 190, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("-- Music --", 0, 250, love.graphics.getWidth(), "center")
+		love.graphics.printf("Rolemusic - 'Besos y Abrazos' ", 0, 270, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://freemusicarchive.org/music/Rolemusic/)", 0, 290, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("-- Font --", 0, 350, love.graphics.getWidth(), "center")
+		love.graphics.printf("Yusuke Kamiyamane - 'PF Tempesta Five'", 0, 370, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://p.yusukekamiyamane.com/)", 0, 390, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("-- Tools --", 0, 450, love.graphics.getWidth(), "center")
+		love.graphics.printf("Made with Lua and Love2D framework", 0, 470, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://lua.org & http://love2d.org)", 0, 490, love.graphics.getWidth(), "center")
+
+	elseif gamestate == "gameover" then
+
+		love.graphics.printf("-- Game Over --", 0, 150, love.graphics.getWidth(), "center")
+		love.graphics.printf("(You tried your best)", 0, 170, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("Score: "..score, 0, 220, love.graphics.getWidth(), "center")
+		love.graphics.printf("Gold: "..player.gold, 0, 240, love.graphics.getWidth(), "center")
+		love.graphics.printf("Enemies slain: "..enemies_killed, 0, 260, love.graphics.getWidth(), "center")
+
+		love.graphics.printf("Press 'R' to restart", 0, 320, love.graphics.getWidth(), "center")
+
+	
 	end
 
 	for k,v in ipairs(buttons) do
@@ -197,9 +251,6 @@ function love.draw(dt)
 
 	love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
-	love.graphics.print("Score: "..score, 700, 30)
-	love.graphics.print("Gold: "..player.gold, 700, 45)
-	love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 60)
 	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
 
 
@@ -209,7 +260,7 @@ function love.mousepressed(x, y, button)
 
 	if button == 'l' then
 
-		if gamestate == "mainmenu" then
+		if gamestate == "mainmenu" or gamestate == "credits"then
 			for k,v in ipairs(buttons) do
 				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
 					gamestate = v.path
@@ -231,7 +282,12 @@ function love.mousepressed(x, y, button)
 				end
 			end
 		elseif gamestate == "shop" then
-			
+			for k,v in ipairs(buttons) do
+				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
+					gamestate = v.path
+					if isPaused then isPaused = not isPaused end
+				end
+			end	
 		end
 	end
 

@@ -21,13 +21,12 @@ function Entity.create(n, x, y, weapon)
 
 	e.total_health = 100 * e.level
 	e.health = e.total_health
-	e.total_mana = 100
 	e.mana = 100
 
 	e.isShooting = false
 
 	if self == player then 
-		e.range = 75
+		e.range = 80
 		e.damage = 20
 	else 
 		e.range = 50
@@ -57,12 +56,13 @@ function Entity:draw(dt)
 		love.graphics.draw(self.image, self.x, self.y, 0, 3, 3)
 	end
 
-	love.graphics.setColor(255, 0, 0)
-	love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
-	love.graphics.setColor(0, 200, 200)
-	love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
-	love.graphics.setColor(255, 255, 255)
-
+	if self ~= player then
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
+		love.graphics.setColor(0, 200, 200)
+		love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/100), 5)
+		love.graphics.setColor(255, 255, 255)
+	end
 
 	if self:collidingLeft() then
 		love.graphics.circle("fill", self.x, self.y + self.h/2, 3)
@@ -91,11 +91,12 @@ function Entity:update(dt)
 	-- death condition
 	if self == player and self.health <= 0 then
 		isPaused = true
+		gamestate = "gameover"
 	elseif self ~= player and self.health <= 0 then
 		self:destroy()
 		enemies_killed = enemies_killed + 1
-		score = score + 100
-		player.gold = player.gold + 100
+		score = score + math.floor(100*self.level)
+		player.gold = player.gold + math.floor(100*self.level/4)
 	end
 
 	-- health & mana regeneration

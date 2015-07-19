@@ -22,6 +22,7 @@ end
 
 function Button:draw(dt)
    love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+   love.graphics.printf(self.name, self.x, self.y+12, self.w, "center")
 
 	if debug then
 		love.graphics.print(self.x, self.x + self.w + 5, self.y+15)
