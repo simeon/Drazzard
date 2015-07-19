@@ -3,10 +3,11 @@ function love.load()
 	require 'wall'
 	require 'block'
 	require 'button'
+	require 'item'
 
 
 	-- global variables
-	enemies_killed = 1
+	enemies_killed = 0
 	debug = false
 	translateX = 0
 	translateY = 0
@@ -26,7 +27,8 @@ function love.load()
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
 	back_to_game_button = Button.create("<- Back to Game", "game", 10, 10)
 	game_button = Button.create("Start Game!", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2)
-	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75)
+	how_to_play_button = Button.create("How To Play", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75)
+	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75 + 75)
 
 	entities = { player, enemy }	
 	walls = {
@@ -107,7 +109,7 @@ end
 
 function love.update(dt)
 	if gamestate == "mainmenu" then
-		buttons = { game_button, credits_button }
+		buttons = { game_button, how_to_play_button, credits_button }
 	elseif gamestate == "game" then
 
 		if not music_started then
@@ -144,6 +146,8 @@ function love.update(dt)
 		end
 	elseif gamestate == "shop" then
 		buttons = { back_to_game_button }
+	elseif gamestate == "howtoplay" then
+		buttons = { main_menu_button }
 	elseif gamestate == "credits" then
 		buttons = { main_menu_button }
 	end
@@ -199,7 +203,7 @@ function love.draw(dt)
 		
 		love.graphics.print("Score: "..score, 10, 40)
 		love.graphics.print("Gold: "..player.gold, 10, 55)
-		love.graphics.print("enemies_killed: "..enemies_killed - 1, 700, 60)
+		love.graphics.print("enemies_killed: "..enemies_killed, 700, 60)
 		
 		if debug then
 			love.graphics.print("Entities: "..#entities, 800, 30)
@@ -210,6 +214,13 @@ function love.draw(dt)
 
 		love.graphics.printf("Welcome to the shop!", 0, 25, love.graphics.getWidth(), 'center')
 		love.graphics.printf("Gold: "..player.gold, 0, 40, love.graphics.getWidth(), 'center')
+
+	elseif gamestate == "howtoplay" then
+
+		love.graphics.printf("How To Play", 0, 25, love.graphics.getWidth(), 'center')
+
+		love.graphics.printf("Move", 0, 150, love.graphics.getWidth(), 'center')
+
 
 	elseif gamestate == "credits" then
 
@@ -281,6 +292,13 @@ function love.mousepressed(x, y, button)
 					end
 				end
 			end
+		elseif gamestate == "howtoplay" then
+			for k,v in ipairs(buttons) do
+				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then
+					gamestate = v.path
+					if isPaused then isPaused = not isPaused end
+				end
+			end	
 		elseif gamestate == "shop" then
 			for k,v in ipairs(buttons) do
 				if checkCollision(v.x, v.y, v.w, v.h, love.mouse.getX(), love.mouse.getY(), 1, 1) then

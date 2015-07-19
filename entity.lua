@@ -4,7 +4,7 @@ Entity.__index = Entity
 function Entity.create(n, x, y, weapon)
 	local e = {}             -- our new object
 	setmetatable(e, Entity)  -- make Account handle lookup
-	e.level = 1.1 * enemies_killed
+	e.level = 1.1 * (enemies_killed+1)
 
 	e.name = n
 	e.x = x or 100
@@ -100,7 +100,7 @@ function Entity:update(dt)
 	end
 
 	-- health & mana regeneration
-	if self.health < 100 then self.health = self.health + 5 * dt end
+	if self.health < self.total_health then self.health = self.health + 5 * dt end
 	if self.mana < 100 then self.mana = self.mana + 10 * dt end
 
 	if self.sprinting then
