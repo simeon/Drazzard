@@ -146,6 +146,7 @@ function Entity:colliding()
 	self:collidingBottom()
 end
 
+
 function Entity:collidingLeft()
 	for k,v in ipairs(walls) do
 		if checkCollision(self.x-5, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
@@ -267,21 +268,53 @@ function Entity:direction()
 	if self.dy > 0 then return "down" end
 end
 
+
+
+function Entity:canMove(dir)
+	for k,v in ipairs(floors) do
+		if dir == "left" then
+			if checkCollision(self.x, self.y, -5, self.h, v.x, v.y, v.w, v.h) then
+				return true
+			end
+		end
+		if dir == "right" then
+			if checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+				return true
+			end
+		end
+		if dir == "top" then
+			if checkCollision(self.x, self.y, self.w, -5, v.x, v.y, v.w, v.h) then
+				return true
+			end
+		end
+		if dir == "bottom" then
+			if checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
+				return true
+			end
+		end
+	end
+end
+
+
+
+
+
 function Entity:AI(level)
 	self.dx = 0
 	self.dy = 0
 
 	local angle = math.atan2(player.y - self.y, player.x - self.x)
-	if not self:collidingLeft() and math.cos(angle) < 0 then
+	notice = angle
+	if not self:collidingLeft() and self:canMove("left") and math.cos(angle) < 0 then
 		self.dx = self.speed*math.cos(angle)
 	end
-	if not self:collidingRight() and math.cos(angle) > 0 then
+	if not self:collidingRight() and self:canMove("right") and math.cos(angle) > 0 then
 		self.dx = self.speed*math.cos(angle)
 	end
-	if not self:collidingTop() and math.sin(angle) < 0 then
+	if not self:collidingTop() and self:canMove("top") and math.sin(angle) < 0 then
 		self.dy = self.speed*math.sin(angle)
 	end
-	if not self:collidingBottom() and math.sin(angle) > 0 then
+	if not self:collidingBottom() and self:canMove("bottom") and math.sin(angle) > 0 then
 		self.dy = self.speed*math.sin(angle)
 	end
 end

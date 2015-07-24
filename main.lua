@@ -4,6 +4,7 @@ function love.load()
 	require 'block'
 	require 'button'
 	require 'item'
+	require 'floor'
 
 
 	-- global variables
@@ -41,7 +42,11 @@ function love.load()
 		Item.create("+ Stamina", "boots", "MANA", 99999, 650, 400)
 	 }
 
-
+	floors = {
+		Floor.create("stone", 0, 0, 20, 10),
+		Floor.create("stone", 0, -6, 5, 7),
+		Floor.create("stone", -10, -10, 20, 5),
+	}	
 
 	entities = { player }	
 	spawnEnemy(2)
@@ -52,7 +57,9 @@ function love.load()
 		Wall.create("stone", 3, 6, 7, 1),
 		Wall.create("stone", 10, 4, 1, 8),
 
-	}	
+	}
+
+	walls = {}
 	
 	blocks = {}
 	notice = ""
@@ -145,6 +152,9 @@ function love.update(dt)
 					player.health = player.health - v.damage * dt
 				end
 			end
+			for k,v in ipairs(floors) do
+				v:update(dt)
+			end
 			for k,v in ipairs(walls) do
 				v:update(dt)
 			end
@@ -196,6 +206,9 @@ function love.draw(dt)
 				--love.graphics.arc("fill", player.x+player.w/2, player.y+player.h/2, player.range, entity_angle-.01, entity_angle+.01)
 				--love.graphics.setColor(255, 255, 255, 255)
 			end
+		end
+		for k,v in ipairs(floors) do
+			v:draw(dt)
 		end
 		for k,v in ipairs(walls) do
 			v:draw(dt)
@@ -442,16 +455,16 @@ function checkKeys(dt)
 		player.sprinting = true
 		speed = 150
 	end
-	if love.keyboard.isDown("d") and not player:collidingRight() then
+	if love.keyboard.isDown("d") and player:canMove("right") and not player:collidingRight() then
 		player.dx = speed
 	end
-	if love.keyboard.isDown("a") and not player:collidingLeft() then
+	if love.keyboard.isDown("a") and player:canMove("left") and not player:collidingLeft() then
 		player.dx = -speed
 	end
-	if love.keyboard.isDown("s") and not player:collidingBottom() then
+	if love.keyboard.isDown("s") and player:canMove("bottom") and not player:collidingBottom() then
 		player.dy = speed
 	end
-	if love.keyboard.isDown("w") and not player:collidingTop() then
+	if love.keyboard.isDown("w") and player:canMove("top") and not player:collidingTop() then
 		player.dy = -speed
 	end
 end
