@@ -43,11 +43,15 @@ function love.load()
 
 
 
-	entities = { player, enemy }	
+	entities = { player }	
+	spawnEnemy(2)
 	walls = {
-		Wall.create("stone", 0, 0, 5, 1),
-		Wall.create("stone", 0, 0, 1, 10),
-		Wall.create("stone", 3, 3, 2, 1) 
+		Wall.create("stone", 0, 0, 20, 1),
+		Wall.create("stone", 0, 1, 1, 10),
+		Wall.create("stone", 3, 3, 3, 1),
+		Wall.create("stone", 3, 6, 7, 1),
+		Wall.create("stone", 10, 4, 1, 8),
+
 	}	
 	
 	blocks = {}
@@ -59,7 +63,7 @@ function love.load()
 
 	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
 
-	canvas = love.graphics.newCanvas(800, 600)
+	canvas = love.graphics.newCanvas(300*tilesize, 300*tilesize)
 	love.graphics.setCanvas(canvas)
 		canvas:clear()
 		for k,v in ipairs(walls) do
@@ -236,7 +240,11 @@ function love.draw(dt)
 
 		love.graphics.printf("How To Play", 0, 25, love.graphics.getWidth(), 'center')
 
-		love.graphics.printf("Move", 0, 150, love.graphics.getWidth(), 'center')
+		love.graphics.printf("WASD ... Move", 0, 150, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Shift ... Sprint", 0, 175, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Left Click ... Sword Attack", 0, 200, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Escape ... Shop/Pause", 0, 200, love.graphics.getWidth(), 'center')
+
 
 
 	elseif gamestate == "credits" then
@@ -457,6 +465,14 @@ function collideWhere(x1,y1,w1,h1, x2,y2,w2,h2)
 		return "top"
 	elseif y2 < y1+h1 then
 		return "bottom"
+	end
+end
+
+function spawnEnemy(num, xPos, yPos)
+	local x = xPos or 200
+	local y = yPos or tilesize
+	for i=1,num do
+		table.insert(entities, Entity.create("Enemy!", x, y))
 	end
 end
 

@@ -36,9 +36,12 @@ function Entity.create(n, x, y, weapon)
 		e.damage = 20
 	end
 	e.fov = .5
+	e.coinflip = math.random()
 
-	e.gold = 9999999999
+
+	e.gold = 0
 	e.gold_boost = 1
+
 	-- graphics
 	e.image = love.graphics.newImage("assets/sprites/entities/knight.png")
 	e.image:setFilter("nearest")
@@ -89,6 +92,16 @@ function Entity:draw(dt)
 		love.graphics.print("S:"..math.floor(self.xScreen)..","..math.floor(self.yScreen), self.x + self.w + 5, self.y+30)
 		love.graphics.setColor(255, 255, 255, 255)
 	end
+
+
+	if self:canSee() then
+		love.graphics.setColor(255, 255, 255)
+	elseif not self:canSee() then
+		love.graphics.setColor(255, 0, 0)
+	end
+	-- line of sght
+	love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2)
+	love.graphics.setColor(255, 255, 255)
 end
 
 function Entity:update(dt)
@@ -101,6 +114,7 @@ function Entity:update(dt)
 		enemies_killed = enemies_killed + 1
 		score = score + math.floor(100*self.level)
 		player.gold = player.gold + math.floor(100*player.gold_boost*self.level/4)
+		spawnEnemy(1)
 	end
 
 	-- health & mana regeneration
@@ -111,12 +125,6 @@ function Entity:update(dt)
 		self.mana = self.mana - 20 * dt
 	end
 
-	-- checks if hit by damaging block
-	for k,v in ipairs(blocks) do
-		if v.name == "damage" and v.owner ~= self and checkCollision(self.x, self.y, self.w, self.h, v.x, v.y, v.w, v.h) then
-			self.health = self.health - 100*dt
-		end
-	end
 
 	-- AI & Collision for non-players
 	if self ~= player then
@@ -190,12 +198,73 @@ function Entity:collidingBottom()
 	end
 end
 
+
+
+
+function Entity:canSee()
+	return self:canSeeLeft() and
+		self:canSeeRight() and
+		self:canSeeTop() and
+		self:canSeeBottom()
+end
+
+function Entity:canSeeLeft()
+	for k,v in ipairs(walls) do
+		if self ~= player and self.y+self.h > v.y and self.y < v.y+v.h then
+			if self.x > v.x+v.w and v.x > player.x+player.w then
+				return false
+			end
+		end
+	end
+	return true
+end
+
+function Entity:canSeeRight()
+	for k,v in ipairs(walls) do
+		if self ~= player and self.y+self.h > v.y and self.y < v.y+v.h then
+			if self.x+self.w < v.x and v.x+v.w < player.x then
+				return false
+			end
+		end
+	end
+	return true
+end
+
+function Entity:canSeeTop()
+	for k,v in ipairs(walls) do
+		if self ~= player and self.x+self.w > v.x and self.x < v.x+v.w then
+			if self.y > v.y+v.h and v.y > player.y+player.h then
+				return false
+			end
+		end
+	end
+	return true
+end
+
+function Entity:canSeeBottom()
+	for k,v in ipairs(walls) do
+		if self ~= player and self.x+self.w > v.x and self.x < v.x+v.w then
+			if self.y+self.h < v.y and v.y+v.h < player.y then
+				return false
+			end
+		end
+	end
+	return true
+end
+
 function Entity:destroy()
 	for i = #entities, 1, -1 do
 	    if entities[i] == self then
 	        table.remove(entities, i)
 	    end
 	end
+end
+
+function Entity:direction()
+	if self.dx < 0 then return "left" end
+	if self.dx > 0 then return "right" end
+	if self.dy < 0 then return "up" end
+	if self.dy > 0 then return "down" end
 end
 
 function Entity:AI(level)
