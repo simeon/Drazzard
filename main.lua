@@ -27,9 +27,9 @@ function love.load()
 	-- buttons
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
 	back_to_game_button = Button.create("<- Back to Game", "game", 10, 10)
-	game_button = Button.create("Start Game!", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2)
-	how_to_play_button = Button.create("How To Play", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75)
-	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 75 + 75)
+	game_button = Button.create("Start", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25, true)
+	how_to_play_button = Button.create("Controls", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75, true)
+	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75 + 75, true)
 
 	-- items/perks
 	items = { 
@@ -65,7 +65,7 @@ function love.load()
 	notice = ""
 
 	-- visuals
-	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogo.png")
+	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogos.png")
 
 
 	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
@@ -183,7 +183,7 @@ end
 function love.draw(dt)
 
 	if gamestate == "mainmenu" then
-		love.graphics.draw(main_logo, 250)
+		love.graphics.draw(main_logo, love.graphics.getWidth()/2 - 485)
 	elseif gamestate == "game" then
 		love.graphics.push()
 		translateX = love.graphics.getWidth()/2-player.x-player.w/2
