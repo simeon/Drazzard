@@ -4,7 +4,8 @@ function love.load()
 	require 'block'
 	require 'button'
 	require 'item'
-	require 'Room'
+	require 'room'
+	require 'tile'
 
 	love.graphics.setBackgroundColor(30, 25, 35)
 
@@ -25,7 +26,7 @@ function love.load()
 	score = 0
 
 	-- initial class instances
-	player = Entity.create("Me!", 100*tilesize, 100*tilesize)
+	player = Entity.create("Me!", 1*tilesize, 1*tilesize)
 	enemy = Entity.create("Enemy!", 300, 500)
 
 	-- buttons
@@ -59,13 +60,14 @@ function love.load()
 		Wall.create("stone", 10, 4, 1, 8),
 
 	}
-
 	walls = {}
 	
 	blocks = {}
 	notice = ""
 
-	generateFloor()
+	tiles = {}
+
+	generateMap()
 	-- visuals
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogos.png")
 	
@@ -85,6 +87,7 @@ function love.load()
 	stone_tile_W = love.graphics.newImage("assets/sprites/tiles/stone_tile_W.png")
 	stone_tile_SIDE = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDE.png")
 	stone_tile_SIDEalt = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDEalt.png")
+	stone_tile_SIDEalt2 = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDEalt2.png")
 
 	-- halls/bridges
 	hall_tile = love.graphics.newImage("assets/sprites/tiles/hall_tile.png")
@@ -99,10 +102,54 @@ function love.load()
 
 
 
-	canvas = love.graphics.newCanvas(500*tilesize, 500*tilesize)
+	canvas = love.graphics.newCanvas(50*tilesize, 50*tilesize)
 	love.graphics.setCanvas(canvas)
 		canvas:clear()
-		for k,v in ipairs(walls) do
+
+		for k,v in ipairs(tiles) do
+			
+			love.graphics.draw(stone_tile, v.x, v.y)
+			if math.random() < .25 then
+				if math.random() < .5 then
+					love.graphics.draw(stone_tile_alt, v.x, v.y)
+				else
+					love.graphics.draw(stone_tile_alt2, v.x, v.y)
+				end
+			end
+
+			if not v:collidesLeft() then
+      			love.graphics.draw(stone_tile_W, v.x, v.y)
+   			end
+   			if not v:collidesRight() then
+      			love.graphics.draw(stone_tile_E, v.x, v.y)
+   			end
+			if not v:collidesBottom() then
+      			love.graphics.draw(stone_tile_S, v.x, v.y)
+      			love.graphics.draw(stone_tile_SIDEalt, v.x, v.y+tilesize)
+   			end
+			if not v:collidesTop() then
+      			love.graphics.draw(stone_tile_N, v.x, v.y)
+   			end
+
+   			-- NW
+			if not v:collidesLeft() and not v:collidesTop() then
+      			love.graphics.draw(stone_tile_NW, v.x, v.y)
+   			end
+   			-- NE
+			if not v:collidesRight() and not v:collidesTop() then
+      			love.graphics.draw(stone_tile_NE, v.x, v.y)
+   			end
+   			-- SW
+			if not v:collidesLeft() and not v:collidesBottom() then
+      			love.graphics.draw(stone_tile_SW, v.x, v.y)
+   			end
+   			-- SE
+			if not v:collidesRight() and not v:collidesBottom() then
+      			love.graphics.draw(stone_tile_SE, v.x, v.y)
+   			end   			
+		end
+
+		--[[for k,v in ipairs(walls) do
 			for i=0,v.w/tilesize-1 do
 		        for j=0,v.h/tilesize-1 do
 		        	--love.graphics.draw(stone_tile, v.x + tilesize*i, v.y + tilesize*j)
@@ -164,7 +211,7 @@ function love.load()
 		       	end
 		   	end
 		end
-
+]]
 
 	love.graphics.setCanvas()
 
@@ -238,6 +285,9 @@ function love.update(dt)
 					player.health = player.health - v.damage * dt
 				end
 			end
+			for k,v in ipairs(tiles) do
+				v:update(dt)
+			end
 			for k,v in ipairs(halls) do
 				v:update(dt)
 			end
@@ -286,15 +336,9 @@ function love.draw(dt)
 		love.graphics.arc("line", player.x+player.w/2, player.y+player.h/2, player.range, angle-player.fov, angle+player.fov)
 		love.graphics.setColor(255, 255, 255, 255)
 
-		for k,v in ipairs(entities) do
+
+		for k,v in ipairs(tiles) do
 			v:draw(dt)
-			local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
-			local entity_angle = math.atan2( (v.y+v.h/2) - (player.y+player.h/2), (v.x+v.w/2) - (player.x+player.w/2))
-			if v ~= player and distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < player.range and math.abs(mouse_angle-entity_angle) < player.fov then
-				--love.graphics.setColor(255, 100, 100, 255)
-				--love.graphics.arc("fill", player.x+player.w/2, player.y+player.h/2, player.range, entity_angle-.01, entity_angle+.01)
-				--love.graphics.setColor(255, 255, 255, 255)
-			end
 		end
 		for k,v in ipairs(halls) do
 			v:draw(dt)
@@ -307,6 +351,16 @@ function love.draw(dt)
 		end
 		for k,v in ipairs(blocks) do
 			v:draw(dt)
+		end
+		for k,v in ipairs(entities) do
+			v:draw(dt)
+			local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
+			local entity_angle = math.atan2( (v.y+v.h/2) - (player.y+player.h/2), (v.x+v.w/2) - (player.x+player.w/2))
+			if v ~= player and distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < player.range and math.abs(mouse_angle-entity_angle) < player.fov then
+				--love.graphics.setColor(255, 100, 100, 255)
+				--love.graphics.arc("fill", player.x+player.w/2, player.y+player.h/2, player.range, entity_angle-.01, entity_angle+.01)
+				--love.graphics.setColor(255, 255, 255, 255)
+			end
 		end
 		-- GUI
 		love.graphics.circle("line", 0,0,5)
@@ -596,10 +650,21 @@ function generateMap()
 	local x = 100
 	local y = 100
 	-- center
-	rooms = {
-		Room.create("stone", "room", x, y, 11, 11),
-		Room.create("stone", "room", x+4, y+3, 3, 3)
-	}
+	for i=1,10 do
+		for j=1,10 do
+			if not (i == 4 and j == 4) then
+				t = Tile.create("stone", i, j)
+				table.insert(tiles, t)
+			end
+		end
+	end
+
+	for i=1,10 do
+		for j=1,10 do
+			t = Tile.create("stone", 8+i, 5+j)
+			table.insert(tiles, t)
+		end
+	end
 end
 
 function generateFloor()
