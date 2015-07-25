@@ -4,7 +4,7 @@ function love.load()
 	require 'block'
 	require 'button'
 	require 'item'
-	require 'floor'
+	require 'Room'
 
 
 	-- global variables
@@ -42,10 +42,10 @@ function love.load()
 		Item.create("+ Stamina", "boots", "MANA", 99999, 650, 400)
 	 }
 
-	floors = {
-		Floor.create("stone", 0, 0, 20, 10),
-		Floor.create("stone", 0, -6, 5, 7),
-		Floor.create("stone", -10, -10, 20, 5),
+	rooms = {
+		Room.create("stone", 0, 0, 20, 10),
+		Room.create("stone", 0, -6, 5, 7),
+		Room.create("stone", -10, -10, 20, 5),
 	}	
 
 	entities = { player }	
@@ -152,7 +152,7 @@ function love.update(dt)
 					player.health = player.health - v.damage * dt
 				end
 			end
-			for k,v in ipairs(floors) do
+			for k,v in ipairs(rooms) do
 				v:update(dt)
 			end
 			for k,v in ipairs(walls) do
@@ -207,7 +207,7 @@ function love.draw(dt)
 				--love.graphics.setColor(255, 255, 255, 255)
 			end
 		end
-		for k,v in ipairs(floors) do
+		for k,v in ipairs(rooms) do
 			v:draw(dt)
 		end
 		for k,v in ipairs(walls) do
@@ -219,7 +219,7 @@ function love.draw(dt)
 		-- GUI
 		love.graphics.circle("line", 0,0,5)
 		love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
-		love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
+		--love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 
 		-- DEBUG
 		love.graphics.pop()
@@ -417,6 +417,10 @@ function love.keypressed(key)
 	if key == '1' then
 		table.insert(entities, Entity.create("Enemy!", math.random(0, 500), math.random(0, 500)))
 	end
+
+	if key == '3' then
+		generateRoom()
+	end
 end
 
 function love.keyreleased(key)
@@ -505,6 +509,14 @@ function contains(list, value)
 			return false
 		end
 	end
+end
+
+
+function generateRoom()
+	local w = math.random(7, 20)
+	local h = math.random(7, 20)
+	local r = Room.create("stone", player.x/tilesize, player.y/tilesize, w, h)
+	table.insert(rooms, r)
 end
 
 function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end

@@ -100,7 +100,7 @@ function Entity:draw(dt)
 		love.graphics.setColor(255, 0, 0)
 	end
 	-- line of sght
-	love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2)
+	--love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2)
 	love.graphics.setColor(255, 255, 255)
 end
 
@@ -271,7 +271,7 @@ end
 
 
 function Entity:canMove(dir)
-	for k,v in ipairs(floors) do
+	for k,v in ipairs(rooms) do
 		if dir == "left" then
 			if checkCollision(self.x, self.y, -5, self.h, v.x, v.y, v.w, v.h) then
 				return true
