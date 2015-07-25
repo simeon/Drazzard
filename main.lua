@@ -16,13 +16,15 @@ function love.load()
 
 	music_started = false
 
+	current_room = nil
+
 	gamestate = "mainmenu"
 	isPaused = false
 	score = 0
 
 	-- initial class instances
 	player = Entity.create("Me!", 200, 200)
-	enemy = Entity.create("Enemy!", 400, 500)
+	enemy = Entity.create("Enemy!", 300, 500)
 
 	-- buttons
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
@@ -43,10 +45,10 @@ function love.load()
 	 }
 
 	rooms = {
-		Room.create("stone", -10, 0, 20, 10),
-		Room.create("stone", 0, -6, 5, 7),
-		Room.create("stone", -10, -10, 20, 5),
-		Room.create("stone", 20, 10, 2, 1)
+		Room.create("stone", "room", 3, 3, 5, 5),
+		--Room.create("stone", 0, -6, 5, 7),
+		--Room.create("stone", -10, -10, 20, 5),
+		--Room.create("stone", 5, 10, 2, 1)
 	}	
 
 	entities = { player }	
@@ -509,9 +511,50 @@ function contains(list, value)
 end
 
 function generateFloor()
-	rooms = {
-		Room.create("stone", 0, 0, 20, 10)
-	}	
+	generateRoom()
+end
+
+function generateRoom(num)
+	num = math.random()
+	local w = 4
+	local h = 4
+	local x = (current_room.x+current_room.w)/tilesize + w
+	local y = player.y/tilesize - h/2
+
+	temp_rooms = {}
+	-- creates a branch off of a room if it is new
+	for k,v in ipairs(rooms) do
+		if v.status == "new" then
+			if num < .25 then -- N
+				local b = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-w/2, (v.y)/tilesize-h, w, h)
+				table.insert(temp_rooms, b)
+				v.status = "old"
+			elseif num < .5 then -- E
+				local b = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-h/2, w, h)
+				table.insert(temp_rooms, b)
+				v.status = "old"
+			elseif num < .75 then -- S
+				local b = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-w/2, (v.y+v.h)/tilesize, w, h)
+				table.insert(temp_rooms, b)
+				v.status = "old"
+			elseif num < 1 then -- W
+				local b = Room.create("stone", "hall", (v.x)/tilesize-w, (v.y+v.h/2)/tilesize-h/2, w, h)
+				table.insert(temp_rooms, b)
+				v.status = "old"
+			end
+				
+
+
+		end
+	end
+
+	for k,v in ipairs(temp_rooms) do
+		table.insert(rooms, v)
+	end
+
+
+	
+
 end
 
 function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end
