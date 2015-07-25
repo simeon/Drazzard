@@ -11,11 +11,18 @@ function Room.create(n, t, x, y, w, h)
    r.w = w * tilesize or 0
    r.h = h * tilesize or 0
    r.status = "new"
-
    return r
 end
 
 function Room:draw(dt)
+
+
+
+   if self.type == "hall" then
+      love.graphics.setColor(200, 0, 0)
+   elseif self.type == "room" then
+      love.graphics.setColor(0, 0, 200)
+   end
 
    if current_room == self then
       love.graphics.setColor(0, 255, 0)

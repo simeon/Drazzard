@@ -44,12 +44,8 @@ function love.load()
 		Item.create("+ Stamina", "boots", "MANA", 99999, 650, 400)
 	 }
 
-	rooms = {
-		Room.create("stone", "room", 3, 3, 5, 5),
-		--Room.create("stone", 0, -6, 5, 7),
-		--Room.create("stone", -10, -10, 20, 5),
-		--Room.create("stone", 5, 10, 2, 1)
-	}	
+	rooms = {}	
+	halls = {}
 
 	entities = { player }	
 	--spawnEnemy(2)
@@ -162,6 +158,9 @@ function love.update(dt)
 					player.health = player.health - v.damage * dt
 				end
 			end
+			for k,v in ipairs(halls) do
+				v:update(dt)
+			end
 			for k,v in ipairs(rooms) do
 				v:update(dt)
 			end
@@ -217,6 +216,9 @@ function love.draw(dt)
 				--love.graphics.setColor(255, 255, 255, 255)
 			end
 		end
+		for k,v in ipairs(halls) do
+			v:draw(dt)
+		end	
 		for k,v in ipairs(rooms) do
 			v:draw(dt)
 		end
@@ -411,10 +413,6 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
-	if key == '2' then
-		debug = not debug
-	end
-
 	if key == 'escape' and player.health > 0 and gamestate ~= "mainmenu" then
 		isPaused = not isPaused
 		if gamestate == "game" then gamestate = "shop" elseif gamestate == "shop" then gamestate = "game" end
@@ -427,6 +425,14 @@ function love.keypressed(key)
 
 	if key == '1' then
 		table.insert(entities, Entity.create("Enemy!", math.random(0, 500), math.random(0, 500)))
+	end
+
+	if key == '2' then
+		debug = not debug
+	end
+
+	if key == '3' then
+		generateHalls()
 	end
 
 	if key == '4' then
@@ -511,7 +517,40 @@ function contains(list, value)
 end
 
 function generateFloor()
-	generateRoom()
+	rooms = {}
+	halls = {}
+	for i=0, 10 do
+		for j=0, 10 do
+			local r = Room.create("stone", "room", i*10, j*10, math.random(5, 10), math.random(5, 10))
+			table.insert(rooms, r)
+		end
+	end
+
+	generateHalls()
+end
+
+function generateHalls( ... )
+	-- generates halls for rooms
+	for i=1,2 do
+		for k,v in ipairs(rooms) do
+			if v.x ~= 0 then
+				num = math.random()
+				if num < .25 then -- left
+					local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 2)
+					table.insert(halls, h)
+				elseif num < .5 then -- right
+					local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 2)
+					table.insert(halls, h)
+				elseif num < .75 then -- top
+					local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 2, 4)
+					table.insert(halls, h)
+				elseif num < 1 then -- bottom
+					local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 2, 4)
+					table.insert(halls, h)
+				end
+			end
+		end
+	end
 end
 
 function generateRoom(num)
@@ -524,26 +563,7 @@ function generateRoom(num)
 	temp_rooms = {}
 	-- creates a branch off of a room if it is new
 	for k,v in ipairs(rooms) do
-		if v.status == "new" then
-			if num < .25 then -- N
-				local b = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-w/2, (v.y)/tilesize-h, w, h)
-				table.insert(temp_rooms, b)
-				v.status = "old"
-			elseif num < .5 then -- E
-				local b = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-h/2, w, h)
-				table.insert(temp_rooms, b)
-				v.status = "old"
-			elseif num < .75 then -- S
-				local b = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-w/2, (v.y+v.h)/tilesize, w, h)
-				table.insert(temp_rooms, b)
-				v.status = "old"
-			elseif num < 1 then -- W
-				local b = Room.create("stone", "hall", (v.x)/tilesize-w, (v.y+v.h/2)/tilesize-h/2, w, h)
-				table.insert(temp_rooms, b)
-				v.status = "old"
-			end
-				
-
+		if num < 1 then -- top
 
 		end
 	end
@@ -551,9 +571,6 @@ function generateRoom(num)
 	for k,v in ipairs(temp_rooms) do
 		table.insert(rooms, v)
 	end
-
-
-	
 
 end
 
