@@ -85,11 +85,24 @@ function Entity:draw(dt)
 	end
 
 	if debug then
-		love.graphics.setColor(255, 255, 255, 100)
+		love.graphics.setColor(255, 255, 255, 150)
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print(self.name, self.x + self.w + 5, self.y)
 		love.graphics.print("A:"..math.floor(self.x)..","..math.floor(self.y), self.x + self.w + 5, self.y+15)
 		love.graphics.print("S:"..math.floor(self.xScreen)..","..math.floor(self.yScreen), self.x + self.w + 5, self.y+30)
+		
+		love.graphics.rectangle("line", self.x-5, self.y, 5, 5)
+		love.graphics.rectangle("line", self.x-5, self.y+self.h-5, 5, 5)
+
+		love.graphics.rectangle("line", self.x+self.w, self.y, 5, 5)
+		love.graphics.rectangle("line", self.x+self.w, self.y+self.h-5, 5, 5)
+
+		love.graphics.rectangle("line", self.x, self.y-5, 5, 5)
+		love.graphics.rectangle("line", self.x+self.w-5, self.y-5, 5, 5)
+		
+		love.graphics.rectangle("line", self.x, self.y+self.h, 5, 5)
+		love.graphics.rectangle("line", self.x+self.w-5, self.y+self.h, 5, 5)
+
 		love.graphics.setColor(255, 255, 255, 255)
 	end
 
@@ -102,6 +115,10 @@ function Entity:draw(dt)
 	-- line of sght
 	--love.graphics.line(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2)
 	love.graphics.setColor(255, 255, 255)
+
+
+
+	
 end
 
 function Entity:update(dt)
@@ -271,24 +288,29 @@ end
 
 
 function Entity:canMove(dir)
+
 	for k,v in ipairs(rooms) do
 		if dir == "left" then
-			if checkCollision(self.x, self.y, -5, self.h, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x-5, self.y, 5, 5, v.x, v.y, v.w, v.h) and 
+				checkCollision(self.x-5, self.y+self.h-5, 5, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "right" then
-			if checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x+self.w, self.y, 5, 5, v.x, v.y, v.w, v.h) and
+				checkCollision(self.x+self.w, self.y+self.h-5, 5, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "top" then
-			if checkCollision(self.x, self.y, self.w, -5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x, self.y-5, 5, 5, v.x, v.y, v.w, v.h) and
+				checkCollision(self.x+self.w-5, self.y-5, 5, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "bottom" then
-			if checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x, self.y+self.h, 5, 5, v.x, v.y, v.w, v.h) and
+				checkCollision(self.x+self.w-5, self.y+self.h, 5, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end

@@ -6,7 +6,7 @@ function love.load()
 	require 'item'
 	require 'Room'
 
-
+	math.randomseed(os.time())
 	-- global variables
 	enemies_killed = 0
 	debug = false
@@ -43,13 +43,14 @@ function love.load()
 	 }
 
 	rooms = {
-		Room.create("stone", 0, 0, 20, 10),
+		Room.create("stone", -10, 0, 20, 10),
 		Room.create("stone", 0, -6, 5, 7),
 		Room.create("stone", -10, -10, 20, 5),
+		Room.create("stone", 20, 10, 2, 1)
 	}	
 
 	entities = { player }	
-	spawnEnemy(2)
+	--spawnEnemy(2)
 	walls = {
 		Wall.create("stone", 0, 0, 20, 1),
 		Wall.create("stone", 0, 1, 1, 10),
@@ -68,7 +69,6 @@ function love.load()
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogos.png")
 
 
-	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
 
 	canvas = love.graphics.newCanvas(300*tilesize, 300*tilesize)
 	love.graphics.setCanvas(canvas)
@@ -76,7 +76,15 @@ function love.load()
 		for k,v in ipairs(walls) do
 			for i=0,v.w/tilesize-1 do
 		        for j=0,v.h/tilesize-1 do
-		        	love.graphics.draw(stone_tile, v.x + tilesize*i, v.y + tilesize*j)
+		        	--love.graphics.draw(stone_tile, v.x + tilesize*i, v.y + tilesize*j)
+		       	end
+		   	end
+		end
+
+		for k,v in ipairs(rooms) do
+			for i=0,(v.w-1)/tilesize do
+		        for j=0,(v.h-1)/tilesize do
+		        	--love.graphics.draw(grass_tile, v.x + tilesize*i, v.y + tilesize*j, 0, 1/8)
 		       	end
 		   	end
 		end
@@ -137,8 +145,8 @@ function love.update(dt)
 	elseif gamestate == "game" then
 
 		if not music_started then
-			love.audio.play("assets/sounds/bg_music.mp3")
-			music_started = true
+			--love.audio.play("assets/sounds/bg_music.mp3")
+			--music_started = true
 		end
 
 		buttons = {  }
@@ -300,6 +308,7 @@ function love.draw(dt)
 
 	love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
+	love.graphics.print("#rooms: "..#rooms, 700, 30)
 	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
 
 
@@ -418,8 +427,8 @@ function love.keypressed(key)
 		table.insert(entities, Entity.create("Enemy!", math.random(0, 500), math.random(0, 500)))
 	end
 
-	if key == '3' then
-		generateRoom()
+	if key == '4' then
+		generateFloor()
 	end
 end
 
@@ -473,18 +482,6 @@ function checkKeys(dt)
 	end
 end
 
-function collideWhere(x1,y1,w1,h1, x2,y2,w2,h2)
-	if x1 < x2+w2 then
-		return "left"
-	elseif x2 < x1+w1 then
-		return "right"
-	elseif y1 < y2+h2 then
-		return "top"
-	elseif y2 < y1+h1 then
-		return "bottom"
-	end
-end
-
 function spawnEnemy(num, xPos, yPos)
 	local x = xPos or 200
 	local y = yPos or tilesize
@@ -511,12 +508,10 @@ function contains(list, value)
 	end
 end
 
-
-function generateRoom()
-	local w = math.random(7, 20)
-	local h = math.random(7, 20)
-	local r = Room.create("stone", player.x/tilesize, player.y/tilesize, w, h)
-	table.insert(rooms, r)
+function generateFloor()
+	rooms = {
+		Room.create("stone", 0, 0, 20, 10)
+	}	
 end
 
 function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end

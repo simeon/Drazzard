@@ -16,6 +16,7 @@ end
 function Room:draw(dt)
 	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 
+
 	if debug then
 		love.graphics.print(self.x, self.x + self.w + 5, self.y+15)
 		love.graphics.print(self.y, self.x + self.w + 5, self.y+30)
