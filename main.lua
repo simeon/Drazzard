@@ -6,6 +6,8 @@ function love.load()
 	require 'item'
 	require 'Room'
 
+	love.graphics.setBackgroundColor(30, 25, 35)
+
 	math.randomseed(os.time())
 	-- global variables
 	enemies_killed = 0
@@ -23,7 +25,7 @@ function love.load()
 	score = 0
 
 	-- initial class instances
-	player = Entity.create("Me!", tilesize, tilesize)
+	player = Entity.create("Me!", 100*tilesize, 100*tilesize)
 	enemy = Entity.create("Enemy!", 300, 500)
 
 	-- buttons
@@ -63,12 +65,41 @@ function love.load()
 	blocks = {}
 	notice = ""
 
+	generateFloor()
 	-- visuals
 	main_logo = love.graphics.newImage("assets/sprites/GUI/mainlogos.png")
+	
+	-- stone tiles
+	stone_tile = love.graphics.newImage("assets/sprites/tiles/stone_tile.png")
+	stone_tile_alt = love.graphics.newImage("assets/sprites/tiles/stone_tile_alt.png")
+	stone_tile_alt2 = love.graphics.newImage("assets/sprites/tiles/stone_tile_alt2.png")
+
+	stone_tile_NW = love.graphics.newImage("assets/sprites/tiles/stone_tile_NW.png")
+	stone_tile_NE = love.graphics.newImage("assets/sprites/tiles/stone_tile_NE.png")
+	stone_tile_SW = love.graphics.newImage("assets/sprites/tiles/stone_tile_SW.png")
+	stone_tile_SE = love.graphics.newImage("assets/sprites/tiles/stone_tile_SE.png")
+
+	stone_tile_N = love.graphics.newImage("assets/sprites/tiles/stone_tile_N.png")
+	stone_tile_E = love.graphics.newImage("assets/sprites/tiles/stone_tile_E.png")
+	stone_tile_S = love.graphics.newImage("assets/sprites/tiles/stone_tile_S.png")
+	stone_tile_W = love.graphics.newImage("assets/sprites/tiles/stone_tile_W.png")
+	stone_tile_SIDE = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDE.png")
+	stone_tile_SIDEalt = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDEalt.png")
+
+	-- halls/bridges
+	hall_tile = love.graphics.newImage("assets/sprites/tiles/hall_tile.png")
+	hall_tile_H = love.graphics.newImage("assets/sprites/tiles/hall_tile_H.png")
+	hall_tile_N = love.graphics.newImage("assets/sprites/tiles/hall_tile_N.png")
+	hall_tile_S = love.graphics.newImage("assets/sprites/tiles/hall_tile_S.png")
+
+	-- mist
+	mist = love.graphics.newImage("assets/sprites/tiles/mist.png")
 
 
 
-	canvas = love.graphics.newCanvas(300*tilesize, 300*tilesize)
+
+
+	canvas = love.graphics.newCanvas(500*tilesize, 500*tilesize)
 	love.graphics.setCanvas(canvas)
 		canvas:clear()
 		for k,v in ipairs(walls) do
@@ -81,11 +112,60 @@ function love.load()
 
 		for k,v in ipairs(rooms) do
 			for i=0,(v.w-1)/tilesize do
-		        for j=0,(v.h-1)/tilesize do
-		        	--love.graphics.draw(grass_tile, v.x + tilesize*i, v.y + tilesize*j, 0, 1/8)
+		        for j=0,(v.h)/tilesize do
+		        	if math.random() < .05 then
+		        		if math.random() < .5 then
+		        			love.graphics.draw(stone_tile_alt, v.x + tilesize*i, v.y + tilesize*j, 0)
+		           		else
+		        			love.graphics.draw(stone_tile_alt2, v.x + tilesize*i, v.y + tilesize*j, 0)
+		           		end
+		           	else
+		        		love.graphics.draw(stone_tile, v.x + tilesize*i, v.y + tilesize*j, 0)
+		           	end
+
+		           	if i == 0 then
+		        		love.graphics.draw(stone_tile_W, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	elseif i == v.w/tilesize-1 then
+		        		love.graphics.draw(stone_tile_E, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	end
+
+		        	if j == 0 then
+		        		love.graphics.draw(stone_tile_N, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	elseif j == v.h/tilesize-1 then
+		        		love.graphics.draw(stone_tile_S, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	elseif j == v.h/tilesize then
+		        		love.graphics.draw(stone_tile_SIDEalt, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	end
+
+		        	if j == 0 and i == 0 then
+		        		love.graphics.draw(stone_tile_NW, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	elseif j == 0 and i == v.w/tilesize-1 then
+		        		love.graphics.draw(stone_tile_NE, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	end
+
+		        	if j == v.h/tilesize-1 and i == 0 then
+		        		love.graphics.draw(stone_tile_SW, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	elseif j == v.h/tilesize-1 and i == v.w/tilesize-1 then
+		        		love.graphics.draw(stone_tile_SE, v.x + tilesize*i, v.y + tilesize*j, 0)
+		        	end
+		        	--love.graphics.rectangle("line", v.x + tilesize*i, v.y + tilesize*j, 32, 32)
 		       	end
 		   	end
 		end
+
+		for k,v in ipairs(halls) do
+			for i=0,v.w/tilesize-1 do
+		        for j=0,v.h/tilesize-1 do
+		        	if v.w > v.h then
+		        		love.graphics.draw(hall_tile_H, v.x + tilesize*i, v.y + tilesize*j)
+		        	else
+		        		love.graphics.draw(hall_tile, v.x + tilesize*i, v.y + tilesize*j)
+		        	end
+		       	end
+		   	end
+		end
+
+
 	love.graphics.setCanvas()
 
 	-- font
@@ -276,13 +356,15 @@ function love.draw(dt)
 
 		love.graphics.printf("Credits", 0, 25, love.graphics.getWidth(), "center")
 
-		love.graphics.printf("-- Code/Art --", 0, 150, love.graphics.getWidth(), "center")
-		love.graphics.printf("Simeon Videnov", 0, 170, love.graphics.getWidth(), "center")
-		love.graphics.printf("(http://simeon.io)", 0, 190, love.graphics.getWidth(), "center")
+		love.graphics.printf("--[ Code & Title Art ]--", 0, 90, love.graphics.getWidth(), "center")
+		love.graphics.printf("Simeon Videnov", 0, 120, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://simeon.io)", 0, 140, love.graphics.getWidth(), "center")
 
-		love.graphics.printf("-- Music --", 0, 250, love.graphics.getWidth(), "center")
-		love.graphics.printf("Rolemusic - 'Besos y Abrazos' ", 0, 270, love.graphics.getWidth(), "center")
-		love.graphics.printf("(http://freemusicarchive.org/music/Rolemusic/)", 0, 290, love.graphics.getWidth(), "center")
+		love.graphics.printf("--[ Sprites ]--", 0, 170, 450, "center")		
+		love.graphics.printf("Buch\n(http://opengameart.org/users/buch)", 0, 200, 400, "center")
+
+		love.graphics.printf("--[ Music ]--", 450, 170, 400, "center")
+		love.graphics.printf("Rolemusic - 'Besos y Abrazos'\n(http://freemusicarchive.org/music/Rolemusic/) ", 450, 200, 400, "center")
 
 		love.graphics.printf("-- Font --", 0, 350, love.graphics.getWidth(), "center")
 		love.graphics.printf("Yusuke Kamiyamane - 'PF Tempesta Five'", 0, 370, love.graphics.getWidth(), "center")
@@ -314,7 +396,6 @@ function love.draw(dt)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
 	love.graphics.print("#rooms: "..#rooms, 700, 30)
 	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
-	love.graphics.print(distance(player.xScreen+player.w/2, player.yScreen+player.h/2, love.mouse.getX(), love.mouse.getY()), 10, 10)
 
 end
 
@@ -509,14 +590,26 @@ function contains(list, value)
 	end
 end
 
+
+function generateMap()
+	-- relative points
+	local x = 100
+	local y = 100
+	-- center
+	rooms = {
+		Room.create("stone", "room", x, y, 11, 11),
+		Room.create("stone", "room", x+4, y+3, 3, 3)
+	}
+end
+
 function generateFloor()
 	rooms = {}
 	halls = {}
 	-- generates grid of rooms
-	for i=0, 10 do
-		for j=0, 10 do
-			local w = math.random(5, 10)
-			local h = math.random(5, 10)
+	for i=1, 10 do
+		for j=1, 10 do
+			local w = math.random(5, 8)
+			local h = math.random(5, 8)
 			local r = Room.create("stone", "room", i*10-w/2, j*10-h/2, w, h)
 			table.insert(rooms, r)
 		end
@@ -525,28 +618,53 @@ function generateFloor()
 end
 
 function generateHalls()
+
+	for k,v in ipairs(rooms) do
+		num = math.random()
+		if num < .25 then -- left
+			local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 1)
+			table.insert(halls, h)
+		elseif num < .5 then -- right
+			local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 1)
+			table.insert(halls, h)
+		elseif num < .75 then -- top
+			local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 1, 4)
+			table.insert(halls, h)
+		elseif num < 1 then -- bottom
+			local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 1, 4)
+			table.insert(halls, h)
+		end	
+	end
+
+
 	-- generates halls for rooms
-	for i=1,2 do
+	--[[for i=1,2 do
 		for k,v in ipairs(rooms) do
 			num = math.random()
 			if num < .25 then -- left
-				local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 2)
+				local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 1)
 				table.insert(halls, h)
 			elseif num < .5 then -- right
-				local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 2)
+				local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 1)
 				table.insert(halls, h)
 			elseif num < .75 then -- top
-				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 2, 4)
+				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 1, 4)
 				table.insert(halls, h)
 			elseif num < 1 then -- bottom
-				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 2, 4)
+				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 1, 4)
 				table.insert(halls, h)
 			end
 		end
 	end
 
 	-- removes halls at edges
-
+	for k,v in ipairs(halls) do
+		for i,j in ipairs(rooms) do
+			if checkCollision(v.x, v.y, v.w, v.h, j.x, j.y, j.w, j.h) then
+				v.status = "old"
+			end
+		end
+	end]]
 end
 
 function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end

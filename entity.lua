@@ -354,7 +354,6 @@ function Entity:AI(level)
 	self.dy = 0
 
 	local angle = math.atan2(player.y - self.y, player.x - self.x)
-	notice = angle
 	if not self:collidingLeft() and self:canMove("left") and math.cos(angle) < 0 then
 		self.dx = self.speed*math.cos(angle)
 	end

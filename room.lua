@@ -19,22 +19,22 @@ function Room:draw(dt)
 
 
    if self.type == "hall" then
-      love.graphics.setColor(200, 0, 0)
+      love.graphics.setColor(200, 0, 0, 100)
    elseif self.type == "room" then
-      love.graphics.setColor(0, 0, 200)
+      love.graphics.setColor(0, 0, 200, 150)
    end
-
    if current_room == self then
       love.graphics.setColor(0, 255, 0)
    end
    love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
    love.graphics.setColor(255, 255, 255)
-   love.graphics.printf(self.name.." "..self.type.."\n("..self.status..")", self.x, self.y, self.w, "center")
+   
 
 	
    if debug then
 		love.graphics.print(self.x, self.x + self.w + 5, self.y+15)
 		love.graphics.print(self.y, self.x + self.w + 5, self.y+30)
+      love.graphics.printf(self.name.." "..self.type.."\n("..self.status..")", self.x, self.y, self.w, "center")
 	end
 end
 
