@@ -23,7 +23,7 @@ function love.load()
 	score = 0
 
 	-- initial class instances
-	player = Entity.create("Me!", 200, 200)
+	player = Entity.create("Me!", tilesize, tilesize)
 	enemy = Entity.create("Enemy!", 300, 500)
 
 	-- buttons
@@ -314,7 +314,7 @@ function love.draw(dt)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
 	love.graphics.print("#rooms: "..#rooms, 700, 30)
 	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
-
+	love.graphics.print(distance(player.xScreen+player.w/2, player.yScreen+player.h/2, love.mouse.getX(), love.mouse.getY()), 10, 10)
 
 end
 
@@ -393,17 +393,10 @@ function love.mousepressed(x, y, button)
 		end
 	end
 
-	if button == 'r' and player.mana >= 5 and not isPaused then
-		--local angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
-   		--table.insert(blocks, Block.create("damage", player, player.x+player.w/2, player.y+player.h/2, 400*math.cos(angle), 400*math.sin(angle)))
-   		
-   		for k,v in ipairs(entities) do
-   			if v ~= player and distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < player.range then
-   				v.x = -10000
-   				v.y = -10000
-   			end
-   		end
-   		player.mana = player.mana - 5
+	if button == 'r' and player.mana >= 50 and not isPaused then
+   		player.x = love.mouse.getX() - translateX
+   		player.y = love.mouse.getY() - translateY
+   		player.mana = player.mana - (distance(player.xScreen+player.w/2, player.yScreen+player.h/2, love.mouse.getX(), love.mouse.getY())/10)
     end
 end
 
@@ -519,58 +512,40 @@ end
 function generateFloor()
 	rooms = {}
 	halls = {}
+	-- generates grid of rooms
 	for i=0, 10 do
 		for j=0, 10 do
-			local r = Room.create("stone", "room", i*10, j*10, math.random(5, 10), math.random(5, 10))
+			local w = math.random(5, 10)
+			local h = math.random(5, 10)
+			local r = Room.create("stone", "room", i*10-w/2, j*10-h/2, w, h)
 			table.insert(rooms, r)
 		end
 	end
-
 	generateHalls()
 end
 
-function generateHalls( ... )
+function generateHalls()
 	-- generates halls for rooms
 	for i=1,2 do
 		for k,v in ipairs(rooms) do
-			if v.x ~= 0 then
-				num = math.random()
-				if num < .25 then -- left
-					local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 2)
-					table.insert(halls, h)
-				elseif num < .5 then -- right
-					local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 2)
-					table.insert(halls, h)
-				elseif num < .75 then -- top
-					local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 2, 4)
-					table.insert(halls, h)
-				elseif num < 1 then -- bottom
-					local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 2, 4)
-					table.insert(halls, h)
-				end
+			num = math.random()
+			if num < .25 then -- left
+				local h = Room.create("stone", "hall", (v.x)/tilesize-4, (v.y+v.h/2)/tilesize-1, 4, 2)
+				table.insert(halls, h)
+			elseif num < .5 then -- right
+				local h = Room.create("stone", "hall", (v.x+v.w)/tilesize, (v.y+v.h/2)/tilesize-1, 4, 2)
+				table.insert(halls, h)
+			elseif num < .75 then -- top
+				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y)/tilesize-4, 2, 4)
+				table.insert(halls, h)
+			elseif num < 1 then -- bottom
+				local h = Room.create("stone", "hall", (v.x+v.w/2)/tilesize-1, (v.y+v.h)/tilesize, 2, 4)
+				table.insert(halls, h)
 			end
 		end
 	end
-end
 
-function generateRoom(num)
-	num = math.random()
-	local w = 4
-	local h = 4
-	local x = (current_room.x+current_room.w)/tilesize + w
-	local y = player.y/tilesize - h/2
-
-	temp_rooms = {}
-	-- creates a branch off of a room if it is new
-	for k,v in ipairs(rooms) do
-		if num < 1 then -- top
-
-		end
-	end
-
-	for k,v in ipairs(temp_rooms) do
-		table.insert(rooms, v)
-	end
+	-- removes halls at edges
 
 end
 

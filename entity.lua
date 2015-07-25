@@ -136,10 +136,10 @@ function Entity:update(dt)
 
 	-- health & mana regeneration
 	if self.health < self.total_health then self.health = self.health + self.regen * dt end
-	if self.mana < self.total_mana then self.mana = self.mana + 10 * dt end
+	if self.mana < self.total_mana then self.mana = self.mana + 1 * dt end
 
 	if self.sprinting then
-		self.mana = self.mana - 20 * dt
+		self.mana = self.mana - 8 * dt
 	end
 
 
