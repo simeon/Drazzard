@@ -11,7 +11,7 @@ The game is written entirely in [Lua](http://www.lua.org/) and utilizes the [Lov
 | Perk	  | Information         	| Max Level Limit? |
 |---      |---	                  |---               |
 | +FOV    | Increases the angle at which enemies can be attacked         	      | Yes |
-| +Range  | Increases the distance at which enemies will take damage from you 	| Yes |
+| +Range  | Increases distance at which enemies will take damage from you 	    | Yes |
 | +Gold   | Increases the amount of gold recieved after defeating an enemy      | Yes |
 | +Health | Fully replenishes health & increases max health                     | No |
 | +Stamina| Fully replenishes stamina & increases max stamina                   | No |
