@@ -69,6 +69,12 @@ function Tile:draw(dt)
          love.graphics.draw(stone_tile_S_P, self.x, self.y)
          love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
       end
+   elseif self.name == "bridge" then
+      if self.role == "V" then
+         love.graphics.draw(bridge_tile_V, self.x, self.y)
+      elseif self.role == "H" then
+         love.graphics.draw(bridge_tile_H, self.x, self.y)
+      end
    end
 
    if debug then

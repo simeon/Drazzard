@@ -85,6 +85,10 @@ function love.load()
 	stone_tile_SIDEalt = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDEalt.png")
 	stone_tile_SIDEalt2 = love.graphics.newImage("assets/sprites/tiles/stone_tile_SIDEalt2.png")
 
+	bridge_tile_V = love.graphics.newImage("assets/sprites/tiles/bridge_tile_V.png")
+	bridge_tile_H = love.graphics.newImage("assets/sprites/tiles/bridge_tile_H.png")
+
+
 
 	-- creates map
 	generateMap()
@@ -95,13 +99,13 @@ function love.load()
 			-- Centers
 			if v:collidesTop() and v:collidesRight() and v:collidesBottom() and v:collidesLeft() then
 				v.role = "C"
-				--[[if math.random() < .25 then
+				if math.random() < .25 then
 					if math.random() < .5 then
 						v.role = "C2"
 					else
 						v.role = "C3"
 					end
-				end]]
+				end
 			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
 				v.role = "C-V"
 			elseif v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
@@ -137,8 +141,12 @@ function love.load()
 			elseif v:collidesTop() and v:collidesRight() and v:collidesBottom() and not v:collidesLeft() then
 				v.role = "W"
 			end
-
-
+   		elseif v.name == "bridge" then
+   			if v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
+   				v.role = "H"
+   			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
+   				v.role = "V"
+   			end
    		end
 	end
 
@@ -561,9 +569,25 @@ function generateMap(n)
 
 
 	generateSquareRoom(1, 0, 9, 5)
+	generateBridges(3, 5, 1, 4)
 	generateCircleRoom(5, 15)
+	generateCircleRoom(17, 2, 5)
+	generateBridges(10, 3, 4, 1)
 
+end
 
+function generateBridges(x, y, w, h)
+	local x = x
+	local y = y
+	local w = w
+	local h = h
+
+	for i=x,x+w-1 do
+		for j=y,y+h-1 do
+			t = Tile.create("bridge", i, j)
+			table.insert(tiles, t)
+		end
+	end
 end
 
 function generateCircleRoom(x, y, radius)
