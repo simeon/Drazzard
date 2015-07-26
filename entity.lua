@@ -291,50 +291,22 @@ function Entity:canMove(dir)
 	-- tiles
 	for k,v in ipairs(tiles) do
 		if dir == "left" then
-			if checkCollision(self.x-5, self.y, 5, 5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x-5, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "right" then
-			if checkCollision(self.x+self.w, self.y, 5, 5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x+self.w, self.y, 5, self.h, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "top" then
-			if checkCollision(self.x, self.y-5, 5, 5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x, self.y-5, self.w, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
 		if dir == "bottom" then
-			if checkCollision(self.x, self.y+self.h, 5, 5, v.x, v.y, v.w, v.h) then
-				return true
-			end
-		end
-	end
-
-	-- halls
-	for k,v in ipairs(halls) do
-		if dir == "left" then
-			if checkCollision(self.x-5, self.y, 5, 5, v.x, v.y, v.w, v.h) and 
-				checkCollision(self.x-5, self.y+self.h-5, 5, 5, v.x, v.y, v.w, v.h) then
-				return true
-			end
-		end
-		if dir == "right" then
-			if checkCollision(self.x+self.w, self.y, 5, 5, v.x, v.y, v.w, v.h) and
-				checkCollision(self.x+self.w, self.y+self.h-5, 5, 5, v.x, v.y, v.w, v.h) then
-				return true
-			end
-		end
-		if dir == "top" then
-			if checkCollision(self.x, self.y-5, 5, 5, v.x, v.y, v.w, v.h) and
-				checkCollision(self.x+self.w-5, self.y-5, 5, 5, v.x, v.y, v.w, v.h) then
-				return true
-			end
-		end
-		if dir == "bottom" then
-			if checkCollision(self.x, self.y+self.h, 5, 5, v.x, v.y, v.w, v.h) and
-				checkCollision(self.x+self.w-5, self.y+self.h, 5, 5, v.x, v.y, v.w, v.h) then
+			if checkCollision(self.x, self.y+self.h, self.w, 5, v.x, v.y, v.w, v.h) then
 				return true
 			end
 		end
