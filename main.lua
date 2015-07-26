@@ -274,7 +274,8 @@ function love.draw(dt)
 
 
 		-- GUI
-		love.graphics.circle("line", 0,0,5)
+		love.graphics.circle("line", 0+tilesize/2,0+tilesize/2, tilesize/2)
+		love.graphics.rectangle("line", 0, 0, tilesize, tilesize)
 		love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
 		--love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 
@@ -557,22 +558,38 @@ function generateMap(n)
 	-- relative points
 	local x = 4
 	local y = 4
-	generateRoom(1, 9, 3, 2)
-	generateRoom(9, 1, 1, 4)
-	generateRoom(4, 4, 2, 3)
+
+
+	generateSquareRoom(1, 0, 9, 5)
+	generateCircleRoom(5, 15)
 
 
 end
 
-function generateRoom(w, h, x, y)
-	local x = x or 0
-	local y = y or 0
+function generateCircleRoom(x, y, radius)
+	r = radius or 7
+	x = 0 - r + x
+	y = 0 - r + y
+
+	for i=x, x+2*r-1 do
+		for j=y, y+2*r-1 do
+			if distance(i, j, x+r, y+r) < r then
+				t = Tile.create("stone", i, j)
+				table.insert(tiles, t)
+			end
+		end
+	end
+end
+
+function generateSquareRoom(x, y, w, h)
+	local x = x
+	local y = y
 	local w = w or 1
 	local h = h or 1
 
 	for i=x,x+w-1 do
 		for j=y,y+h-1 do
-			t = Tile.create("stone", x+i, y+j)
+			t = Tile.create("stone", i, j)
 			table.insert(tiles, t)
 		end
 	end
