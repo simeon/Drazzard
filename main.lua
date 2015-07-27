@@ -98,28 +98,18 @@ function love.load()
 		if v.name == "stone" then
 			-- Centers
 			if v:collidesTop() and v:collidesRight() and v:collidesBottom() and v:collidesLeft() then
-				v.role = "C"
-				if math.random() < .25 then
-					if math.random() < .5 then
+					local rand = math.random()
+					if rand < .75 then
+						v.role = "C"
+					elseif rand < .85 then
 						v.role = "C2"
 					else
 						v.role = "C3"
 					end
-				end
 			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
 				v.role = "C-V"
 			elseif v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
 				v.role = "C-H"
-
-
-			elseif v:collidesBottom() and not v:collidesLeft() and not v:collidesTop() and not v:collidesRight() then
-				v.role = "N-P"
-			elseif v:collidesLeft() and not v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
-				v.role = "E-P"
-			elseif v:collidesTop() and not v:collidesLeft() and not v:collidesRight() and not v:collidesBottom() then
-				v.role = "S-P"
-			elseif v:collidesRight() and not v:collidesLeft() and not v:collidesTop() and not v:collidesBottom() then
-				v.role = "W-P"
 			
 
 			elseif v:collidesLeft() and v:collidesBottom() and not v:collidesTop() and not v:collidesRight() then
@@ -131,6 +121,16 @@ function love.load()
 			elseif v:collidesTop() and v:collidesRight() and not v:collidesLeft() and not v:collidesBottom() then
 				v.role = "SW"
 			
+
+			elseif v:collidesBottom() and not v:collidesLeft() and not v:collidesTop() and not v:collidesRight() then
+				v.role = "N-P"
+			elseif v:collidesLeft() and not v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
+				v.role = "E-P"
+			elseif v:collidesTop() and not v:collidesLeft() and not v:collidesRight() and not v:collidesBottom() then
+				v.role = "S-P"
+			elseif v:collidesRight() and not v:collidesLeft() and not v:collidesTop() and not v:collidesBottom() then
+				v.role = "W-P"
+
 
 			elseif v:collidesLeft() and v:collidesBottom() and v:collidesRight() and not v:collidesTop() then
 				v.role = "N"
@@ -384,7 +384,7 @@ function love.mousepressed(x, y, button)
 				end
 			end
 		elseif gamestate == "game" then
-			if player.mana >= 5 and not isPaused then
+			if not isPaused then
 				for k,v in ipairs(entities) do
 					local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
 					local entity_angle = math.atan2( (v.y+v.h/2) - (player.y+player.h/2), (v.x+v.w/2) - (player.x+player.w/2))
@@ -567,16 +567,28 @@ function generateMap(n)
 	local x = 4
 	local y = 4
 
+	-- generates loose grid of rooms
+	for i=0,5 do
+		for j=0,5 do
+			local w = 7
+			local h = 7
 
-	generateSquareRoom(1, 0, 9, 5)
-	generateBridges(3, 5, 1, 4)
-	generateCircleRoom(5, 15)
-	generateCircleRoom(17, 2, 5)
-	generateBridges(10, 3, 4, 1)
+			local rand = math.random()
+			if rand < .5 then
+				generateSquareRoom(8*i, 8*j, w, h)
+			elseif rand < .75 then
+				generateCircleRoom(8*i+3, 8*j+3, 4)
+			elseif rand < 1 then
+				generateDonutRoom(8*i+3, 8*j+3, 4)
+			end
+
+			
+		end
+	end
 
 end
 
-function generateBridges(x, y, w, h)
+function generateBridge(x, y, w, h)
 	local x = x
 	local y = y
 	local w = w
@@ -598,6 +610,21 @@ function generateCircleRoom(x, y, radius)
 	for i=x, x+2*r-1 do
 		for j=y, y+2*r-1 do
 			if distance(i, j, x+r, y+r) < r then
+				t = Tile.create("stone", i, j)
+				table.insert(tiles, t)
+			end
+		end
+	end
+end
+
+function generateDonutRoom(x, y, radius)
+	r = radius or 7
+	x = 0 - r + x
+	y = 0 - r + y
+
+	for i=x, x+2*r-1 do
+		for j=y, y+2*r-1 do
+			if distance(i, j, x+r, y+r) < r and distance(i, j, x+r, y+r) > 2 then
 				t = Tile.create("stone", i, j)
 				table.insert(tiles, t)
 			end

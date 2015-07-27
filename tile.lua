@@ -12,7 +12,7 @@ function Tile.create(n, x, y, w, h)
    t.w = tilesize
    t.h = tilesize
 
-   t.role = "C"
+   t.role = " "
    t.rand = math.random()
    return t
 end
