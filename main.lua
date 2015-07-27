@@ -1,7 +1,6 @@
 function love.load()
 	require 'entity'
 	require 'wall'
-	require 'block'
 	require 'button'
 	require 'item'
 	require 'tile'
@@ -86,6 +85,9 @@ function love.load()
 
 	bridge_tile_V = love.graphics.newImage("assets/sprites/tiles/bridge_tile_V.png")
 	bridge_tile_H = love.graphics.newImage("assets/sprites/tiles/bridge_tile_H.png")
+
+	wall_tile_barrel = love.graphics.newImage("assets/sprites/tiles/wall_tile_barrel.png")
+
 
 	--rectangles
 	rooms = {}
@@ -219,6 +221,9 @@ function love.update(dt)
 			for k,v in ipairs(tiles) do
 				v:update(dt)
 			end
+			for k,v in ipairs(walls) do
+				v:update(dt)
+			end
 			for k,v in ipairs(buttons) do
 				v:update(dt)
 			end
@@ -247,11 +252,6 @@ end
 function love.draw(dt)
 
 	if gamestate == "mainmenu" then
-		for i=0,30 do
-			for j=0,20 do
-				love.graphics.draw(stone_tile_SIDE, i*tilesize, j*tilesize)
-			end
-		end
 		love.graphics.draw(main_logo, love.graphics.getWidth()/2 - 485)
 	elseif gamestate == "game" then
 		
@@ -262,6 +262,9 @@ function love.draw(dt)
 		-----------------------------------
 		--love.graphics.draw(canvas)
 		for k,v in ipairs(tiles) do
+			v:draw(dt)
+		end
+		for k,v in ipairs(walls) do
 			v:draw(dt)
 		end
 		for k,v in ipairs(rooms) do
@@ -592,6 +595,7 @@ function generateMap()
 
 	-- main room
 	generateDonutRoom(0, 0, 6)
+	table.insert(walls, Wall.create("", -4, -13))
 end
 
 

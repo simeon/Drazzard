@@ -49,27 +49,35 @@ function Entity.create(n, x, y, weapon)
 end
 
 function Entity:draw(dt)
-	if self ~= player then
-		love.graphics.setColor(255, 0, 0, 50)
-		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
+
+
+	if distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2) < 255 then
+		love.graphics.setColor(255, 255, 255, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
+
+		if self ~= player then
+			love.graphics.setColor(255, 0, 0, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
+			love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
+			love.graphics.setColor(255, 255, 255, 255)
+		end
+
+		if self ~= player and (player.xScreen+player.w/2 < self.xScreen+self.w/2) then 
+			love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
+		elseif self == player and (love.mouse.getX() < self.xScreen+self.w/2) then 
+			love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
+		else
+			love.graphics.draw(self.image, self.x, self.y, 0, 3, 3)
+		end
 		love.graphics.setColor(255, 255, 255, 255)
+
+		if self ~= player then
+			love.graphics.setColor(255, 0, 0, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
+			love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
+			love.graphics.setColor(0, 200, 200, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
+			love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/self.total_mana), 5)
+			love.graphics.setColor(255, 255, 255, 255)
+		end
 	end
 
-	if self ~= player and (player.xScreen+player.w/2 < self.xScreen+self.w/2) then 
-		love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
-	elseif self == player and (love.mouse.getX() < self.xScreen+self.w/2) then 
-		love.graphics.draw(self.image, self.x, self.y, 0, -3, 3, self.w/3, 0)
-	else
-		love.graphics.draw(self.image, self.x, self.y, 0, 3, 3)
-	end
-
-	if self ~= player then
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", self.x, self.y - 15, self.health * (self.w/self.total_health), 5)
-		love.graphics.setColor(0, 200, 200)
-		love.graphics.rectangle("fill", self.x, self.y - 10, self.mana * (self.w/self.total_mana), 5)
-		love.graphics.setColor(255, 255, 255)
-	end
 
 	if self:collidingLeft() then
 		love.graphics.circle("fill", self.x, self.y + self.h/2, 3)
