@@ -4,7 +4,6 @@ function love.load()
 	require 'block'
 	require 'button'
 	require 'item'
-	require 'room'
 	require 'tile'
 
 	love.graphics.setBackgroundColor(30, 25, 35)
@@ -88,7 +87,8 @@ function love.load()
 	bridge_tile_V = love.graphics.newImage("assets/sprites/tiles/bridge_tile_V.png")
 	bridge_tile_H = love.graphics.newImage("assets/sprites/tiles/bridge_tile_H.png")
 
-
+	--rectangles
+	rooms = {}
 
 	-- creates map
 	generateMap()
@@ -99,9 +99,9 @@ function love.load()
 			-- Centers
 			if v:collidesTop() and v:collidesRight() and v:collidesBottom() and v:collidesLeft() then
 					local rand = math.random()
-					if rand < .75 then
+					if rand < .5 then
 						v.role = "C"
-					elseif rand < .85 then
+					elseif rand < .75 then
 						v.role = "C2"
 					else
 						v.role = "C3"
@@ -264,6 +264,9 @@ function love.draw(dt)
 		for k,v in ipairs(tiles) do
 			v:draw(dt)
 		end
+		for k,v in ipairs(rooms) do
+			love.graphics.rectangle("line", v.x, v.y, v.w, v.h)
+		end
 		for k,v in ipairs(entities) do
 			v:draw(dt)
 			--[[local mouse_angle = math.atan2((love.mouse.getY()-translateY - (player.y+player.h/2)), (love.mouse.getX()-translateX - (player.x+player.w/2)))
@@ -296,7 +299,21 @@ function love.draw(dt)
 		love.graphics.setColor(0, 200, 200)
 		love.graphics.rectangle("fill", 10, 25, player.mana * (100/player.total_mana), 10)
 		love.graphics.setColor(255, 255, 255)
+
+		-- minimap
+		love.graphics.setColor(255, 255, 255, 50)
+		for k,v in ipairs(tiles) do
+			--love.graphics.rectangle("line", v.x/10 + 50, v.y/10 + 200, v.w/10, v.h/10)
+			love.graphics.rectangle("fill", v.x/10 + 50, v.y/10 + 200, v.w/10, v.h/10)
+		end
+		love.graphics.setColor(255, 255, 255)
+
+		love.graphics.setColor(0, 255, 0)
+			love.graphics.circle("fill", player.x/10 + 50, player.y/10 + 200, player.w/10)
+		love.graphics.setColor(255, 255, 255)
 		
+
+
 		love.graphics.print("Score: "..score, 10, 40)
 		love.graphics.print("Gold: "..player.gold, 10, 55)
 		love.graphics.print("enemies_killed: "..enemies_killed, 700, 60)
@@ -368,7 +385,8 @@ function love.draw(dt)
 
 	love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
 	love.graphics.print("gamestate: "..gamestate, 700, 15)
-	love.graphics.print("#rooms: "..#tiles, 700, 30)
+	love.graphics.print("#tiles: "..#tiles, 700, 30)
+	love.graphics.print("#rooms: "..#rooms, 700, 45)
 	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
 
 end
@@ -561,7 +579,23 @@ function contains(list, value)
 end
 
 
-function generateMap(n)
+function generateMap()
+
+
+	-- north room
+	generateSquareRoom(-4, -13, 9, 5)
+	generateBridge(-2, -8, 1, 3)
+	generateBridge(2, -8, 1, 3)
+
+	-- east room
+	generateSquareRoom(6, -2, 7, 5)
+
+	-- main room
+	generateDonutRoom(0, 0, 6)
+end
+
+
+--[[function generateMap(n)
 	num = n or 1
 	-- relative points
 	local x = 4
@@ -582,11 +616,11 @@ function generateMap(n)
 				generateDonutRoom(8*i+3, 8*j+3, 4)
 			end
 
-			
+
 		end
 	end
 
-end
+end]]
 
 function generateBridge(x, y, w, h)
 	local x = x
@@ -603,9 +637,9 @@ function generateBridge(x, y, w, h)
 end
 
 function generateCircleRoom(x, y, radius)
-	r = radius or 7
-	x = 0 - r + x
-	y = 0 - r + y
+	local r = radius or 7
+	local x = 0 - r + x
+	local y = 0 - r + y
 
 	for i=x, x+2*r-1 do
 		for j=y, y+2*r-1 do
@@ -618,9 +652,9 @@ function generateCircleRoom(x, y, radius)
 end
 
 function generateDonutRoom(x, y, radius)
-	r = radius or 7
-	x = 0 - r + x
-	y = 0 - r + y
+	local r = radius or 7
+	local x = 0 - r + x
+	local y = 0 - r + y
 
 	for i=x, x+2*r-1 do
 		for j=y, y+2*r-1 do
@@ -644,6 +678,19 @@ function generateSquareRoom(x, y, w, h)
 			table.insert(tiles, t)
 		end
 	end
+	table.insert(rooms, {x=x*tilesize, y=y*tilesize, w=w*tilesize, h=h*tilesize})
+
+--[[
+	local rand = math.random()
+	if rand < .25 and y > 0 then
+		generateBridge(x+3, y-1, 1, 1)
+	elseif rand < .5 then
+		generateBridge(x+w, y+3, 1, 1)
+	elseif rand < .75 then
+		generateBridge(x+3, y+h+1, 1, 1)
+	elseif rand < 1 and x > 0 then
+		generateBridge(x-1, y+3, 1, 1)
+	end]]
 end
 
 function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end

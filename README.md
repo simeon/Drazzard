@@ -8,9 +8,9 @@ The game is written entirely in [Lua](http://www.lua.org/) and utilizes the [Lov
 
 
 ### Shop Perks
-| Perk	  | Information         	| Max Level Limit? |
-|---      |---	                  |---               |
-| +FOV    | Increases the angle at which enemies can be attacked         	      | Yes |
+| Perk	  | Information         												| Max Level Limit? |
+|---      |---	                  												|---               |
+| +FOV    | Increases the angle at which enemies can be attacked         	    | Yes |
 | +Range  | Increases distance at which enemies will take damage from you 	    | Yes |
 | +Gold   | Increases the amount of gold recieved after defeating an enemy      | Yes |
 | +Health | Fully replenishes health & increases max health                     | No |
@@ -19,7 +19,7 @@ The game is written entirely in [Lua](http://www.lua.org/) and utilizes the [Lov
 
 ### Controls
 | Key(s)	| Action         	|
-|---      |---	            |
+|---      	|---	      		|
 |  WASD 	|  Move         	|
-|  LMB 	  |  Sword attack 	|
-|  Shift	  |  Sprint 	          |
+|  LMB 	  	|  Sword attack 	|
+|  Shift	|  Sprint 	        |

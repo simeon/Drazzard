@@ -21,7 +21,7 @@ function Entity.create(n, x, y, weapon)
 
 	e.total_health = 100 * e.level
 	e.health = e.total_health
-	e.total_mana = 100 * e.level
+	e.total_mana = 10000 * e.level
 	e.mana = e.total_mana
 
 	e.regen = 5

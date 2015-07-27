@@ -19,66 +19,71 @@ end
 
 function Tile:draw(dt)
 
-   if self.name == "stone" then
-      if self.role == "C" then
-         love.graphics.draw(stone_tile, self.x, self.y)
-      elseif self.role == "C2" then
-         love.graphics.draw(stone_tile_alt, self.x, self.y)
-      elseif self.role == "C3" then
-         love.graphics.draw(stone_tile_alt2, self.x, self.y)
-      elseif self.role == "W" then
-         love.graphics.draw(stone_tile_W, self.x, self.y)
-      elseif self.role == "E" then
-         love.graphics.draw(stone_tile_E, self.x, self.y)
-      elseif self.role == "S" then
-         love.graphics.draw(stone_tile_S, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "N" then
-         love.graphics.draw(stone_tile_N, self.x, self.y)
+   love.graphics.setColor(255, 255, 255, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
+   if distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2) < 255 then
+      if self.name == "stone" then
+         if self.role == "C" then
+            love.graphics.draw(stone_tile, self.x, self.y)
+         elseif self.role == "C2" then
+            love.graphics.draw(stone_tile_alt, self.x, self.y)
+         elseif self.role == "C3" then
+            love.graphics.draw(stone_tile_alt2, self.x, self.y)
+         elseif self.role == "W" then
+            love.graphics.draw(stone_tile_W, self.x, self.y)
+         elseif self.role == "E" then
+            love.graphics.draw(stone_tile_E, self.x, self.y)
+         elseif self.role == "S" then
+            love.graphics.draw(stone_tile_S, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "N" then
+            love.graphics.draw(stone_tile_N, self.x, self.y)
 
 
-      elseif self.role == "NW" then
-         love.graphics.draw(stone_tile_NW, self.x, self.y)
-      elseif self.role == "NE" then
-         love.graphics.draw(stone_tile_NE, self.x, self.y)
-      elseif self.role == "SW" then
-         love.graphics.draw(stone_tile_SW, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "SE" then
-         love.graphics.draw(stone_tile_SE, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "NW" then
+            love.graphics.draw(stone_tile_NW, self.x, self.y)
+         elseif self.role == "NE" then
+            love.graphics.draw(stone_tile_NE, self.x, self.y)
+         elseif self.role == "SW" then
+            love.graphics.draw(stone_tile_SW, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "SE" then
+            love.graphics.draw(stone_tile_SE, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
 
-      elseif self.role == "C-V" then
-         love.graphics.draw(stone_tile_C_V, self.x, self.y)
-      elseif self.role == "C-H" then
-         love.graphics.draw(stone_tile_C_H, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "C-A" then
-         love.graphics.draw(stone_tile_C_A, self.x, self.y)
+         elseif self.role == "C-V" then
+            love.graphics.draw(stone_tile_C_V, self.x, self.y)
+         elseif self.role == "C-H" then
+            love.graphics.draw(stone_tile_C_H, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "C-A" then
+            love.graphics.draw(stone_tile_C_A, self.x, self.y)
 
-      elseif self.role == "N-P" then
-         love.graphics.draw(stone_tile_N_P, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "W-P" then
-         love.graphics.draw(stone_tile_W_P, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "E-P" then
-         love.graphics.draw(stone_tile_E_P, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      elseif self.role == "S-P" then
-         love.graphics.draw(stone_tile_S_P, self.x, self.y)
-         love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
-      end
-   elseif self.name == "bridge" then
-      if self.role == "V" then
-         love.graphics.draw(bridge_tile_V, self.x, self.y)
-      elseif self.role == "H" then
-         love.graphics.draw(bridge_tile_H, self.x, self.y)
+         elseif self.role == "N-P" then
+            love.graphics.draw(stone_tile_N_P, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "W-P" then
+            love.graphics.draw(stone_tile_W_P, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "E-P" then
+            love.graphics.draw(stone_tile_E_P, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         elseif self.role == "S-P" then
+            love.graphics.draw(stone_tile_S_P, self.x, self.y)
+            love.graphics.draw(stone_tile_SIDEalt, self.x, self.y+tilesize)
+         end
+      elseif self.name == "bridge" then
+         if self.role == "V" then
+            love.graphics.draw(bridge_tile_V, self.x, self.y)
+         elseif self.role == "H" then
+            love.graphics.draw(bridge_tile_H, self.x, self.y)
+         end
       end
    end
+   love.graphics.setColor(255, 255, 255, 255)
 
    if debug then
-		love.graphics.print(self.role, self.x, self.y)
+      love.graphics.print(self.x/tilesize, self.x, self.y-5)
+		love.graphics.print(self.y/tilesize, self.x, self.y+5)
       love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 	end
 end
