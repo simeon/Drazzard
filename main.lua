@@ -586,16 +586,40 @@ function generateMap()
 
 
 	-- north room
+	generateDonutRoom(-7, -17, 5)
+	table.insert(walls, Wall.create("", -5, -15))
+	table.insert(walls, Wall.create("", -4, -15))
+	table.insert(walls, Wall.create("", -4, -14))
+
+	generateBridge(-2, -19, 5, 1)
+	generateSquareRoom(3, -19, 4, 4)
+	generateSquareRoom(7, -19, 3, 6)
+
+	generateDonutRoom(16, -16, 5)
+	generateBridge(10, -16, 2, 1)
+
+	generateSquareRoom(2, -24, 4, 3)
+	generateBridge(3, -21, 1, 2)
+
+
+
 	generateSquareRoom(-4, -13, 9, 5)
 	generateBridge(-2, -8, 1, 3)
 	generateBridge(2, -8, 1, 3)
 
+	generateSquareRoom(10, -11, 9, 5)
+	generateBridge(15, -6, 1, 1)
+	generateBridge(17, -6, 1, 1)
+
+
 	-- east room
-	generateSquareRoom(6, -2, 7, 5)
+	generateSquareRoom(6, -1, 8, 3)
+	generateSquareRoom(14, -5, 8, 6)
+	generateSquareRoom(14, 1, 5, 3)
 
 	-- main room
 	generateDonutRoom(0, 0, 6)
-	table.insert(walls, Wall.create("", -4, -13))
+	--table.insert(walls, Wall.create("", -4, -13))
 end
 
 
@@ -682,7 +706,7 @@ function generateSquareRoom(x, y, w, h)
 			table.insert(tiles, t)
 		end
 	end
-	table.insert(rooms, {x=x*tilesize, y=y*tilesize, w=w*tilesize, h=h*tilesize})
+	--table.insert(rooms, {x=x*tilesize, y=y*tilesize, w=w*tilesize, h=h*tilesize})
 
 --[[
 	local rand = math.random()
