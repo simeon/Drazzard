@@ -25,7 +25,7 @@ function love.load()
 
 	-- initial class instances
 	player = Entity.create("Me!", 4*tilesize, 4*tilesize)
-	enemy = Entity.create("Enemy!", 500, 500)
+
 
 	-- buttons
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
@@ -47,7 +47,7 @@ function love.load()
 
 	walls = {}
 	entities = { player }	
-	--spawnEnemy(2)
+	spawnEnemy(5)
 	notice = ""
 
 	tiles = {}
@@ -288,9 +288,9 @@ function love.draw(dt)
 
 
 		-- GUI
-		love.graphics.circle("line", 0+tilesize/2,0+tilesize/2, tilesize/2)
-		love.graphics.rectangle("line", 0, 0, tilesize, tilesize)
-		love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
+		--love.graphics.circle("line", 0+tilesize/2,0+tilesize/2, tilesize/2)
+		--love.graphics.rectangle("line", 0, 0, tilesize, tilesize)
+		--love.graphics.circle("line", love.mouse.getX()-translateX, love.mouse.getY()-translateY, 5)
 		--love.graphics.line(player.x+player.w/2, player.y+player.h/2, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 
 		-- DEBUG
@@ -316,15 +316,20 @@ function love.draw(dt)
 		love.graphics.setColor(255, 255, 255)
 		
 
-
 		love.graphics.print("Score: "..score, 10, 40)
 		love.graphics.print("Gold: "..player.gold, 10, 55)
-		love.graphics.print("enemies_killed: "..enemies_killed, 700, 60)
 		
 		if debug then
 			love.graphics.print("Entities: "..#entities, 800, 30)
 			love.graphics.print("Actual:"..math.floor(love.mouse.getX()-translateX)..","..math.floor(love.mouse.getY()-translateY), love.mouse.getX() + 15, love.mouse.getY()-15)
 			love.graphics.print("Screen:"..love.mouse.getX()..","..love.mouse.getY(), love.mouse.getX() + 15, love.mouse.getY())
+
+			love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
+			love.graphics.print("gamestate: "..gamestate, 700, 15)
+			love.graphics.print("#tiles: "..#tiles, 700, 30)
+			love.graphics.print("#rooms: "..#rooms, 700, 45)
+			love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
+			love.graphics.print("enemies_killed: "..enemies_killed, 700, 60)
 		end
 	elseif gamestate == "shop" then
 
@@ -342,8 +347,11 @@ function love.draw(dt)
 		love.graphics.printf("WASD ... Move", 0, 150, love.graphics.getWidth(), 'center')
 		love.graphics.printf("Shift ... Sprint", 0, 175, love.graphics.getWidth(), 'center')
 		love.graphics.printf("Left Click ... Sword Attack", 0, 200, love.graphics.getWidth(), 'center')
-		love.graphics.printf("Escape ... Shop/Pause", 0, 200, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Right Click ... Teleport", 0, 225, love.graphics.getWidth(), 'center')
+		love.graphics.printf("Escape ... Shop/Pause", 0, 250, love.graphics.getWidth(), 'center')
 
+		love.graphics.printf("1 ... Spawn Enemy", 0, 300, love.graphics.getWidth(), 'center')
+		love.graphics.printf("2 ... Show Debug", 0, 325, love.graphics.getWidth(), 'center')
 
 
 	elseif gamestate == "credits" then
@@ -354,17 +362,14 @@ function love.draw(dt)
 		love.graphics.printf("Simeon Videnov", 0, 120, love.graphics.getWidth(), "center")
 		love.graphics.printf("(http://simeon.io)", 0, 140, love.graphics.getWidth(), "center")
 
-		love.graphics.printf("--[ Sprites ]--", 0, 170, 450, "center")		
-		love.graphics.printf("Buch\n(http://opengameart.org/users/buch)", 0, 200, 400, "center")
+		love.graphics.printf("--[ Sprites ]--", 0, 220, love.graphics.getWidth(), "center")		
+		love.graphics.printf("Buch\n(http://opengameart.org/users/buch)", 0, 240, love.graphics.getWidth(), "center")
 
-		love.graphics.printf("--[ Music ]--", 450, 170, 400, "center")
-		love.graphics.printf("Rolemusic - 'Besos y Abrazos'\n(http://freemusicarchive.org/music/Rolemusic/) ", 450, 200, 400, "center")
+		love.graphics.printf("--[ Font ]--", 0, 340, love.graphics.getWidth(), "center")
+		love.graphics.printf("Yusuke Kamiyamane - 'PF Tempesta Five'", 0, 360, love.graphics.getWidth(), "center")
+		love.graphics.printf("(http://p.yusukekamiyamane.com/)", 0, 380, love.graphics.getWidth(), "center")
 
-		love.graphics.printf("-- Font --", 0, 350, love.graphics.getWidth(), "center")
-		love.graphics.printf("Yusuke Kamiyamane - 'PF Tempesta Five'", 0, 370, love.graphics.getWidth(), "center")
-		love.graphics.printf("(http://p.yusukekamiyamane.com/)", 0, 390, love.graphics.getWidth(), "center")
-
-		love.graphics.printf("-- Tools --", 0, 450, love.graphics.getWidth(), "center")
+		love.graphics.printf("--[ Tools ]--", 0, 450, love.graphics.getWidth(), "center")
 		love.graphics.printf("Made with Lua and Love2D framework", 0, 470, love.graphics.getWidth(), "center")
 		love.graphics.printf("(http://lua.org & http://love2d.org)", 0, 490, love.graphics.getWidth(), "center")
 
@@ -386,11 +391,7 @@ function love.draw(dt)
 		v:draw(dt)
 	end
 
-	love.graphics.print("FPS: "..love.timer.getFPS(), 700, 0)
-	love.graphics.print("gamestate: "..gamestate, 700, 15)
-	love.graphics.print("#tiles: "..#tiles, 700, 30)
-	love.graphics.print("#rooms: "..#rooms, 700, 45)
-	love.graphics.printf(notice, 0, 10, love.graphics.getWidth(), 'center')
+
 
 end
 
@@ -492,6 +493,10 @@ function love.keypressed(key)
 		gamestate = "game"
 	end
 
+	if key == 'p' then
+		isPaused = not isPaused
+	end
+
 	if key == '1' then
 		table.insert(entities, Entity.create("Enemy!", math.random(0, 500), math.random(0, 500)))
 	end
@@ -500,9 +505,7 @@ function love.keypressed(key)
 		debug = not debug
 	end
 
-	if key == '3' then
-		generateMap()
-	end
+
 end
 
 function love.keyreleased(key)
@@ -510,15 +513,11 @@ function love.keyreleased(key)
 end
 
 function love.focus(f)
-  if not f then
-    print("LOST FOCUS")
-  else
-    print("GAINED FOCUS")
-  end
+
 end
 
 function love.quit()
-  print("Thanks for playing! Come back soon!")
+
 end
 
 
@@ -587,9 +586,6 @@ function generateMap()
 
 	-- north room
 	generateDonutRoom(-7, -17, 5)
-	table.insert(walls, Wall.create("", -5, -15))
-	table.insert(walls, Wall.create("", -4, -15))
-	table.insert(walls, Wall.create("", -4, -14))
 
 	generateBridge(-2, -19, 5, 1)
 	generateSquareRoom(3, -19, 4, 4)

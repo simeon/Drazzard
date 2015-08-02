@@ -4,7 +4,7 @@ Entity.__index = Entity
 function Entity.create(n, x, y, weapon)
 	local e = {}             -- our new object
 	setmetatable(e, Entity)  -- make Account handle lookup
-	e.level = 1.1 * (enemies_killed+1)
+	e.level = 1.1 + (enemies_killed*.1)
 
 	e.name = n
 	e.x = x or 100
@@ -21,7 +21,7 @@ function Entity.create(n, x, y, weapon)
 
 	e.total_health = 100 * e.level
 	e.health = e.total_health
-	e.total_mana = 10000 * e.level
+	e.total_mana = 100 * e.level
 	e.mana = e.total_mana
 
 	e.regen = 5
@@ -56,7 +56,7 @@ function Entity:draw(dt)
 
 		if self ~= player then
 			love.graphics.setColor(255, 0, 0, 255-distance(player.x+player.w/2, player.y+player.h/2, self.x+self.w/2, self.y+self.h/2))
-			love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
+			--love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
 			love.graphics.setColor(255, 255, 255, 255)
 		end
 
@@ -78,7 +78,7 @@ function Entity:draw(dt)
 		end
 	end
 
-
+--[[
 	if self:collidingLeft() then
 		love.graphics.circle("fill", self.x, self.y + self.h/2, 3)
 	end
@@ -91,7 +91,7 @@ function Entity:draw(dt)
 	if self:collidingBottom() then
 		love.graphics.circle("fill", self.x + self.w/2, self.y + self.h, 3)
 	end
-
+]]
 	if debug then
 		love.graphics.setColor(255, 255, 255, 150)
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
