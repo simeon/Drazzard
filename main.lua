@@ -30,6 +30,7 @@ function love.load()
 	-- buttons
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
 	back_to_game_button = Button.create("<- Back to Game", "game", 10, 10)
+	back_to_menu_button = Button.create("Back to Menu ->", "mainmenu", love.graphics.getWidth()-200, 10)
 	game_button = Button.create("Start", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25, true)
 	how_to_play_button = Button.create("Controls", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75, true)
 	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75 + 75, true)
@@ -88,7 +89,6 @@ function love.load()
 
 	wall_tile_barrel = love.graphics.newImage("assets/sprites/tiles/wall_tile_barrel.png")
 
-
 	--rectangles
 	rooms = {}
 
@@ -99,7 +99,10 @@ function love.load()
 	for k,v in ipairs(tiles) do
 		if v.name == "stone" then
 			-- Centers
-			if v:collidesTop() and v:collidesRight() and v:collidesBottom() and v:collidesLeft() then
+			if v:collidesTop() 
+				and v:collidesRight() 
+				and v:collidesBottom() 
+				and v:collidesLeft() then
 					local rand = math.random()
 					if rand < .5 then
 						v.role = "C"
@@ -108,45 +111,93 @@ function love.load()
 					else
 						v.role = "C3"
 					end
-			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
+			elseif v:collidesTop() 
+					and v:collidesBottom() 
+					and not v:collidesLeft() 
+					and not v:collidesRight() then
 				v.role = "C-V"
-			elseif v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesRight() 
+					and not v:collidesTop() 
+					and not v:collidesBottom() then
 				v.role = "C-H"
-			
 
-			elseif v:collidesLeft() and v:collidesBottom() and not v:collidesTop() and not v:collidesRight() then
+
+			elseif v:collidesLeft() 
+					and v:collidesBottom() 
+					and not v:collidesTop() 
+					and not v:collidesRight() then
 				v.role = "NE"
-			elseif v:collidesRight() and v:collidesBottom() and not v:collidesTop() and not v:collidesLeft() then
+			elseif v:collidesRight() 
+					and v:collidesBottom() 
+					and not v:collidesTop() 
+					and not v:collidesLeft() then
 				v.role = "NW"
-			elseif v:collidesLeft() and v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesTop() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "SE"
-			elseif v:collidesTop() and v:collidesRight() and not v:collidesLeft() and not v:collidesBottom() then
+			elseif v:collidesTop() 
+					and v:collidesRight() 
+					and not v:collidesLeft() 
+					and not v:collidesBottom() then
 				v.role = "SW"
 			
 
-			elseif v:collidesBottom() and not v:collidesLeft() and not v:collidesTop() and not v:collidesRight() then
+			elseif v:collidesBottom() 
+					and not v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesRight() then
 				v.role = "N-P"
-			elseif v:collidesLeft() and not v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "E-P"
-			elseif v:collidesTop() and not v:collidesLeft() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesTop() 
+					and not v:collidesLeft() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "S-P"
-			elseif v:collidesRight() and not v:collidesLeft() and not v:collidesTop() and not v:collidesBottom() then
+			elseif v:collidesRight() 
+					and not v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesBottom() then
 				v.role = "W-P"
 
 
-			elseif v:collidesLeft() and v:collidesBottom() and v:collidesRight() and not v:collidesTop() then
+			elseif v:collidesLeft() 
+					and v:collidesBottom() 
+					and v:collidesRight() 
+					and not v:collidesTop() then
 				v.role = "N"
-			elseif v:collidesTop() and v:collidesLeft() and v:collidesBottom() and not v:collidesRight() then
+			elseif v:collidesTop() 
+					and v:collidesLeft() 
+					and v:collidesBottom() 
+					and not v:collidesRight() then
 				v.role = "E"
-			elseif v:collidesLeft() and v:collidesTop() and v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesTop() 
+					and v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "S"
-			elseif v:collidesTop() and v:collidesRight() and v:collidesBottom() and not v:collidesLeft() then
+			elseif v:collidesTop() 
+					and v:collidesRight() 
+					and v:collidesBottom() 
+					and not v:collidesLeft() then
 				v.role = "W"
 			end
    		elseif v.name == "bridge" then
-   			if v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
+   			if v:collidesLeft() 
+				and v:collidesRight() 
+   				and not v:collidesTop() 
+   				and not v:collidesBottom() then
    				v.role = "H"
-   			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
+   			elseif v:collidesTop() 
+				and v:collidesBottom() 
+   				and not v:collidesLeft() 
+   				and not v:collidesRight() then
    				v.role = "V"
    			end
    		end
@@ -241,7 +292,7 @@ function love.update(dt)
 			end
 		end
 	elseif gamestate == "shop" then
-		buttons = { back_to_game_button }
+		buttons = { back_to_game_button , back_to_menu_button}
 	elseif gamestate == "howtoplay" then
 		buttons = { main_menu_button }
 	elseif gamestate == "credits" then
