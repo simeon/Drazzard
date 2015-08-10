@@ -30,6 +30,7 @@ function love.load()
 	-- buttons
 	main_menu_button = Button.create("<- Main Menu", "mainmenu", 10, 10)
 	back_to_game_button = Button.create("<- Back to Game", "game", 10, 10)
+	back_to_menu_button = Button.create("Back to Menu ->", "mainmenu", love.graphics.getWidth()-200, 10)
 	game_button = Button.create("Start", "game", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25, true)
 	how_to_play_button = Button.create("Controls", "howtoplay", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75, true)
 	credits_button = Button.create("Credits", "credits", love.graphics.getWidth()/2-100, love.graphics.getHeight()/2 + 25 + 75 + 75, true)
@@ -121,7 +122,7 @@ function love.load()
 					and not v:collidesBottom() then
 				v.role = "C-H"
 
-				
+
 			elseif v:collidesLeft() 
 					and v:collidesBottom() 
 					and not v:collidesTop() 
@@ -291,7 +292,7 @@ function love.update(dt)
 			end
 		end
 	elseif gamestate == "shop" then
-		buttons = { back_to_game_button }
+		buttons = { back_to_game_button , back_to_menu_button}
 	elseif gamestate == "howtoplay" then
 		buttons = { main_menu_button }
 	elseif gamestate == "credits" then
