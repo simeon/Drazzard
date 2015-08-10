@@ -88,7 +88,6 @@ function love.load()
 
 	wall_tile_barrel = love.graphics.newImage("assets/sprites/tiles/wall_tile_barrel.png")
 
-
 	--rectangles
 	rooms = {}
 
@@ -99,7 +98,10 @@ function love.load()
 	for k,v in ipairs(tiles) do
 		if v.name == "stone" then
 			-- Centers
-			if v:collidesTop() and v:collidesRight() and v:collidesBottom() and v:collidesLeft() then
+			if v:collidesTop() 
+				and v:collidesRight() 
+				and v:collidesBottom() 
+				and v:collidesLeft() then
 					local rand = math.random()
 					if rand < .5 then
 						v.role = "C"
@@ -108,45 +110,93 @@ function love.load()
 					else
 						v.role = "C3"
 					end
-			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
+			elseif v:collidesTop() 
+					and v:collidesBottom() 
+					and not v:collidesLeft() 
+					and not v:collidesRight() then
 				v.role = "C-V"
-			elseif v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesRight() 
+					and not v:collidesTop() 
+					and not v:collidesBottom() then
 				v.role = "C-H"
-			
 
-			elseif v:collidesLeft() and v:collidesBottom() and not v:collidesTop() and not v:collidesRight() then
+				
+			elseif v:collidesLeft() 
+					and v:collidesBottom() 
+					and not v:collidesTop() 
+					and not v:collidesRight() then
 				v.role = "NE"
-			elseif v:collidesRight() and v:collidesBottom() and not v:collidesTop() and not v:collidesLeft() then
+			elseif v:collidesRight() 
+					and v:collidesBottom() 
+					and not v:collidesTop() 
+					and not v:collidesLeft() then
 				v.role = "NW"
-			elseif v:collidesLeft() and v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesTop() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "SE"
-			elseif v:collidesTop() and v:collidesRight() and not v:collidesLeft() and not v:collidesBottom() then
+			elseif v:collidesTop() 
+					and v:collidesRight() 
+					and not v:collidesLeft() 
+					and not v:collidesBottom() then
 				v.role = "SW"
 			
 
-			elseif v:collidesBottom() and not v:collidesLeft() and not v:collidesTop() and not v:collidesRight() then
+			elseif v:collidesBottom() 
+					and not v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesRight() then
 				v.role = "N-P"
-			elseif v:collidesLeft() and not v:collidesTop() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "E-P"
-			elseif v:collidesTop() and not v:collidesLeft() and not v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesTop() 
+					and not v:collidesLeft() 
+					and not v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "S-P"
-			elseif v:collidesRight() and not v:collidesLeft() and not v:collidesTop() and not v:collidesBottom() then
+			elseif v:collidesRight() 
+					and not v:collidesLeft() 
+					and not v:collidesTop() 
+					and not v:collidesBottom() then
 				v.role = "W-P"
 
 
-			elseif v:collidesLeft() and v:collidesBottom() and v:collidesRight() and not v:collidesTop() then
+			elseif v:collidesLeft() 
+					and v:collidesBottom() 
+					and v:collidesRight() 
+					and not v:collidesTop() then
 				v.role = "N"
-			elseif v:collidesTop() and v:collidesLeft() and v:collidesBottom() and not v:collidesRight() then
+			elseif v:collidesTop() 
+					and v:collidesLeft() 
+					and v:collidesBottom() 
+					and not v:collidesRight() then
 				v.role = "E"
-			elseif v:collidesLeft() and v:collidesTop() and v:collidesRight() and not v:collidesBottom() then
+			elseif v:collidesLeft() 
+					and v:collidesTop() 
+					and v:collidesRight() 
+					and not v:collidesBottom() then
 				v.role = "S"
-			elseif v:collidesTop() and v:collidesRight() and v:collidesBottom() and not v:collidesLeft() then
+			elseif v:collidesTop() 
+					and v:collidesRight() 
+					and v:collidesBottom() 
+					and not v:collidesLeft() then
 				v.role = "W"
 			end
    		elseif v.name == "bridge" then
-   			if v:collidesLeft() and v:collidesRight() and not v:collidesTop() and not v:collidesBottom() then
+   			if v:collidesLeft() 
+				and v:collidesRight() 
+   				and not v:collidesTop() 
+   				and not v:collidesBottom() then
    				v.role = "H"
-   			elseif v:collidesTop() and v:collidesBottom() and not v:collidesLeft() and not v:collidesRight() then
+   			elseif v:collidesTop() 
+				and v:collidesBottom() 
+   				and not v:collidesLeft() 
+   				and not v:collidesRight() then
    				v.role = "V"
    			end
    		end
