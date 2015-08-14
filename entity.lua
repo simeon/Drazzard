@@ -165,7 +165,7 @@ end
 
 
 function Entity:colliding()
-	return self:collidingRight() or
+	return self:collidingLeft() or
 	self:collidingRight() or
 	self:collidingTop() or
 	self:collidingBottom()
