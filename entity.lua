@@ -66,10 +66,10 @@ function Entity:draw()
 end
 
 function Entity:update(dt)
-	self.hitbox_up = {x=self.x, y=self.y-5, w=self.w, h=5}
-	self.hitbox_down = {x=self.x, y=self.y+self.h, w=self.w, h=5}
-	self.hitbox_left = {x=self.x-5, y=self.y, w=5, h=self.h}
-	self.hitbox_right = {x=self.x+self.w, y=self.y, w=5, h=self.h}
+	self.hitbox_up = {x=self.x+5, y=self.y-5, w=self.w-10, h=5}
+	self.hitbox_down = {x=self.x+5, y=self.y+self.h, w=self.w-10, h=5}
+	self.hitbox_left = {x=self.x-5, y=self.y+5, w=5, h=self.h-10}
+	self.hitbox_right = {x=self.x+self.w, y=self.y+5, w=5, h=self.h-10}
 
 	-- collision against other entities
 	self.can_move_left = true

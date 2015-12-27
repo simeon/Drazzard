@@ -28,9 +28,11 @@ function love.load(arg)
 	npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
 	npc2 = Entity.create("soldier", 4*tilesize, 2*tilesize)
 	npc3 = Entity.create("soldier", 4*tilesize, 4*tilesize)
+	npc4 = Entity.create("soldier", 6*tilesize, 4*tilesize)
 	table.insert(Entities, npc)
 	table.insert(Entities, npc2)
 	table.insert(Entities, npc3)
+	table.insert(Entities, npc4)
 	table.insert(Entities, player)
 end
 
