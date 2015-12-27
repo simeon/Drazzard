@@ -6,10 +6,10 @@ function Tile.create(t, x, y)
 	setmetatable(e, Tile)
 	
 	e.type = t
-	e.x = x or 100
-	e.y = y or 100
-	e.w = w or 32
-	e.h = h or 32
+	e.x = x or 32
+	e.y = y or 32
+	e.w = w or tilesize
+	e.h = h or tilesize
 
 	e.image = love.graphics.newImage("assets/"..e.type..".png")
 	return e
@@ -20,6 +20,7 @@ function Tile:draw()
 
 	if is_debugging then
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+		love.graphics.print("("..self.x.."\n"..self.y..")", self.x, self.y)
 	end
 end
 
