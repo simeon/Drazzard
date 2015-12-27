@@ -1,13 +1,38 @@
 function love.load(arg)
+	require 'tile'
+
+	-- global variables
+	is_debugging = false
+
+	t = Tile.create("wood", 100, 100)
+	Tiles = { t }
+
+	LoopTables = { Tiles }
+
 end
 
 function love.update(dt)
+	for k,v in ipairs(LoopTables) do
+		for i,j in ipairs(v) do
+			j:update(dt)
+		end
+	end
 end
 
 function love.draw()
+	for k,v in ipairs(LoopTables) do
+		for i,j in ipairs(v) do
+			j:draw()
+		end
+	end
+
+	love.graphics.print(love.timer.getFPS(), 10, 10)
 end
 
 function love.keypressed(key, scancode, isrepeat)
+	if key == "escape" then
+		is_debugging = not is_debugging
+	end
 end
 
 function love.keyreleased(key, scancode)
