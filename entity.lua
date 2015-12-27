@@ -12,6 +12,12 @@ function Entity.create(n, x, y)
 	e.h = h or 32
 	e.dx = 0
 	e.dy = 0
+
+	e.level = 0
+	e.xp = 10
+	e.health = 100
+	e.mana = 100
+
 	e.image = love.graphics.newImage("assets/"..e.name..".png")
 	e.image2 = love.graphics.newImage("assets/"..e.name.."_alt.png")
 

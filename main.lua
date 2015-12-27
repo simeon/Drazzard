@@ -11,14 +11,16 @@ function love.load(arg)
 	timer = 0
 	timerEnd = .75
 	imageState1 = true
+
 	-- world
-	Tiles = { }
-	Entities = { }
+	Tiles = {}
+	Objects = {}
+	Entities = {}
 
 	loadMap()
 
-	LoopTables = { Tiles, Entities }
-	player = Entity.create("player", 3*tilesize, 3*tilesize)
+	LoopTables = { Tiles, Objects, Entities }
+	player = Entity.create("player", 3*tilesize, 4*tilesize)
 	table.insert(Entities, player)
 end
 
@@ -52,8 +54,11 @@ function love.draw()
 		end
 	end
 
+	love.graphics.circle("fill", 0, 0, 1)
+	love.graphics.circle("line", 0, 0, 4)
 	----------------------------------------------------------------
 	if is_camfocused then love.graphics.pop() end
+	drawHUD()
 	love.graphics.print(love.timer.getFPS(), 10, 10)
 end
 
@@ -136,11 +141,25 @@ end
 function love.quit()
 end
 
+function drawHUD()
+	love.graphics.print("Lv. "..player.level, love.graphics.getWidth()/2-50, love.graphics.getHeight()-40)
+	love.graphics.setColor(255, 255, 0)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-25, player.xp, 5)
+	love.graphics.setColor(200, 0, 0)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-20, player.health, 10)
+	love.graphics.setColor(0, 200, 0)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-10, player.mana, 10)
+	love.graphics.setColor(255, 255, 255)
+end
+
 function loadMap()
-	for i=1,10 do
-		for j=1,10 do
-			t = Tile.create("wood", i*tilesize, j*tilesize)
+	for i=1,5 do
+		for j=1,5 do
+			t = Tile.create("grass", i*tilesize, j*tilesize)
 			table.insert(Tiles, t)
 		end
 	end
+
+	table.insert(Objects, Tile.create("fountain", 3*tilesize, 3*tilesize))
+
 end
