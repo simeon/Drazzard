@@ -21,7 +21,7 @@ function Entity.create(n, x, y)
 	e.is_hovered = false
 	e.is_selected = false
 
-	e.range = 1
+	e.range = 4
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -72,10 +72,7 @@ function Entity:update(dt)
 	self.hitbox_right = {x=self.x+self.w, y=self.y+5, w=5, h=self.h-10}
 
 	-- collision against other entities
-	self.can_move_left = true
-	self.can_move_right = true
-	self.can_move_up = true
-	self.can_move_down = true
+	self.can_move_left, self.can_move_right, self.can_move_up, self.can_move_down = true, true, true, true
 
 	for k,v in ipairs(Entities) do
 		if v ~= self then
@@ -93,4 +90,27 @@ function Entity:update(dt)
 			end
 		end
 	end
+
+	-- collision against objects
+	for k,v in ipairs(Objects) do
+		if v ~= self then
+			if collision(v, self.hitbox_up) then
+				self.can_move_up = false
+			end
+			if collision(v, self.hitbox_down) then
+				self.can_move_down = false
+			end
+			if collision(v, self.hitbox_left) then
+				self.can_move_left = false
+			end
+			if collision(v, self.hitbox_right) then
+				self.can_move_right = false
+			end
+		end
+	end
+
+	-- updates player position
+	self.x = self.x + self.dx
+	self.y = self.y + self.dy
+	self.dx, self.dy = 0, 0
 end

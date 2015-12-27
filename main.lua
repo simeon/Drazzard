@@ -1,9 +1,10 @@
 function love.load(arg)
 	require 'tile'
+	require 'object'
 	require 'entity'
 
-	font = love.graphics.newFont("misc/SDS_8x8.ttf", 10)
-	--love.graphics.setFont(font)
+	font = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
+	love.graphics.setFont(font)
 
 	-- global variables
 	translateX, translateY = 0, 0
@@ -13,7 +14,7 @@ function love.load(arg)
 
 	-- timer
 	timer = 0
-	timerEnd = .75
+	timerEnd = .5
 	imageState1 = true
 
 	-- world
@@ -23,16 +24,8 @@ function love.load(arg)
 
 	loadMap()
 
-	LoopTables = { Tiles, Objects, Entities }
+	LoopTables = { Tiles, Entities, Objects }
 	player = Entity.create("soldier", 2*tilesize, 4*tilesize)
-	npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
-	npc2 = Entity.create("soldier", 4*tilesize, 2*tilesize)
-	npc3 = Entity.create("soldier", 4*tilesize, 4*tilesize)
-	npc4 = Entity.create("soldier", 6*tilesize, 4*tilesize)
-	table.insert(Entities, npc)
-	table.insert(Entities, npc2)
-	table.insert(Entities, npc3)
-	table.insert(Entities, npc4)
 	table.insert(Entities, player)
 end
 
@@ -80,17 +73,17 @@ end
 
 function readKeys(dt)
 	local speed = 120
-	if love.keyboard.isDown("right") and player.can_move_right then
-		player.x = player.x + speed*dt
+	if love.keyboard.isDown("d") and player.can_move_right then
+		player.dx = speed*dt
 	end
-	if love.keyboard.isDown("left") and player.can_move_left then
-		player.x = player.x - speed*dt
+	if love.keyboard.isDown("a") and player.can_move_left then
+		player.dx = -speed*dt
 	end
-	if love.keyboard.isDown("up") and player.can_move_up then
-		player.y = player.y - speed*dt
+	if love.keyboard.isDown("w") and player.can_move_up then
+		player.dy = -speed*dt
 	end
-	if love.keyboard.isDown("down") and player.can_move_down then
-		player.y = player.y + speed*dt
+	if love.keyboard.isDown("s") and player.can_move_down then
+		player.dy = speed*dt
 	end
 end
 
@@ -100,19 +93,6 @@ function love.keypressed(key, scancode, isrepeat)
 	end
 	if key == "r" then
 		love.load()
-	end
-
-	if key == "w" then
-		player.y = player.y - tilesize
-	end
-	if key == "s" then
-		player.y = player.y + tilesize
-	end
-	if key == "a" then
-		player.x = player.x - tilesize
-	end
-	if key == "d" then
-		player.x = player.x + tilesize
 	end
 end
 
@@ -211,6 +191,18 @@ function drawHUD()
 end
 
 function loadMap()
+	npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
+	npc2 = Entity.create("soldier", 4*tilesize, 2*tilesize)
+	npc3 = Entity.create("soldier", 4*tilesize, 4*tilesize)
+	npc4 = Entity.create("soldier", 6*tilesize, 4*tilesize)
+	table.insert(Entities, npc)
+	table.insert(Entities, npc2)
+	table.insert(Entities, npc3)
+	table.insert(Entities, npc4)
+
+	npc4 = Entity.create("blueslime", 8*tilesize, 8*tilesize)
+	table.insert(Entities, npc4)
+
 	for i=1,20 do
 		for j=1,20 do
 			t = Tile.create("grass", i*tilesize, j*tilesize)
@@ -218,7 +210,12 @@ function loadMap()
 		end
 	end
 
-	table.insert(Objects, Tile.create("fountain", 3*tilesize, 3*tilesize))
+	table.insert(Objects, Object.create("fountain", 3*tilesize, 3*tilesize))
+	table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
+
+	for i=1,10 do
+		table.insert(Objects, Object.create("tree", 5*tilesize + i*tilesize, 1*tilesize))
+	end
 
 end
 
