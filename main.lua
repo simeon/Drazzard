@@ -7,6 +7,7 @@ function love.load(arg)
 	love.graphics.setFont(font)
 
 	-- global variables
+	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
 	is_debugging = false
@@ -30,6 +31,7 @@ function love.load(arg)
 end
 
 function love.update(dt)
+	if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
 	readKeys(dt)
 
 	for k,v in ipairs(LoopTables) do
@@ -69,6 +71,7 @@ function love.draw()
 	if is_camfocused then love.graphics.pop() end
 	drawHUD()
 	love.graphics.print(love.timer.getFPS(), 10, 10)
+	love.graphics.print(printvar, 10, 30)
 end
 
 function readKeys(dt)
@@ -202,8 +205,12 @@ function loadMap()
 
 	enemy = Entity.create("blueslime", 8*tilesize, 8*tilesize)
 	enemy.demeanor = "hostile"
-	enemy.range = 4*tilesize
+	enemy.range = 6*tilesize
 	table.insert(Entities, enemy)
+	enemy2 = Entity.create("blueslime", 10*tilesize, 8*tilesize)
+	enemy2.demeanor = "hostile"
+	enemy2.range = 6*tilesize
+	table.insert(Entities, enemy2)
 
 	for i=1,20 do
 		for j=1,20 do
@@ -215,8 +222,8 @@ function loadMap()
 	table.insert(Objects, Object.create("fountain", 3*tilesize, 3*tilesize))
 	table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
 
-	for i=1,10 do
-		table.insert(Objects, Object.create("tree", 5*tilesize + i*tilesize, 1*tilesize))
+	for i=1,4 do
+		table.insert(Objects, Object.create("tree", 5*tilesize + i*tilesize, 10*tilesize))
 	end
 
 end
