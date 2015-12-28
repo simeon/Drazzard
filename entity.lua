@@ -22,7 +22,6 @@ function Entity.create(n, x, y)
 	e.health = 80
 	e.mana = 50
 
-
 	e.sight_range = 0*tilesize
 	e.attack_range = 0*tilesize
 	e.target = player
@@ -98,6 +97,16 @@ function Entity:draw()
 end
 
 function Entity:update(dt)
+	-- death check
+	if self ~= player and self.health <= 0 then
+		self.health = 0
+		local grave = Object.create("skull", self.x, self.y)
+		grave.is_solid = false
+		grave.is_fading = true
+		table.insert(Objects, grave)
+		self:destroy()
+	end
+
 	-- updates direction
 	if self ~= player and self.looks_at_target then
 		if player.x+player.w/2 < self.x+self.w/2 then
@@ -118,8 +127,14 @@ function Entity:update(dt)
 	for k,v in ipairs(Entities) do
 		if v ~= self then
 			-- takes damage if within attack range of enemy
-			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < v.attack_range and v.demeanor == "hostile" and self.demeanor ~= "hostile" then
-				self.health = self.health - 30*dt
+			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < v.attack_range and v.demeanor == "hostile" then
+				if self.demeanor == "hostile" then
+					-- do nothing, both are hostile
+				elseif self.demeanor == "neutral" then
+					-- do nothing, entity doesn't care
+				elseif self.demeanor == "friendly" then
+					self.health = self.health - 30*dt
+				end
 			end
 
 			-- stops movement on collision
@@ -140,7 +155,7 @@ function Entity:update(dt)
 
 	-- prevent movement on collision against objects
 	for k,v in ipairs(Objects) do
-		if v ~= self then
+		if v ~= self and v.is_solid then
 			if collision(v, self.hitbox_up) then
 				self.can_move_up = false
 			end
@@ -176,7 +191,6 @@ function Entity:enemyAI(name, dt)
 			local angle = math.angle(self.x, self.y, self.target.x, self.target.y)
 			self.dx = math.cos(angle) * (dt * self.speed)
 			self.dy = math.sin(angle) * (dt * self.speed)
-			printvar = angle
 
 			-- deals with obstacles
 			if self.dy < 0 and not self.can_move_up then self.dy = 0 end
@@ -185,5 +199,13 @@ function Entity:enemyAI(name, dt)
 			if self.dx > 0 and not self.can_move_right then self.dx = 0 end
 
 		end
+	end
+end
+
+function Entity:destroy()
+	for i = #Entities, 1, -1 do
+	    if Entities[i] == self then
+	        table.remove(Entities, i)
+	    end
 	end
 end

@@ -14,6 +14,7 @@ function love.load(arg)
 	tilesize = 32
 	is_debugging = false
 	is_camfocused = true
+	is_paused = false
 
 	-- timer
 	timer = 0
@@ -32,21 +33,30 @@ function love.load(arg)
 end
 
 function love.update(dt)
-	if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
-	readKeys(dt)
-
-	for k,v in ipairs(LoopTables) do
-		for i,j in ipairs(v) do
-			j:update(dt)
-		end
+	-- game over check
+	printvar = #Objects
+	if player.health <= 0 then
+		player.health = 0
+		is_paused = true
 	end
 
+	if not is_paused then
+		if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
+		readKeys(dt)
+
+		for k,v in ipairs(LoopTables) do
+			for i,j in ipairs(v) do
+				j:update(dt)
+			end
+		end
 
 
-	timer = timer + dt
-	if timer >= timerEnd then
-		timer = 0
-		imageState1 = not imageState1
+
+		timer = timer + dt
+		if timer >= timerEnd then
+			timer = 0
+			imageState1 = not imageState1
+		end
 	end
 end
 
