@@ -200,8 +200,10 @@ function loadMap()
 	table.insert(Entities, npc3)
 	table.insert(Entities, npc4)
 
-	npc4 = Entity.create("blueslime", 8*tilesize, 8*tilesize)
-	table.insert(Entities, npc4)
+	enemy = Entity.create("blueslime", 8*tilesize, 8*tilesize)
+	enemy.demeanor = "hostile"
+	enemy.range = 4*tilesize
+	table.insert(Entities, enemy)
 
 	for i=1,20 do
 		for j=1,20 do
@@ -220,3 +222,5 @@ function loadMap()
 end
 
 function math.distance(x1,y1, x2,y2) return ((x2-x1)^2+(y2-y1)^2)^0.5 end
+
+function math.angle(x1,y1, x2,y2) return math.atan2(y2-y1, x2-x1) end

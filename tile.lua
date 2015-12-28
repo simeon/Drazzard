@@ -24,13 +24,13 @@ function Tile:draw()
 		love.graphics.setColor(255, 255, 255, 100)
 		love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 		love.graphics.setColor(255, 255, 255, 255)
+		self.is_highlighted = false
 	end
 
 	if is_debugging then
 		love.graphics.setColor(255, 255, 255, 80)
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.setColor(255, 255, 255, 255)
-
 		--love.graphics.print("("..self.x.."\n"..self.y..")", self.x, self.y)
 	end
 end

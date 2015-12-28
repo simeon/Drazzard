@@ -12,6 +12,7 @@ function Entity.create(n, x, y)
 	e.h = h or tilesize
 	e.dx = 0
 	e.dy = 0
+	e.demeanor = "friendly" -- friendly, neutral, or hostile
 
 	e.level = 100
 	e.xp = 10
@@ -21,7 +22,8 @@ function Entity.create(n, x, y)
 	e.is_hovered = false
 	e.is_selected = false
 
-	e.range = 4
+	e.range = 0*tilesize
+	e.speed = 40
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -44,9 +46,18 @@ function Entity:draw()
 	if imageState1 then love.graphics.draw(self.image, self.x, self.y) else love.graphics.draw(self.image2, self.x, self.y) end
 
 	if is_debugging then
-		love.graphics.setColor(255, 255, 255, 100)
+		-- vision range
+		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
+		--[[for k,v in ipairs(Tiles) do
+			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < self.range then
+				v.is_highlighted = true
+			end
+		end]]
+
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print("("..math.floor(self.x)..","..math.floor(self.y)..")", self.x+self.w, self.y)
+
+		if self.demeanor == "friendly" then	love.graphics.setColor(0, 255, 0) elseif self.demeanor == "neutral" then love.graphics.setColor(255, 255, 255, 100) elseif self.demeanor == "hostile" then love.graphics.setColor(255, 0, 0) end
 
 		-- collision hitboxes
 		love.graphics.rectangle("fill", self.hitbox_up.x, self.hitbox_up.y, self.hitbox_up.w, self.hitbox_up.h)
@@ -109,8 +120,26 @@ function Entity:update(dt)
 		end
 	end
 
-	-- updates player position
+	if self.demeanor == "hostile" then self:enemyAI(self.name, dt) end
+
+	-- updates entity position
 	self.x = self.x + self.dx
 	self.y = self.y + self.dy
 	self.dx, self.dy = 0, 0
+end
+
+function Entity:enemyAI(name, dt)
+	if name == "blueslime" then
+		if math.distance(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2) < self.range then
+
+			-- calculate angle from enemy to player
+		   local angle = math.angle(self.x, self.y, player.x, player.y)
+		   -- work out how much x and y will change in this step
+		   -- math.cos and math.sin will be between -1 and +1
+		   -- multiplying by (dt*speed) means the enemy will move speed pixels in one whole second
+		   self.dx = math.cos(angle) * (dt * self.speed)
+		   self.dy = math.sin(angle) * (dt * self.speed)
+		   -- move to our new x and y
+		end
+	end
 end
