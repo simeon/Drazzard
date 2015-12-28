@@ -5,7 +5,7 @@ function love.load(arg)
 
 	font = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
 	love.graphics.setFont(font)
-	cursor = love.mouse.newCursor("misc/sword_cursor.png", 0, 0)
+	cursor = love.mouse.newCursor("misc/wand_cursor.png", 0, 0)
 	love.mouse.setCursor(cursor)
 
 	-- global variables
@@ -27,9 +27,9 @@ function love.load(arg)
 	Entities = {}
 
 	LoopTables = { Tiles, Objects, Entities }
-	player = Entity.create("soldier", 2*tilesize, 4*tilesize)
+	player = Entity.create("bluemage", 2*tilesize, 4*tilesize)
 	table.insert(Entities, player)
-	loadMap()
+	loadMap("colosseum")
 end
 
 function love.update(dt)
@@ -204,8 +204,8 @@ function drawHUD()
 	love.graphics.setColor(255, 255, 255)
 end
 
-function loadMap()
-	npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
+function loadMap(name)
+	--[[npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
 	npc2 = Entity.create("soldier", 4*tilesize, 2*tilesize)
 	npc3 = Entity.create("soldier", 4*tilesize, 4*tilesize)
 	npc4 = Entity.create("soldier", 6*tilesize, 4*tilesize)
@@ -217,26 +217,26 @@ function loadMap()
 	enemy = Entity.create("blueslime", 8*tilesize, 8*tilesize)
 	enemy.demeanor = "hostile"
 	enemy.sight_range = 6*tilesize
-	enemy.attack_range = 2*tilesize
-	table.insert(Entities, enemy)
-	enemy2 = Entity.create("greenfairy", 10*tilesize, 8*tilesize)
-	enemy2.demeanor = "neutral"
-	enemy2.sight_range = 6*tilesize
-	enemy2.attack_range = 2*tilesize
-	table.insert(Entities, enemy2)
+	enemy.attack_range = 1.5*tilesize
+	table.insert(Entities, enemy)]]
 
-	for i=1,20 do
-		for j=1,20 do
-			t = Tile.create("grass", i*tilesize, j*tilesize)
-			table.insert(Tiles, t)
+
+	if name == "colosseum" then
+		-- main center
+		for i=-12,11 do
+			for j=-8,7 do
+				t = Tile.create("sand", i*tilesize, j*tilesize)
+				table.insert(Tiles, t)
+			end
 		end
-	end
 
-	table.insert(Objects, Object.create("fountain", 3*tilesize, 3*tilesize))
-	table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
+		table.insert(Objects, Object.create("fountain", -.5*tilesize, -.5*tilesize))
+		table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
 
-	for i=1,4 do
-		table.insert(Objects, Object.create("tree", 5*tilesize + i*tilesize, 10*tilesize))
+		for i=0,23 do
+			table.insert(Objects, Object.create("tree", -12*tilesize + i*tilesize, -8*tilesize))
+			table.insert(Objects, Tile.create("stone", -12*tilesize + i*tilesize, -9*tilesize))
+		end
 	end
 
 end

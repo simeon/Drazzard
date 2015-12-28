@@ -13,6 +13,8 @@ function Entity.create(n, x, y)
 	e.dx = 0
 	e.dy = 0
 
+	e.attack = 10
+	
 	e.demeanor = "friendly" -- friendly, neutral, or hostile
 	e.direction = "left"
 	e.looks_at_target = false
@@ -133,7 +135,7 @@ function Entity:update(dt)
 				elseif self.demeanor == "neutral" then
 					-- do nothing, entity doesn't care
 				elseif self.demeanor == "friendly" then
-					self.health = self.health - 30*dt
+					self.health = self.health - v.attack*dt
 				end
 			end
 
