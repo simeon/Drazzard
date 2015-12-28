@@ -27,7 +27,7 @@ function love.load(arg)
 
 	loadMap()
 
-	LoopTables = { Tiles, Entities, Objects }
+	LoopTables = { Tiles, Objects, Entities }
 	player = Entity.create("soldier", 2*tilesize, 4*tilesize)
 	table.insert(Entities, player)
 end
@@ -207,11 +207,13 @@ function loadMap()
 
 	enemy = Entity.create("blueslime", 8*tilesize, 8*tilesize)
 	enemy.demeanor = "hostile"
-	enemy.range = 6*tilesize
+	enemy.sight_range = 6*tilesize
+	enemy.attack_range = 2*tilesize
 	table.insert(Entities, enemy)
-	enemy2 = Entity.create("blueslime", 10*tilesize, 8*tilesize)
-	enemy2.demeanor = "hostile"
-	enemy2.range = 6*tilesize
+	enemy2 = Entity.create("greenfairy", 10*tilesize, 8*tilesize)
+	enemy2.demeanor = "neutral"
+	enemy2.sight_range = 6*tilesize
+	enemy2.attack_range = 2*tilesize
 	table.insert(Entities, enemy2)
 
 	for i=1,20 do

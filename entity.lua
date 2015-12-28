@@ -12,19 +12,20 @@ function Entity.create(n, x, y)
 	e.h = h or tilesize
 	e.dx = 0
 	e.dy = 0
+
 	e.demeanor = "friendly" -- friendly, neutral, or hostile
 	e.direction = "left"
 	e.looks_at_player = false
 
 	e.level = 100
 	e.xp = 10
-	e.health = 100
-	e.mana = 100
+	e.health = 80
+	e.mana = 50
 
-	e.is_hovered = false
-	e.is_selected = false
 
-	e.range = 0*tilesize
+	e.sight_range = 0*tilesize
+	e.attack_range = 0*tilesize
+
 	e.speed = 40
 	e.can_move_left = true
 	e.can_move_right = true
@@ -61,8 +62,18 @@ function Entity:draw()
 	end
 
 	if is_debugging then
+		-- draws statbars
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.rectangle("fill", self.x, self.y-20, self.w, 10)
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.rectangle("fill", self.x, self.y-20, self.health/100*self.w, 5)
+		love.graphics.setColor(0, 200, 255)
+		love.graphics.rectangle("fill", self.x, self.y-15, self.mana/100*self.w, 5)
+		love.graphics.setColor(255, 255, 255)
+
 		-- vision range
-		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.range)
+		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.sight_range)
+		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.attack_range)
 
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print("("..math.floor(self.x)..","..math.floor(self.y)..")", self.x+self.w, self.y)
@@ -81,9 +92,8 @@ function Entity:draw()
 		if self.can_move_down then love.graphics.circle("fill", self.x+self.w/2, self.y+self.h, 5, 4) end
 		if self.can_move_left then love.graphics.circle("fill", self.x, self.y+self.h/2, 5, 4) end
 		if self.can_move_right then love.graphics.circle("fill", self.x+self.w, self.y+self.h/2, 5, 4) end
-
-		love.graphics.setColor(255, 255, 255, 255)
 	end
+	love.graphics.setColor(255, 255, 255, 255)
 end
 
 function Entity:update(dt)
@@ -106,6 +116,12 @@ function Entity:update(dt)
 
 	for k,v in ipairs(Entities) do
 		if v ~= self then
+			-- takes damage if within attack range of enemy
+			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < v.attack_range and v.demeanor == "hostile" and self.demeanor ~= "hostile" then
+				self.health = self.health - 30*dt
+			end
+
+			-- stops movement on collision
 			if collision(v, self.hitbox_up) then
 				self.can_move_up = false
 			end
@@ -154,7 +170,7 @@ function Entity:enemyAI(name, dt)
 	end
 
 	if ai_type == "simplefollow" then
-		if math.distance(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2) < self.range then
+		if math.distance(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2) < self.sight_range then
 			-- moves in direction of player
 			local angle = math.angle(self.x, self.y, player.x, player.y)
 			self.dx = math.cos(angle) * (dt * self.speed)
