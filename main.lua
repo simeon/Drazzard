@@ -5,6 +5,8 @@ function love.load(arg)
 
 	font = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
 	love.graphics.setFont(font)
+	cursor = love.mouse.newCursor("misc/sword_cursor.png", 0, 0)
+	love.mouse.setCursor(cursor)
 
 	-- global variables
 	printvar = ""
