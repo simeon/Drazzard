@@ -15,7 +15,7 @@ function Entity.create(n, x, y)
 
 	e.demeanor = "friendly" -- friendly, neutral, or hostile
 	e.direction = "left"
-	e.looks_at_player = false
+	e.looks_at_target = false
 
 	e.level = 100
 	e.xp = 10
@@ -25,6 +25,7 @@ function Entity.create(n, x, y)
 
 	e.sight_range = 0*tilesize
 	e.attack_range = 0*tilesize
+	e.target = player
 
 	e.speed = 40
 	e.can_move_left = true
@@ -86,7 +87,7 @@ function Entity:draw()
 		love.graphics.rectangle("fill", self.hitbox_left.x, self.hitbox_left.y, self.hitbox_left.w, self.hitbox_left.h)
 		love.graphics.rectangle("fill", self.hitbox_right.x, self.hitbox_right.y, self.hitbox_right.w, self.hitbox_right.h)
 
-		-- draws where player can move
+		-- draws where entity can move
 		love.graphics.setColor(255, 255, 0, 255)
 		if self.can_move_up then love.graphics.circle("fill", self.x+self.w/2, self.y, 5, 4) end
 		if self.can_move_down then love.graphics.circle("fill", self.x+self.w/2, self.y+self.h, 5, 4) end
@@ -98,7 +99,7 @@ end
 
 function Entity:update(dt)
 	-- updates direction
-	if self ~= player and self.looks_at_player then
+	if self ~= player and self.looks_at_target then
 		if player.x+player.w/2 < self.x+self.w/2 then
 			self.direction = "left"
 		else
@@ -164,15 +165,15 @@ function Entity:update(dt)
 end
 
 function Entity:enemyAI(name, dt)
-	self.looks_at_player = true
+	self.looks_at_target = true
 	if name == "blueslime" then
 		ai_type = "simplefollow"
 	end
 
 	if ai_type == "simplefollow" then
-		if math.distance(self.x+self.w/2, self.y+self.h/2, player.x+player.w/2, player.y+player.h/2) < self.sight_range then
-			-- moves in direction of player
-			local angle = math.angle(self.x, self.y, player.x, player.y)
+		if math.distance(self.x+self.w/2, self.y+self.h/2, self.target.x+self.target.w/2, self.target.y+self.target.h/2) < self.sight_range then
+			-- moves in direction of target
+			local angle = math.angle(self.x, self.y, self.target.x, self.target.y)
 			self.dx = math.cos(angle) * (dt * self.speed)
 			self.dy = math.sin(angle) * (dt * self.speed)
 			printvar = angle

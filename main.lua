@@ -25,11 +25,10 @@ function love.load(arg)
 	Objects = {}
 	Entities = {}
 
-	loadMap()
-
 	LoopTables = { Tiles, Objects, Entities }
 	player = Entity.create("soldier", 2*tilesize, 4*tilesize)
 	table.insert(Entities, player)
+	loadMap()
 end
 
 function love.update(dt)
