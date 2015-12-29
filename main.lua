@@ -27,12 +27,14 @@ function love.load(arg)
 	Entities = {}
 
 	LoopTables = { Tiles, Objects, Entities }
-	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
+	player = Entity.create("bluemage", 53*tilesize, 40*tilesize)
+	player.demeanor = "friendly"
 	table.insert(Entities, player)
-	loadMap("colosseum")
+	loadMap("village")
 end
 
 function love.update(dt)
+	require("lurker").update()
 	-- game over check
 	printvar = #Objects
 	if player.health <= 0 then
@@ -67,8 +69,8 @@ function love.draw()
 		translateY = love.graphics.getHeight()/2-player.y-player.h/2
 		love.graphics.translate(translateX, translateY)
 	end
-	----------------------------------------------------------------
-	love.graphics.draw(img, -1700, -1300)
+	--------------------------------------------s--------------------
+	love.graphics.draw(map_image, 0, 0)
 
 	for k,v in ipairs(LoopTables) do
 		for i,j in ipairs(v) do
@@ -87,7 +89,7 @@ function love.draw()
 end
 
 function readKeys(dt)
-	local speed = 120
+	local speed = 320
 	if love.keyboard.isDown("d") and player.can_move_right then
 		player.dx = speed*dt
 	end
@@ -222,30 +224,34 @@ function loadMap(name)
 	table.insert(Entities, enemy)]]
 
 
-	if name == "colosseum" then
-		img = love.graphics.newImage("maps/village.png")
+	if name == "village" then
+		map_image = love.graphics.newImage("maps/village.png")
+
+		-- villagers
 		table.insert(Entities, Entity.create("soldier", -9*tilesize, -6*tilesize))
 		table.insert(Entities, Entity.create("soldier", 20*tilesize, -7*tilesize))
 		table.insert(Entities, Entity.create("soldier", 23*tilesize, -7*tilesize))
-		--[[ main center
-		for i=-15,14 do
-			for j=-8,7 do
-				t = Tile.create("sand", i*tilesize, j*tilesize)
-				table.insert(Tiles, t)
-			end
-		end
 
-		table.insert(Objects, Object.create("fountain", -.5*tilesize, -.5*tilesize))
-		table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
+		-- upper left house
+		table.insert(Objects, Object.create("wall", 40*tilesize, 33*tilesize, 7*tilesize, 3*tilesize))
+		table.insert(Objects, Object.create("wall", 40*tilesize, 36*tilesize, 1*tilesize, 4*tilesize))
+		table.insert(Objects, Object.create("wall", 46*tilesize, 36*tilesize, 1*tilesize, 4*tilesize))
+		table.insert(Objects, Object.create("wall", 41*tilesize, 39*tilesize, 2*tilesize, 1*tilesize))
+		table.insert(Objects, Object.create("wall", 44*tilesize, 39*tilesize, 2*tilesize, 1*tilesize))
 
-		-- left
-		table.insert(Objects, Tile.create("stone", -13*tilesize, -7*tilesize))
-		-- center
-		for i=0,23 do
-			table.insert(Entities, Entity.create("soldier", -12*tilesize + i*tilesize, -10*tilesize))
-			table.insert(Objects, Tile.create("stone", -12*tilesize + i*tilesize, -9*tilesize))
-			table.insert(Objects, Tile.create("stone", -12*tilesize + i*tilesize, 8*tilesize))
-		end]]
+		-- lower left house
+		table.insert(Objects, Object.create("wall", 40*tilesize, 45*tilesize, 9*tilesize, 9*tilesize))
+		table.insert(Objects, Object.create("wall", 36*tilesize, 54*tilesize, 13*tilesize, 7*tilesize))
+
+		-- uppper right house
+		table.insert(Objects, Object.create("wall", 70*tilesize, 33*tilesize, 23*tilesize, 8*tilesize))
+		table.insert(Objects, Object.create("wall", 84*tilesize, 41*tilesize, 9*tilesize, 8*tilesize))
+		
+		enemy = Entity.create("blueslime", 50*tilesize, 40*tilesize)
+		enemy.demeanor = "hostile"
+		enemy.sight_range = 20*tilesize
+		enemy.attack_range = 1.5*tilesize
+		table.insert(Entities, enemy)
 	end
 
 end

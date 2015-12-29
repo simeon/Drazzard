@@ -1,7 +1,7 @@
 Object = {}
 Object.__index = Object
 
-function Object.create(t, x, y)
+function Object.create(t, x, y, w, h)
 	local e = {}   
 	setmetatable(e, Object)
 	
@@ -36,8 +36,8 @@ function Object:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 
 	if is_debugging then
-		love.graphics.setColor(255, 255, 255, 80)
-		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+		love.graphics.setColor(255, 100, 255, 200)
+		love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 		love.graphics.setColor(255, 255, 255, 255)
 		--love.graphics.print("("..self.x.."\n"..self.y..")", self.x, self.y)
 	end

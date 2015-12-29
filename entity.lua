@@ -15,7 +15,7 @@ function Entity.create(n, x, y)
 
 	e.attack = 10
 	
-	e.demeanor = "friendly" -- friendly, neutral, or hostile
+	e.demeanor = "neutral" -- friendly, neutral, or hostile
 	e.direction = "left"
 	e.looks_at_target = false
 
