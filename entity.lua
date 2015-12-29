@@ -78,7 +78,7 @@ function Entity:draw()
 		love.graphics.circle("line", self.x+self.w/2, self.y+self.h/2, self.attack_range)
 
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
-		love.graphics.print("("..math.floor(self.x)..","..math.floor(self.y)..")", self.x+self.w, self.y)
+		love.graphics.print("("..math.floor(self.x/tilesize)..", "..math.floor(self.y/tilesize)..")", self.x+self.w, self.y)
 
 		if self.demeanor == "friendly" then	love.graphics.setColor(0, 255, 0) elseif self.demeanor == "neutral" then love.graphics.setColor(255, 255, 255, 100) elseif self.demeanor == "hostile" then love.graphics.setColor(255, 0, 0) end
 

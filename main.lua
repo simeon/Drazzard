@@ -27,7 +27,7 @@ function love.load(arg)
 	Entities = {}
 
 	LoopTables = { Tiles, Objects, Entities }
-	player = Entity.create("bluemage", 2*tilesize, 4*tilesize)
+	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
 	table.insert(Entities, player)
 	loadMap("colosseum")
 end
@@ -68,6 +68,7 @@ function love.draw()
 		love.graphics.translate(translateX, translateY)
 	end
 	----------------------------------------------------------------
+	love.graphics.draw(img, -1700, -1300)
 
 	for k,v in ipairs(LoopTables) do
 		for i,j in ipairs(v) do
@@ -222,8 +223,12 @@ function loadMap(name)
 
 
 	if name == "colosseum" then
-		-- main center
-		for i=-12,11 do
+		img = love.graphics.newImage("maps/village.png")
+		table.insert(Entities, Entity.create("soldier", -9*tilesize, -6*tilesize))
+		table.insert(Entities, Entity.create("soldier", 20*tilesize, -7*tilesize))
+		table.insert(Entities, Entity.create("soldier", 23*tilesize, -7*tilesize))
+		--[[ main center
+		for i=-15,14 do
 			for j=-8,7 do
 				t = Tile.create("sand", i*tilesize, j*tilesize)
 				table.insert(Tiles, t)
@@ -233,10 +238,14 @@ function loadMap(name)
 		table.insert(Objects, Object.create("fountain", -.5*tilesize, -.5*tilesize))
 		table.insert(Objects, Object.create("sign", 7*tilesize, 3*tilesize))
 
+		-- left
+		table.insert(Objects, Tile.create("stone", -13*tilesize, -7*tilesize))
+		-- center
 		for i=0,23 do
-			table.insert(Objects, Object.create("tree", -12*tilesize + i*tilesize, -8*tilesize))
+			table.insert(Entities, Entity.create("soldier", -12*tilesize + i*tilesize, -10*tilesize))
 			table.insert(Objects, Tile.create("stone", -12*tilesize + i*tilesize, -9*tilesize))
-		end
+			table.insert(Objects, Tile.create("stone", -12*tilesize + i*tilesize, 8*tilesize))
+		end]]
 	end
 
 end
