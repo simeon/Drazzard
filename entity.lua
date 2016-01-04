@@ -15,7 +15,7 @@ function Entity.create(n, x, y)
 
 	e.attack = 10
 	
-	e.demeanor = "neutral" -- friendly, neutral, or hostile
+	e.team = "none"
 	e.direction = "left"
 	e.looks_at_target = false
 
@@ -80,7 +80,7 @@ function Entity:draw()
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print("("..math.floor(self.x/tilesize)..", "..math.floor(self.y/tilesize)..")", self.x+self.w, self.y)
 
-		if self.demeanor == "friendly" then	love.graphics.setColor(0, 255, 0) elseif self.demeanor == "neutral" then love.graphics.setColor(255, 255, 255, 100) elseif self.demeanor == "hostile" then love.graphics.setColor(255, 0, 0) end
+		if self.demeanor == "green" then	love.graphics.setColor(0, 255, 0) elseif self.demeanor == "none" then love.graphics.setColor(255, 255, 255, 100) elseif self.demeanor == "red" then love.graphics.setColor(255, 0, 0) end
 
 		-- collision hitboxes
 		love.graphics.rectangle("fill", self.hitbox_up.x, self.hitbox_up.y, self.hitbox_up.w, self.hitbox_up.h)
@@ -128,17 +128,6 @@ function Entity:update(dt)
 
 	for k,v in ipairs(Entities) do
 		if v ~= self then
-			-- takes damage if within attack range of enemy
-			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < v.attack_range and v.demeanor == "hostile" then
-				if self.demeanor == "hostile" then
-					-- do nothing, both are hostile
-				elseif self.demeanor == "neutral" then
-					-- do nothing, entity doesn't care
-				elseif self.demeanor == "friendly" then
-					self.health = self.health - v.attack*dt
-				end
-			end
-
 			-- stops movement on collision
 			if collision(v, self.hitbox_up) then
 				self.can_move_up = false
@@ -202,6 +191,12 @@ function Entity:enemyAI(name, dt)
 
 		end
 	end
+end
+
+function Entity:launchProjectile()
+	obj = Object.create("meteor", self.x, self.y, tilesize, tilesize)
+	obj.dx = 100*love.timer.getDelta()
+	table.insert(Objects, obj)
 end
 
 function Entity:destroy()

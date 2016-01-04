@@ -11,6 +11,9 @@ function Object.create(t, x, y, w, h)
 	e.w = w or tilesize
 	e.h = h or tilesize
 
+	e.dx = 0
+	e.dy = 0
+
 	e.is_solid = true
 	e.opacity = 255
 	e.is_fading = false
@@ -51,6 +54,9 @@ function Object:update(dt)
 			self:destroy()
 		end
 	end
+
+	self.x = self.x + self.dx
+	self.y = self.y + self.dy
 end
 
 function Object:destroy()

@@ -28,13 +28,12 @@ function love.load(arg)
 
 	LoopTables = { Tiles, Objects, Entities }
 	player = Entity.create("bluemage", 53*tilesize, 40*tilesize)
-	player.demeanor = "friendly"
+	player.demeanor = "green"
 	table.insert(Entities, player)
 	loadMap("village")
 end
 
 function love.update(dt)
-	require("lurker").update()
 	-- game over check
 	printvar = #Objects
 	if player.health <= 0 then
@@ -138,6 +137,9 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button, istouch)
+	if button == 1 then
+		player:launchProjectile()
+	end
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -248,7 +250,7 @@ function loadMap(name)
 		table.insert(Objects, Object.create("wall", 84*tilesize, 41*tilesize, 9*tilesize, 8*tilesize))
 		
 		enemy = Entity.create("blueslime", 50*tilesize, 40*tilesize)
-		enemy.demeanor = "hostile"
+		enemy.demeanor = "red"
 		enemy.sight_range = 20*tilesize
 		enemy.attack_range = 1.5*tilesize
 		table.insert(Entities, enemy)
