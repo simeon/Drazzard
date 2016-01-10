@@ -2,9 +2,13 @@ function love.load(arg)
 	require 'tile'
 	require 'object'
 	require 'entity'
+	require 'button'
 
-	font_karmatic_lg = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 50)
-	font_karmatic_md = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
+	ui_font = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
+
+	title_font = love.graphics.newFont("misc/Lady_Radical.ttf", 70)
+	button_font = love.graphics.newFont("misc/Lady_Radical.ttf", 35)
+
 
 	h1 = love.graphics.newFont("misc/Roboto-Black.ttf", 35)
 	h2 = love.graphics.newFont("misc/Roboto-Bold.ttf", 30)
@@ -13,12 +17,14 @@ function love.load(arg)
 	h5 = love.graphics.newFont("misc/Roboto-Regular.ttf", 15)
 	h6 = love.graphics.newFont("misc/Roboto-Regular.ttf", 10)
 
-	love.graphics.setFont(font_karmatic_md)
+	love.graphics.setFont(ui_font)
 	cursor = love.mouse.newCursor("misc/wand_cursor.png", 0, 0)
 	love.mouse.setCursor(cursor)
 
+	love.graphics.setBackgroundColor(30, 25, 35)
+
 	-- global variables
-	gamestate = "credits"
+	gamestate = "mainmenu"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -26,17 +32,29 @@ function love.load(arg)
 	is_camfocused = true
 	is_paused = false
 
+
 	-- timer
 	timer = 0
 	timerEnd = .5
 	imageState1 = true
 
-	-- world
+	-- tables
 	Tiles = {}
 	Objects = {}
 	Entities = {}
+	Buttons = {}
 
-	LoopTables = { Tiles, Objects, Entities }
+	LoopTables = { Tiles, Objects, Entities, Buttons }
+
+	-- buttons
+	start_button = Button.create("start", 200, 150)
+	settings_button = Button.create("settings", 200, 250)
+	credits_button = Button.create("credits", 200, 350, "credits")
+
+
+
+
+	-- world	
 	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
 	player.demeanor = "green"
 	table.insert(Entities, player)
@@ -44,31 +62,42 @@ function love.load(arg)
 end
 
 function love.update(dt)
-	-- game over check
-	printvar = #Objects
-	if player.health <= 0 then
-		player.health = 0
-		is_paused = true
-	end
 
-	if not is_paused then
-		if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
-		readKeys(dt)
+	if gamestate == "game" then
+		-- game over check
+		printvar = #Objects
+		if player.health <= 0 then
+			player.health = 0
+			is_paused = true
+		end
 
-		for k,v in ipairs(LoopTables) do
-			for i,j in ipairs(v) do
-				j:update(dt)
+		if not is_paused then
+			if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
+			readKeys(dt)
+
+			for k,v in ipairs(LoopTables) do
+				for i,j in ipairs(v) do
+					j:update(dt)
+				end
+			end
+
+			timer = timer + dt
+			if timer >= timerEnd then
+				timer = 0
+				imageState1 = not imageState1
 			end
 		end
-
-
-
-		timer = timer + dt
-		if timer >= timerEnd then
-			timer = 0
-			imageState1 = not imageState1
+	elseif gamestate == "mainmenu" then
+		Buttons = {
+			start_button,
+			settings_button,
+			credits_button
+		}
+		for k,v in ipairs(Buttons) do
+			v:update()
 		end
 	end
+
 end
 
 function love.draw()
@@ -95,6 +124,8 @@ function love.draw()
 		----------------------------------------------------------------
 		if is_camfocused then love.graphics.pop() end
 		drawHUD()
+	elseif gamestate == "mainmenu" then
+		drawMainMenu()
 	elseif gamestate == "credits" then
 		drawCreditScreen()
 	end
@@ -274,6 +305,26 @@ function loadMap(name)
 
 end
 
+function drawMainMenu()
+	love.graphics.setFont(title_font)
+	-- text shadow
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.printf("Drazzard", 0, 25, love.graphics.getWidth(),"center")
+	-- main title text
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.printf("Drazzard", 0, 15, love.graphics.getWidth(),"center")
+
+	
+	-- buttons 
+	for k,v in ipairs(Buttons) do
+		centerX(v)
+		v:draw()
+	end
+
+	love.graphics.setFont(ui_font)
+end
+
+
 function drawCreditScreen()
 	-- title
 	love.graphics.setFont(font_karmatic_lg)
@@ -314,6 +365,20 @@ function drawCreditScreen()
 	love.graphics.setFont(font_karmatic_md)
 end
 
+function centerX(thing)
+	thing.x = love.graphics.getWidth()/2-thing.w/2
+end
+
 function math.distance(x1,y1, x2,y2) return ((x2-x1)^2+(y2-y1)^2)^0.5 end
 
 function math.angle(x1,y1, x2,y2) return math.atan2(y2-y1, x2-x1) end
+
+function mouseOverlaps(thing)
+	local mX = love.mouse.getX()
+	local mY = love.mouse.getY()
+
+	return mX > thing.x and
+		   mX < thing.x + thing.w and
+		   mY > thing.y and
+		   mY < thing.y + thing.h
+end
