@@ -3,12 +3,22 @@ function love.load(arg)
 	require 'object'
 	require 'entity'
 
-	font = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
-	love.graphics.setFont(font)
+	font_karmatic_lg = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 50)
+	font_karmatic_md = love.graphics.newFont("misc/Karmatic_Arcade.ttf", 10)
+
+	h1 = love.graphics.newFont("misc/Roboto-Black.ttf", 35)
+	h2 = love.graphics.newFont("misc/Roboto-Bold.ttf", 30)
+	h3 = love.graphics.newFont("misc/Roboto-Medium.ttf", 25)
+	h4 = love.graphics.newFont("misc/Roboto-Regular.ttf", 20)
+	h5 = love.graphics.newFont("misc/Roboto-Regular.ttf", 15)
+	h6 = love.graphics.newFont("misc/Roboto-Regular.ttf", 10)
+
+	love.graphics.setFont(font_karmatic_md)
 	cursor = love.mouse.newCursor("misc/wand_cursor.png", 0, 0)
 	love.mouse.setCursor(cursor)
 
 	-- global variables
+	gamestate = "credits"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -27,7 +37,7 @@ function love.load(arg)
 	Entities = {}
 
 	LoopTables = { Tiles, Objects, Entities }
-	player = Entity.create("bluemage", 53*tilesize, 40*tilesize)
+	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
 	player.demeanor = "green"
 	table.insert(Entities, player)
 	loadMap("village")
@@ -62,29 +72,35 @@ function love.update(dt)
 end
 
 function love.draw()
-	if is_camfocused then
-		love.graphics.push()
-		translateX = love.graphics.getWidth()/2-player.x-player.w/2
-		translateY = love.graphics.getHeight()/2-player.y-player.h/2
-		love.graphics.translate(translateX, translateY)
-	end
-	--------------------------------------------s--------------------
-	love.graphics.draw(map_image, 0, 0)
 
-	for k,v in ipairs(LoopTables) do
-		for i,j in ipairs(v) do
-			j:draw()
+	if gamestate == "game" then
+		if is_camfocused then
+			love.graphics.push()
+			translateX = love.graphics.getWidth()/2-player.x-player.w/2
+			translateY = love.graphics.getHeight()/2-player.y-player.h/2
+			love.graphics.translate(translateX, translateY)
 		end
+		----------------------------------------------------------------
+		love.graphics.draw(map_image, 0, 0)
+
+		for k,v in ipairs(LoopTables) do
+			for i,j in ipairs(v) do
+				j:draw()
+			end
+		end
+
+
+		love.graphics.circle("fill", 0, 0, 1)
+		love.graphics.circle("line", 0, 0, 4)
+		----------------------------------------------------------------
+		if is_camfocused then love.graphics.pop() end
+		drawHUD()
+	elseif gamestate == "credits" then
+		drawCreditScreen()
 	end
 
-
-	love.graphics.circle("fill", 0, 0, 1)
-	love.graphics.circle("line", 0, 0, 4)
-	----------------------------------------------------------------
-	if is_camfocused then love.graphics.pop() end
-	drawHUD()
 	love.graphics.print(love.timer.getFPS(), 10, 10)
-	love.graphics.print(printvar, 10, 30)
+	love.graphics.print(gamestate, 10, 30)
 end
 
 function readKeys(dt)
@@ -256,6 +272,46 @@ function loadMap(name)
 		table.insert(Entities, enemy)
 	end
 
+end
+
+function drawCreditScreen()
+	-- title
+	love.graphics.setFont(font_karmatic_lg)
+	love.graphics.printf("Credits", 0, 15, love.graphics.getWidth(),"center")
+
+	-- body
+	love.graphics.setColor(255, 255, 255, 160)
+	love.graphics.setFont(h1)
+	love.graphics.printf("~ PROGRAMMING ~", 0, 100, love.graphics.getWidth(), "center")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(h2)
+	love.graphics.printf("Simeon Videnov", 0, 140, love.graphics.getWidth(), "center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("( http://simeon.io )", 0, 170, love.graphics.getWidth(), "center")
+	
+	
+	love.graphics.setColor(255, 255, 255, 160)
+	love.graphics.setFont(h1)
+	love.graphics.printf("~ ART & SPRITES ~", 0, 210, love.graphics.getWidth(), "center")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(h2)
+	love.graphics.printf("DawnBringer & DragonDePlatino", 0, 250, love.graphics.getWidth(), "center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("( http://pixeljoint.com/p/23821.htm )", 0, 280, love.graphics.getWidth(), "center")
+	love.graphics.printf("( http://opengameart.org/users/dragondeplatino )", 0, 300, love.graphics.getWidth(), "center")
+
+	love.graphics.setColor(255, 255, 255, 160)
+	love.graphics.setFont(h1)
+	love.graphics.printf("~ MUSIC & SFX ~", 0, 340, love.graphics.getWidth(), "center")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(h2)
+	love.graphics.printf("---", 0, 380, love.graphics.getWidth(), "center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("( --- )", 0, 410, love.graphics.getWidth(), "center")
+
+
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(font_karmatic_md)
 end
 
 function math.distance(x1,y1, x2,y2) return ((x2-x1)^2+(y2-y1)^2)^0.5 end

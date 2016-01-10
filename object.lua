@@ -15,6 +15,7 @@ function Object.create(t, x, y, w, h)
 	e.dy = 0
 
 	e.is_solid = true
+	e.is_explosive = false
 	e.opacity = 255
 	e.is_fading = false
 
@@ -47,6 +48,16 @@ function Object:draw()
 end
 
 function Object:update(dt)
+	-- prevent movement on collision against objects
+	for k,v in ipairs(Objects) do
+		if v ~= self and v.is_solid then
+			if collision(v, self) then
+				self.dx = 0
+				self.dy = 0
+			end
+		end
+	end
+
 	-- if has been marked to disappear gracefully
 	if self.is_fading then
 		self.opacity = self.opacity - 30*dt

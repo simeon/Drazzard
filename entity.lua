@@ -193,9 +193,13 @@ function Entity:enemyAI(name, dt)
 	end
 end
 
-function Entity:launchProjectile()
+function Entity:launchProjectile()			
 	obj = Object.create("meteor", self.x, self.y, tilesize, tilesize)
-	obj.dx = 100*love.timer.getDelta()
+	local angle = math.angle(self.x, self.y, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
+	obj.dx = math.cos(angle) * (100*love.timer.getDelta())
+	obj.dy = math.sin(angle) * (100*love.timer.getDelta())
+
+
 	table.insert(Objects, obj)
 end
 
