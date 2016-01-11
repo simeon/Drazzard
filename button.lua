@@ -14,19 +14,26 @@ function Button.create(text, x, y, link, w, h)
 
 	e.is_centered = false
 	e.is_highlighted = false
+
+	e.image = love.graphics.newImage("button.png")
+	e.image:setFilter("nearest", "nearest")
 	return e
 end
 
 function Button:draw()
-	love.graphics.setColor(255, 255, 255, 200)
 
 	if self.is_highlighted then
 		love.graphics.setColor(0, 255, 0)
 	end
-	
-	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+
+	love.graphics.draw(self.image, self.x, self.y, 0, 2, 2)
+	--love.graphics.setColor(255, 255, 255, 200)
+	--love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 	love.graphics.setFont(button_font)
-	love.graphics.printf(self.text, self.x, self.y+3, self.w, "center")
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.printf(self.text, self.x, self.y+7, self.w, "center")
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.printf(self.text, self.x, self.y+10, self.w, "center")
 	love.graphics.setFont(ui_font)
 
 	if is_debugging then

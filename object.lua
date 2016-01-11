@@ -21,6 +21,10 @@ function Object.create(t, x, y, w, h)
 	e.is_fading = false
 	e.fade_rate = 30
 
+	e.is_damaging = false
+	e.collision_damage = 30
+	e.creator = nil
+
 	e.is_highlighted = false
 
 	e.image = love.graphics.newImage("assets/"..e.type..".png")
@@ -56,22 +60,20 @@ function Object:update(dt)
 			if collision(v, self) then
 				self.dx = 0
 				self.dy = 0
-				
 				-- explodes if necessary
-				if self.is_explosive and self.is_solid then
-					explosion_sound:play()
+				self:explode()
+			end
+		end
+	end
 
-					self.image = love.graphics.newImage("assets/explosion.png")
-					self.image2 = love.graphics.newImage("assets/explosion_alt.png")
-					self.is_solid = false
-					self.is_fading = true
-					self.fade_rate = 180
-					for k,v in ipairs(Entities) do
-						if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < 1.5*tilesize then
-							v.health = v.health - 5
-						end
-					end
-				end
+	-- damage against entities
+	if self.is_damaging then
+		for k,v in ipairs(Entities) do
+			if collision(v, self) and v ~= self.creator then
+				self.dx = 0
+				self.dy = 0
+				v.health = v.health - 1
+				self:explode()
 			end
 		end
 	end
@@ -86,6 +88,23 @@ function Object:update(dt)
 
 	self.x = self.x + self.dx*dt
 	self.y = self.y + self.dy*dt
+end
+
+function Object:explode( )
+	if self.is_explosive and self.is_solid then
+		explosion_sound:play()
+
+		self.image = love.graphics.newImage("assets/explosion.png")
+		self.image2 = love.graphics.newImage("assets/explosion_alt.png")
+		self.is_solid = false
+		self.is_fading = true
+		self.fade_rate = 180
+		for k,v in ipairs(Entities) do
+			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < 1.5*tilesize then
+				v.health = v.health - 5
+			end
+		end
+	end
 end
 
 function Object:destroy()

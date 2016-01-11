@@ -15,7 +15,7 @@ function Entity.create(n, x, y)
 
 	e.attack = 10
 	
-	e.team = "none"
+	e.team = "green"
 	e.direction = "left"
 	e.looks_at_target = false
 
@@ -80,7 +80,7 @@ function Entity:draw()
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		love.graphics.print("("..math.floor(self.x/tilesize)..", "..math.floor(self.y/tilesize)..")", self.x+self.w, self.y)
 
-		if self.demeanor == "green" then	love.graphics.setColor(0, 255, 0) elseif self.demeanor == "none" then love.graphics.setColor(255, 255, 255, 100) elseif self.demeanor == "red" then love.graphics.setColor(255, 0, 0) end
+		if self.team == "green" then	love.graphics.setColor(0, 255, 0) elseif self.team == "none" then love.graphics.setColor(255, 255, 255, 100) elseif self.team == "red" then love.graphics.setColor(255, 0, 0) end
 
 		-- collision hitboxes
 		love.graphics.rectangle("fill", self.hitbox_up.x, self.hitbox_up.y, self.hitbox_up.w, self.hitbox_up.h)
@@ -207,7 +207,9 @@ function Entity:launchProjectile()
 		obj.dx = math.cos(angle) * 400
 		obj.dy = math.sin(angle) * 400
 
+		obj.is_damaging = true
 		obj.is_explosive = true
+		obj.creator = self
 		table.insert(Objects, obj)
 
 		self.mana = self.mana - 10

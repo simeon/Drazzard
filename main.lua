@@ -23,6 +23,14 @@ function love.load(arg)
 
 	love.graphics.setBackgroundColor(30, 25, 35)
 
+
+	-- visuals
+	mainmenu_image = love.graphics.newImage("DrazzardLogo.png")
+	mainmenu_image:setFilter("nearest", "nearest")
+	innerGear = love.graphics.newImage("logos/innerGear.png")
+	innerGear:setFilter("nearest", "nearest")
+	outerGear = love.graphics.newImage("logos/outerGear.png")
+	outerGear:setFilter("nearest", "nearest")
 	-- sounds
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
 	click_sound = love.audio.newSource("audio/click.wav", "static")
@@ -46,7 +54,7 @@ function love.load(arg)
 	timer = 0
 	timerEnd = .5
 	imageState1 = true
-
+	
 	-- tables
 	Tiles = {}
 	Objects = {}
@@ -56,15 +64,11 @@ function love.load(arg)
 	LoopTables = { Tiles, Objects, Entities, Buttons }
 
 	-- buttons
-	start_button = Button.create("start", 200, 150, "game")
-	controls_button = Button.create("how to play", 200, 250, "controls")
+	start_button = Button.create("play", 200, 190, "game")
+	controls_button = Button.create("how to play", 200, 270, "controls")
 	credits_button = Button.create("credits", 200, 350, "credits")
 	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
 
-
-	sim = love.graphics.newImage("logos/SimeonLogo.png")
-	innerGear = love.graphics.newImage("logos/innerGear.png")
-	outerGear = love.graphics.newImage("logos/outerGear.png")
 
 	-- world	
 	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
@@ -102,6 +106,9 @@ function love.update(dt)
 			end
 		end
 	elseif gamestate == "mainmenu" then
+		-- title animation
+		timer = timer + dt
+
 		menu_music:play()
 
 		Buttons = {
@@ -204,6 +211,8 @@ function love.keypressed(key, scancode, isrepeat)
 		is_debugging = not is_debugging
 	end
 	if key == "r" then
+		menu_music:stop()
+		game_music:stop()
 		love.load()
 	end
 end
@@ -327,9 +336,18 @@ function loadMap(name)
 		-- bottom wall
 		table.insert(Objects, Object.create("wall", 0*tilesize, 29*tilesize, 30*tilesize, 1*tilesize))
 
+		npc = Entity.create("soldier", 2*tilesize, 3*tilesize)
+		npc.team = "red"
+		table.insert(Entities, npc)
+
+		npc2 = Entity.create("soldier", 5*tilesize, 5*tilesize)
+		npc2.team = "red"
+		table.insert(Entities, npc2)
+
+		table.insert(Objects, Object.create("rock", 5*tilesize, 10*tilesize))
+
 
 		--[[ villagers
-		table.insert(Entities, Entity.create("soldier", -9*tilesize, -6*tilesize))
 		table.insert(Entities, Entity.create("soldier", 20*tilesize, -7*tilesize))
 		table.insert(Entities, Entity.create("soldier", 23*tilesize, -7*tilesize))
 
@@ -358,13 +376,16 @@ function loadMap(name)
 end
 
 function drawMainMenu()
+	-- background image
+	love.graphics.draw(mainmenu_image, 0, -260, 0, love.graphics.getWidth()/768, 1)
+
 	love.graphics.setFont(title_font)
 	-- text shadow
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.printf("DRAZZARD", 0, 30, love.graphics.getWidth(),"center")
+	love.graphics.setColor(0, 0, 0, 150)
+	love.graphics.printf("DRAZZARD", 0, 30+8*math.sin(timer), love.graphics.getWidth(),"center")
 	-- main title text
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.printf("DRAZZARD", 0, 15, love.graphics.getWidth(),"center")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.printf("DRAZZARD", 0, 15+5*math.sin(timer), love.graphics.getWidth(),"center")
 
 	
 	-- buttons 
@@ -372,7 +393,6 @@ function drawMainMenu()
 		centerX(v)
 		v:draw()
 	end
-
 	love.graphics.setFont(ui_font)
 end
 
@@ -410,7 +430,7 @@ function drawCreditScreen()
 
 	-- left column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Idea and Programming", 0, 100, love.graphics.getWidth()/2,"center")
+	love.graphics.printf("Concept and Programming", 0, 100, love.graphics.getWidth()/2,"center")
 	love.graphics.setFont(h4)
 	love.graphics.printf("Simeon Videnov", 0, 160, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 130)
@@ -440,8 +460,13 @@ function drawMinimap()
 		love.graphics.rectangle("line", 10+v.x/16, 10+v.y/16, v.w/16, v.h/16)
 	end
 	-- players
-	love.graphics.setColor(0, 255, 0)
 	for k,v in ipairs(Entities) do
+		if v.team == "red" then
+			love.graphics.setColor(255, 0, 0)
+		elseif v.team == "green" then
+			love.graphics.setColor(0, 255, 0)
+		end
+
 		love.graphics.circle("line", 10+v.x/16, 10+v.y/16, 1)
 	end
 	love.graphics.setColor(255, 255, 255)
