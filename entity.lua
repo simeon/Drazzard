@@ -19,10 +19,10 @@ function Entity.create(n, x, y)
 	e.direction = "left"
 	e.looks_at_target = false
 
-	e.level = 100
-	e.xp = 10
-	e.health = 80
-	e.mana = 50
+	e.health = 100
+	e.mana = 100
+	e.health_regen_rate = 1
+	e.mana_regen_rate = 5
 
 	e.sight_range = 0*tilesize
 	e.attack_range = 0*tilesize
@@ -99,6 +99,13 @@ function Entity:draw()
 end
 
 function Entity:update(dt)
+	if self.health < 100 then
+		self.health = self.health + self.health_regen_rate*dt
+	end
+	if self.mana < 100 then
+		self.mana = self.mana + self.mana_regen_rate*dt
+	end
+
 	-- death check
 	if self ~= player and self.health <= 0 then
 		self.health = 0
@@ -194,7 +201,7 @@ function Entity:enemyAI(name, dt)
 end
 
 function Entity:launchProjectile()
-	if self.mana > 0 then
+	if self.mana >= 10 then
 		local angle = math.angle(self.x, self.y, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
 		obj = Object.create("meteor", self.x + tilesize*math.cos(angle), self.y + tilesize*math.sin(angle), tilesize, tilesize)
 		obj.dx = math.cos(angle) * 400
@@ -203,7 +210,7 @@ function Entity:launchProjectile()
 		obj.is_explosive = true
 		table.insert(Objects, obj)
 
-		self.mana = self.mana - 1
+		self.mana = self.mana - 10
 	end
 end
 

@@ -27,9 +27,12 @@ function love.load(arg)
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
 	click_sound = love.audio.newSource("audio/click.wav", "static")
 
+	game_music = love.audio.newSource("audio/Jaunty Gumption.mp3")
+
+
 
 	-- global variables
-	gamestate = "game"
+	gamestate = "credits"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -72,6 +75,7 @@ end
 function love.update(dt)
 
 	if gamestate == "game" then
+		game_music:play()
 		-- game over check
 		printvar = #Objects
 		if player.health <= 0 then
@@ -298,13 +302,10 @@ function mouseHovers(obj)
 end
 
 function drawHUD()
-	love.graphics.print("Lv. "..player.level, love.graphics.getWidth()/2-50, love.graphics.getHeight()-40)
-	love.graphics.setColor(255, 255, 0)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-25, player.xp, 5)
 	love.graphics.setColor(200, 0, 0)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-20, player.health, 10)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-30, player.health, 10)
 	love.graphics.setColor(0, 200, 200)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-10, player.mana, 10)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-20, player.mana, 10)
 	love.graphics.setColor(255, 255, 255)
 end
 
@@ -412,14 +413,11 @@ function drawCreditScreen()
 	love.graphics.printf("( http://simeon.io )", love.graphics.getWidth()/3, 185, love.graphics.getWidth()/3,"center")
 	love.graphics.setColor(255, 255, 255, 255)
 
-	-- right column
+	-- left column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Music", 2*love.graphics.getWidth()/3, 100, love.graphics.getWidth()/3,"center")
-	love.graphics.setFont(h3)
-	love.graphics.printf("--", 2*love.graphics.getWidth()/3, 160, love.graphics.getWidth()/3,"center")
-	love.graphics.setColor(255, 255, 255, 130)
-	love.graphics.printf("( -- )", 2*love.graphics.getWidth()/3, 185, love.graphics.getWidth()/3,"center")
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.printf("Music", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2,"center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("\"Jaunty Gumption\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", love.graphics.getWidth()/2, 160, love.graphics.getWidth()/2,"left")
 
 
 
