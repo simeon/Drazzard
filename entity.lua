@@ -28,7 +28,7 @@ function Entity.create(n, x, y)
 	e.attack_range = 0*tilesize
 	e.target = player
 
-	e.speed = 40
+	e.speed = 200
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -193,14 +193,18 @@ function Entity:enemyAI(name, dt)
 	end
 end
 
-function Entity:launchProjectile()			
-	obj = Object.create("meteor", self.x, self.y, tilesize, tilesize)
-	local angle = math.angle(self.x, self.y, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
-	obj.dx = math.cos(angle) * 400
-	obj.dy = math.sin(angle) * 400
+function Entity:launchProjectile()
+	if self.mana > 0 then
+		local angle = math.angle(self.x, self.y, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
+		obj = Object.create("meteor", self.x + tilesize*math.cos(angle), self.y + tilesize*math.sin(angle), tilesize, tilesize)
+		obj.dx = math.cos(angle) * 400
+		obj.dy = math.sin(angle) * 400
 
-	obj.is_explosive = true
-	table.insert(Objects, obj)
+		obj.is_explosive = true
+		table.insert(Objects, obj)
+
+		self.mana = self.mana - 1
+	end
 end
 
 function Entity:destroy()

@@ -23,6 +23,10 @@ function love.load(arg)
 
 	love.graphics.setBackgroundColor(30, 25, 35)
 
+	-- sounds
+	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
+
+
 	-- global variables
 	gamestate = "game"
 	printvar = ""
@@ -170,7 +174,7 @@ function love.draw()
 end
 
 function readKeys(dt)
-	local speed = 320
+	local speed = player.speed
 	if love.keyboard.isDown("d") and player.can_move_right then
 		player.dx = speed*dt
 	end
@@ -347,10 +351,10 @@ function drawMainMenu()
 	love.graphics.setFont(title_font)
 	-- text shadow
 	love.graphics.setColor(0, 0, 0)
-	love.graphics.printf("Drazzard", 0, 25, love.graphics.getWidth(),"center")
+	love.graphics.printf("DRAZZARD", 0, 30, love.graphics.getWidth(),"center")
 	-- main title text
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.printf("Drazzard", 0, 15, love.graphics.getWidth(),"center")
+	love.graphics.printf("DRAZZARD", 0, 15, love.graphics.getWidth(),"center")
 
 	
 	-- buttons 

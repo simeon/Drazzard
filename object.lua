@@ -16,8 +16,10 @@ function Object.create(t, x, y, w, h)
 
 	e.is_solid = true
 	e.is_explosive = false
+
 	e.opacity = 255
 	e.is_fading = false
+	e.fade_rate = 30
 
 	e.is_highlighted = false
 
@@ -56,8 +58,19 @@ function Object:update(dt)
 				self.dy = 0
 				
 				-- explodes if necessary
-				if self.is_explosive then
-					self:destroy()
+				if self.is_explosive and self.is_solid then
+					explosion_sound:play()
+
+					self.image = love.graphics.newImage("assets/explosion.png")
+					self.image2 = love.graphics.newImage("assets/explosion_alt.png")
+					self.is_solid = false
+					self.is_fading = true
+					self.fade_rate = 150
+					for k,v in ipairs(Entities) do
+						if math.distance(v.x, v.y, self.x, self.y) < 2*tilesize then
+							v.health = v.health - 5
+						end
+					end
 				end
 			end
 		end
@@ -65,7 +78,7 @@ function Object:update(dt)
 
 	-- if has been marked to disappear gracefully
 	if self.is_fading then
-		self.opacity = self.opacity - 30*dt
+		self.opacity = self.opacity - self.fade_rate*dt
 		if self.opacity < 0 then
 			self:destroy()
 		end
