@@ -24,7 +24,7 @@ function love.load(arg)
 	love.graphics.setBackgroundColor(30, 25, 35)
 
 	-- global variables
-	gamestate = "credits"
+	gamestate = "game"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -48,12 +48,14 @@ function love.load(arg)
 
 	-- buttons
 	start_button = Button.create("start", 200, 150, "game")
-	settings_button = Button.create("settings", 200, 250)
+	controls_button = Button.create("how to play", 200, 250, "controls")
 	credits_button = Button.create("credits", 200, 350, "credits")
 	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
 
 
 	sim = love.graphics.newImage("logos/SimeonLogo.png")
+	innerGear = love.graphics.newImage("logos/innerGear.png")
+	outerGear = love.graphics.newImage("logos/outerGear.png")
 
 	-- world	
 	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
@@ -91,8 +93,12 @@ function love.update(dt)
 	elseif gamestate == "mainmenu" then
 		Buttons = {
 			start_button,
-			settings_button,
+			controls_button,
 			credits_button
+		}
+	elseif gamestate == "controls" then
+		Buttons = {
+			mainmenu_button
 		}
 	elseif gamestate == "credits" then
 		Buttons = {
@@ -101,7 +107,7 @@ function love.update(dt)
 	elseif gamestate == "splashscreen" then
 		Buttons = {}
 		timer = timer + dt
-		if timer >= 2 then
+		if timer >= 2.5 then
 			timer = 0
 			gamestate = "mainmenu"
 		end
@@ -138,12 +144,16 @@ function love.draw()
 		drawHUD()
 	elseif gamestate == "mainmenu" then
 		drawMainMenu()
+	elseif gamestate == "controls" then
+		drawControlsScreen()
 	elseif gamestate == "credits" then
 		drawCreditScreen()
 	elseif gamestate == "splashscreen" then
-		love.graphics.setColor(255, 255, 255, 100)
+		love.graphics.setColor(255, 255, 255, 255)
 		-- rotates image
-		love.graphics.draw(sim, love.graphics.getWidth()/2-150, love.graphics.getHeight()/2-180)
+		love.graphics.draw(innerGear, love.graphics.getWidth()/2, love.graphics.getHeight()/2-30, 0, 1, 1, 150, 150)
+		love.graphics.draw(outerGear, love.graphics.getWidth()/2, love.graphics.getHeight()/2-30, timer*math.pi/12, 1, 1, 150, 150)
+		love.graphics.draw(outerGear, love.graphics.getWidth()/2, love.graphics.getHeight()/2-310, math.pi/10-timer*math.pi/12, 1, 1, 150, 150)
 		love.graphics.setFont(button_font)
 		love.graphics.printf("http://simeon.io", 0, love.graphics.getHeight()/2+120, love.graphics.getWidth(), "center")
 		love.graphics.setColor(255, 255, 255, 255)
@@ -209,7 +219,7 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button, istouch)
-	if gamestate == "mainmenu" or gamestate == "credits" then
+	if gamestate == "mainmenu" or gamestate == "credits" or gamestate == "controls" then
 		if button == 1 then
 			for k,v in ipairs(Buttons) do
 				if mouseOverlaps(v) then
@@ -292,9 +302,19 @@ end
 function loadMap(name)
 
 	if name == "village" then
-		map_image = love.graphics.newImage("maps/village.png")
+		map_image = love.graphics.newImage("Village.png")
 
-		-- villagers
+		-- top wall
+		table.insert(Objects, Object.create("wall", 0*tilesize, 0*tilesize, 30*tilesize, 1*tilesize))
+		-- left wall
+		table.insert(Objects, Object.create("wall", 0*tilesize, 0*tilesize, 1*tilesize, 30*tilesize))
+		-- right wall
+		table.insert(Objects, Object.create("wall", 29*tilesize, 0*tilesize, 1*tilesize, 30*tilesize))
+		-- bottom wall
+		table.insert(Objects, Object.create("wall", 0*tilesize, 29*tilesize, 30*tilesize, 1*tilesize))
+
+
+		--[[ villagers
 		table.insert(Entities, Entity.create("soldier", -9*tilesize, -6*tilesize))
 		table.insert(Entities, Entity.create("soldier", 20*tilesize, -7*tilesize))
 		table.insert(Entities, Entity.create("soldier", 23*tilesize, -7*tilesize))
@@ -318,7 +338,7 @@ function loadMap(name)
 		enemy.demeanor = "red"
 		enemy.sight_range = 20*tilesize
 		enemy.attack_range = 1.5*tilesize
-		table.insert(Entities, enemy)
+		table.insert(Entities, enemy)]]
 	end
 
 end
@@ -342,6 +362,17 @@ function drawMainMenu()
 	love.graphics.setFont(ui_font)
 end
 
+function drawControlsScreen()
+	-- title
+	love.graphics.setFont(button_font)
+	love.graphics.printf("HOW TO PLAY", 0, 10, love.graphics.getWidth(),"center")
+	love.graphics.setColor(255, 255, 255, 255)
+
+	-- buttons 
+	for k,v in ipairs(Buttons) do
+		v:draw()
+	end
+end
 
 function drawCreditScreen()
 	-- title
@@ -361,7 +392,7 @@ function drawCreditScreen()
 	love.graphics.printf("DragonDePlatino", 0, 220, love.graphics.getWidth()/3,"center")
 	love.graphics.setColor(255, 255, 255, 130)
 	love.graphics.printf("( DawnLike Tileset )", 0, 245, love.graphics.getWidth()/3,"center")
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(255, 255, 255, 255) 
 
 	-- center column
 	love.graphics.setFont(button_font)

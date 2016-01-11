@@ -196,10 +196,10 @@ end
 function Entity:launchProjectile()			
 	obj = Object.create("meteor", self.x, self.y, tilesize, tilesize)
 	local angle = math.angle(self.x, self.y, love.mouse.getX()-translateX, love.mouse.getY()-translateY)
-	obj.dx = math.cos(angle) * (100*love.timer.getDelta())
-	obj.dy = math.sin(angle) * (100*love.timer.getDelta())
+	obj.dx = math.cos(angle) * 400
+	obj.dy = math.sin(angle) * 400
 
-
+	obj.is_explosive = true
 	table.insert(Objects, obj)
 end
 

@@ -54,6 +54,11 @@ function Object:update(dt)
 			if collision(v, self) then
 				self.dx = 0
 				self.dy = 0
+				
+				-- explodes if necessary
+				if self.is_explosive then
+					self:destroy()
+				end
 			end
 		end
 	end
@@ -66,8 +71,8 @@ function Object:update(dt)
 		end
 	end
 
-	self.x = self.x + self.dx
-	self.y = self.y + self.dy
+	self.x = self.x + self.dx*dt
+	self.y = self.y + self.dy*dt
 end
 
 function Object:destroy()

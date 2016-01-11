@@ -18,6 +18,7 @@ function Button.create(text, x, y, link, w, h)
 end
 
 function Button:draw()
+	love.graphics.setColor(255, 255, 255, 200)
 
 	if self.is_highlighted then
 		love.graphics.setColor(0, 255, 0)
