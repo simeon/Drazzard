@@ -33,7 +33,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "credits"
+	gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
