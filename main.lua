@@ -47,9 +47,10 @@ function love.load(arg)
 	LoopTables = { Tiles, Objects, Entities, Buttons }
 
 	-- buttons
-	start_button = Button.create("start", 200, 150)
+	start_button = Button.create("start", 200, 150, "game")
 	settings_button = Button.create("settings", 200, 250)
 	credits_button = Button.create("credits", 200, 350, "credits")
+	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
 
 
 
@@ -93,9 +94,14 @@ function love.update(dt)
 			settings_button,
 			credits_button
 		}
-		for k,v in ipairs(Buttons) do
-			v:update()
-		end
+	elseif gamestate == "credits" then
+		Buttons = {
+			mainmenu_button
+		}
+	end
+
+	for k,v in ipairs(Buttons) do
+		v:update()
 	end
 
 end
@@ -117,7 +123,6 @@ function love.draw()
 				j:draw()
 			end
 		end
-
 
 		love.graphics.circle("fill", 0, 0, 1)
 		love.graphics.circle("line", 0, 0, 4)
@@ -184,7 +189,15 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button, istouch)
-	if button == 1 then
+	if gamestate == "mainmenu" or gamestate == "credits" then
+		if button == 1 then
+			for k,v in ipairs(Buttons) do
+				if mouseOverlaps(v) then
+					if v.link then gamestate = v.link end
+				end
+			end
+		end
+	elseif gamestate == "game" then
 		player:launchProjectile()
 	end
 end
@@ -257,21 +270,6 @@ function drawHUD()
 end
 
 function loadMap(name)
-	--[[npc = Entity.create("soldier", 4*tilesize, 1*tilesize)
-	npc2 = Entity.create("soldier", 4*tilesize, 2*tilesize)
-	npc3 = Entity.create("soldier", 4*tilesize, 4*tilesize)
-	npc4 = Entity.create("soldier", 6*tilesize, 4*tilesize)
-	table.insert(Entities, npc)
-	table.insert(Entities, npc2)
-	table.insert(Entities, npc3)
-	table.insert(Entities, npc4)
-
-	enemy = Entity.create("blueslime", 8*tilesize, 8*tilesize)
-	enemy.demeanor = "hostile"
-	enemy.sight_range = 6*tilesize
-	enemy.attack_range = 1.5*tilesize
-	table.insert(Entities, enemy)]]
-
 
 	if name == "village" then
 		map_image = love.graphics.newImage("maps/village.png")
@@ -327,42 +325,15 @@ end
 
 function drawCreditScreen()
 	-- title
-	love.graphics.setFont(font_karmatic_lg)
-	love.graphics.printf("Credits", 0, 15, love.graphics.getWidth(),"center")
-
-	-- body
-	love.graphics.setColor(255, 255, 255, 160)
-	love.graphics.setFont(h1)
-	love.graphics.printf("~ PROGRAMMING ~", 0, 100, love.graphics.getWidth(), "center")
+	love.graphics.setFont(button_font)
+	love.graphics.printf("CREDITS", 0, -5, love.graphics.getWidth(),"center")
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setFont(h2)
-	love.graphics.printf("Simeon Videnov", 0, 140, love.graphics.getWidth(), "center")
-	love.graphics.setFont(h4)
-	love.graphics.printf("( http://simeon.io )", 0, 170, love.graphics.getWidth(), "center")
-	
-	
-	love.graphics.setColor(255, 255, 255, 160)
-	love.graphics.setFont(h1)
-	love.graphics.printf("~ ART & SPRITES ~", 0, 210, love.graphics.getWidth(), "center")
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setFont(h2)
-	love.graphics.printf("DawnBringer & DragonDePlatino", 0, 250, love.graphics.getWidth(), "center")
-	love.graphics.setFont(h4)
-	love.graphics.printf("( http://pixeljoint.com/p/23821.htm )", 0, 280, love.graphics.getWidth(), "center")
-	love.graphics.printf("( http://opengameart.org/users/dragondeplatino )", 0, 300, love.graphics.getWidth(), "center")
+	love.graphics.setFont(ui_font)
 
-	love.graphics.setColor(255, 255, 255, 160)
-	love.graphics.setFont(h1)
-	love.graphics.printf("~ MUSIC & SFX ~", 0, 340, love.graphics.getWidth(), "center")
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setFont(h2)
-	love.graphics.printf("---", 0, 380, love.graphics.getWidth(), "center")
-	love.graphics.setFont(h4)
-	love.graphics.printf("( --- )", 0, 410, love.graphics.getWidth(), "center")
-
-
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setFont(font_karmatic_md)
+	-- buttons 
+	for k,v in ipairs(Buttons) do
+		v:draw()
+	end
 end
 
 function centerX(thing)
