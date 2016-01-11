@@ -27,15 +27,15 @@ function Button:draw()
 	love.graphics.setFont(button_font)
 	love.graphics.printf(self.text, self.x, self.y+3, self.w, "center")
 	love.graphics.setFont(ui_font)
-	if self.link then love.graphics.printf(self.link, self.x, self.y, self.w, "center") end
 
-	love.graphics.setColor(255, 255, 255)
 	if is_debugging then
+		if self.link then love.graphics.printf(self.link, self.x, self.y, self.w, "center") end
 		love.graphics.setColor(255, 255, 255, 80)
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
-		love.graphics.setColor(255, 255, 255, 255)
 		--love.graphics.print("("..self.x.."\n"..self.y..")", self.x, self.y)
 	end
+	
+	love.graphics.setColor(255, 255, 255)
 end
 
 function Button:update(dt)

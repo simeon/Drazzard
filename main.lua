@@ -24,7 +24,7 @@ function love.load(arg)
 	love.graphics.setBackgroundColor(30, 25, 35)
 
 	-- global variables
-	gamestate = "mainmenu"
+	gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -53,7 +53,7 @@ function love.load(arg)
 	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
 
 
-
+	sim = love.graphics.newImage("SimeonLogo.png")
 
 	-- world	
 	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
@@ -98,6 +98,13 @@ function love.update(dt)
 		Buttons = {
 			mainmenu_button
 		}
+	elseif gamestate == "splashscreen" then
+		Buttons = {}
+		timer = timer + dt
+		if timer >= 2 then
+			timer = 0
+			gamestate = "mainmenu"
+		end
 	end
 
 	for k,v in ipairs(Buttons) do
@@ -133,10 +140,23 @@ function love.draw()
 		drawMainMenu()
 	elseif gamestate == "credits" then
 		drawCreditScreen()
+	elseif gamestate == "splashscreen" then
+		love.graphics.setColor(255, 255, 255, 100)
+		-- rotates image
+		love.graphics.draw(sim, love.graphics.getWidth()/2-150, love.graphics.getHeight()/2-180)
+		love.graphics.setFont(button_font)
+		love.graphics.printf("http://simeon.io", 0, love.graphics.getHeight()/2+120, love.graphics.getWidth(), "center")
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setFont(ui_font)
+
 	end
 
-	love.graphics.print(love.timer.getFPS(), 10, 10)
-	love.graphics.print(gamestate, 10, 30)
+	love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
+	if is_debugging then
+		love.graphics.print(gamestate, 10, 10)
+		love.graphics.print(tostring(is_debugging), 10, 30)
+		love.graphics.print(timer, 10, 50)
+	end
 end
 
 function readKeys(dt)
@@ -326,7 +346,7 @@ end
 function drawCreditScreen()
 	-- title
 	love.graphics.setFont(button_font)
-	love.graphics.printf("CREDITS", 0, -5, love.graphics.getWidth(),"center")
+	love.graphics.printf("CREDITS", 0, 10, love.graphics.getWidth(),"center")
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(ui_font)
 
