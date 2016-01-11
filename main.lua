@@ -25,6 +25,7 @@ function love.load(arg)
 
 	-- sounds
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
+	click_sound = love.audio.newSource("audio/click.wav", "static")
 
 
 	-- global variables
@@ -146,6 +147,7 @@ function love.draw()
 		----------------------------------------------------------------
 		if is_camfocused then love.graphics.pop() end
 		drawHUD()
+		drawMinimap()
 	elseif gamestate == "mainmenu" then
 		drawMainMenu()
 	elseif gamestate == "controls" then
@@ -227,7 +229,10 @@ function love.mousepressed(x, y, button, istouch)
 		if button == 1 then
 			for k,v in ipairs(Buttons) do
 				if mouseOverlaps(v) then
-					if v.link then gamestate = v.link end
+					if v.link then 
+						click_sound:play()
+						gamestate = v.link
+					end
 				end
 			end
 		end
@@ -422,6 +427,22 @@ function drawCreditScreen()
 	for k,v in ipairs(Buttons) do
 		v:draw()
 	end
+end
+
+function drawMinimap()
+	-- walls
+	for k,v in ipairs(Objects) do
+		if v.is_explosive then
+			love.graphics.setColor(255, 0, 0)
+		end
+		love.graphics.rectangle("line", 10+v.x/16, 10+v.y/16, v.w/16, v.h/16)
+	end
+	-- players
+	love.graphics.setColor(0, 255, 0)
+	for k,v in ipairs(Entities) do
+		love.graphics.circle("line", 10+v.x/16, 10+v.y/16, 1)
+	end
+	love.graphics.setColor(255, 255, 255)
 end
 
 function centerX(thing)

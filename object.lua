@@ -65,9 +65,9 @@ function Object:update(dt)
 					self.image2 = love.graphics.newImage("assets/explosion_alt.png")
 					self.is_solid = false
 					self.is_fading = true
-					self.fade_rate = 150
+					self.fade_rate = 180
 					for k,v in ipairs(Entities) do
-						if math.distance(v.x, v.y, self.x, self.y) < 2*tilesize then
+						if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < 1.5*tilesize then
 							v.health = v.health - 5
 						end
 					end
