@@ -28,6 +28,7 @@ function love.load(arg)
 	click_sound = love.audio.newSource("audio/click.wav", "static")
 
 	game_music = love.audio.newSource("audio/Jaunty Gumption.mp3")
+	menu_music = love.audio.newSource("audio/Rhinoceros.mp3")
 
 
 
@@ -75,6 +76,7 @@ end
 function love.update(dt)
 
 	if gamestate == "game" then
+		menu_music:stop()
 		game_music:play()
 		-- game over check
 		printvar = #Objects
@@ -100,6 +102,8 @@ function love.update(dt)
 			end
 		end
 	elseif gamestate == "mainmenu" then
+		menu_music:play()
+
 		Buttons = {
 			start_button,
 			controls_button,
@@ -393,31 +397,31 @@ function drawCreditScreen()
 
 	-- right column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Sprites", 0, 100, love.graphics.getWidth()/3,"center")
-	love.graphics.setFont(h3)
-	love.graphics.printf("DawnBringer", 0, 160, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("Sprites", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2,"center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("DawnBringer", love.graphics.getWidth()/2, 160, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 130)
-	love.graphics.printf("( DawnBringer Palette )", 0, 185, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("( DawnBringer Palette )", love.graphics.getWidth()/2, 180, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.printf("DragonDePlatino", 0, 220, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("DragonDePlatino", love.graphics.getWidth()/2, 210, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 130)
-	love.graphics.printf("( DawnLike Tileset )", 0, 245, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("( DawnLike Tileset )", love.graphics.getWidth()/2, 230, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 255) 
 
-	-- center column
+	-- left column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Programming", love.graphics.getWidth()/3, 100, love.graphics.getWidth()/3,"center")
-	love.graphics.setFont(h3)
-	love.graphics.printf("Simeon Videnov", love.graphics.getWidth()/3, 160, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("Idea and Programming", 0, 100, love.graphics.getWidth()/2,"center")
+	love.graphics.setFont(h4)
+	love.graphics.printf("Simeon Videnov", 0, 160, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 130)
-	love.graphics.printf("( http://simeon.io )", love.graphics.getWidth()/3, 185, love.graphics.getWidth()/3,"center")
+	love.graphics.printf("( http://simeon.io )", 0, 180, love.graphics.getWidth()/2,"center")
 	love.graphics.setColor(255, 255, 255, 255)
 
 	-- left column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Music", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2,"center")
+	love.graphics.printf("Music", 0, 250, love.graphics.getWidth()/2,"center")
 	love.graphics.setFont(h4)
-	love.graphics.printf("\"Jaunty Gumption\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", love.graphics.getWidth()/2, 160, love.graphics.getWidth()/2,"left")
+	love.graphics.printf("\"Jaunty Gumption\",\"Rhinoceros\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", 0, 310, love.graphics.getWidth()/2,"center")
 
 
 
