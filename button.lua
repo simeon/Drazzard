@@ -22,7 +22,7 @@ function Button:draw()
 	if self.is_highlighted then
 		love.graphics.setColor(0, 255, 0)
 	end
-
+	
 	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 	love.graphics.setFont(button_font)
 	love.graphics.printf(self.text, self.x, self.y+3, self.w, "center")
@@ -34,7 +34,7 @@ function Button:draw()
 		love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 		--love.graphics.print("("..self.x.."\n"..self.y..")", self.x, self.y)
 	end
-	
+
 	love.graphics.setColor(255, 255, 255)
 end
 

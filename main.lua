@@ -10,12 +10,12 @@ function love.load(arg)
 	button_font = love.graphics.newFont("misc/Lady_Radical.ttf", 35)
 
 
-	h1 = love.graphics.newFont("misc/Roboto-Black.ttf", 35)
-	h2 = love.graphics.newFont("misc/Roboto-Bold.ttf", 30)
-	h3 = love.graphics.newFont("misc/Roboto-Medium.ttf", 25)
-	h4 = love.graphics.newFont("misc/Roboto-Regular.ttf", 20)
-	h5 = love.graphics.newFont("misc/Roboto-Regular.ttf", 15)
-	h6 = love.graphics.newFont("misc/Roboto-Regular.ttf", 10)
+	h1 = love.graphics.newFont("misc/BebasNeue.otf", 35)
+	h2 = love.graphics.newFont("misc/BebasNeue.otf", 30)
+	h3 = love.graphics.newFont("misc/BebasNeue.otf", 25)
+	h4 = love.graphics.newFont("misc/BebasNeue.otf", 20)
+	h5 = love.graphics.newFont("misc/BebasNeue.otf", 15)
+	h6 = love.graphics.newFont("misc/BebasNeue.otf", 10)
 
 	love.graphics.setFont(ui_font)
 	cursor = love.mouse.newCursor("misc/wand_cursor.png", 0, 0)
@@ -24,7 +24,7 @@ function love.load(arg)
 	love.graphics.setBackgroundColor(30, 25, 35)
 
 	-- global variables
-	gamestate = "splashscreen"
+	gamestate = "credits"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -53,7 +53,7 @@ function love.load(arg)
 	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
 
 
-	sim = love.graphics.newImage("SimeonLogo.png")
+	sim = love.graphics.newImage("logos/SimeonLogo.png")
 
 	-- world	
 	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
@@ -348,7 +348,40 @@ function drawCreditScreen()
 	love.graphics.setFont(button_font)
 	love.graphics.printf("CREDITS", 0, 10, love.graphics.getWidth(),"center")
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setFont(ui_font)
+
+
+	-- right column
+	love.graphics.setFont(button_font)
+	love.graphics.printf("Sprites", 0, 100, love.graphics.getWidth()/3,"center")
+	love.graphics.setFont(h3)
+	love.graphics.printf("DawnBringer", 0, 160, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 130)
+	love.graphics.printf("( DawnBringer Palette )", 0, 185, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.printf("DragonDePlatino", 0, 220, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 130)
+	love.graphics.printf("( DawnLike Tileset )", 0, 245, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 255)
+
+	-- center column
+	love.graphics.setFont(button_font)
+	love.graphics.printf("Programming", love.graphics.getWidth()/3, 100, love.graphics.getWidth()/3,"center")
+	love.graphics.setFont(h3)
+	love.graphics.printf("Simeon Videnov", love.graphics.getWidth()/3, 160, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 130)
+	love.graphics.printf("( http://simeon.io )", love.graphics.getWidth()/3, 185, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 255)
+
+	-- right column
+	love.graphics.setFont(button_font)
+	love.graphics.printf("Music", 2*love.graphics.getWidth()/3, 100, love.graphics.getWidth()/3,"center")
+	love.graphics.setFont(h3)
+	love.graphics.printf("--", 2*love.graphics.getWidth()/3, 160, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 130)
+	love.graphics.printf("( -- )", 2*love.graphics.getWidth()/3, 185, love.graphics.getWidth()/3,"center")
+	love.graphics.setColor(255, 255, 255, 255)
+
+
 
 	-- buttons 
 	for k,v in ipairs(Buttons) do
