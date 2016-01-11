@@ -17,18 +17,18 @@ function Entity.create(n, x, y)
 	
 	e.team = "green"
 	e.direction = "left"
-	e.looks_at_target = false
+	e.looks_at_target = true
 
 	e.health = 100
 	e.mana = 100
 	e.health_regen_rate = 1
 	e.mana_regen_rate = 5
 
-	e.sight_range = 0*tilesize
+	e.sight_range = 35*tilesize
 	e.attack_range = 0*tilesize
 	e.target = player
 
-	e.speed = 200
+	e.speed = 100
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -169,7 +169,7 @@ function Entity:update(dt)
 		end
 	end
 
-	if self.demeanor == "hostile" then self:enemyAI(self.name, dt) end
+	if self.team ~= player.team then self:enemyAI(self.name, dt) end
 
 	-- updates entity position
 	self.x = self.x + self.dx
@@ -179,8 +179,8 @@ end
 
 function Entity:enemyAI(name, dt)
 	self.looks_at_target = true
-	if name == "blueslime" then
-		ai_type = "simplefollow"
+	if self.name == "soldier" then
+		ai_type = "simplefollow"		
 	end
 
 	if ai_type == "simplefollow" then
@@ -211,7 +211,9 @@ function Entity:launchProjectile()
 		obj.is_explosive = true
 		obj.creator = self
 		table.insert(Objects, obj)
-
+		
+		cast_sound:stop()
+		cast_sound:play()
 		self.mana = self.mana - 10
 	end
 end

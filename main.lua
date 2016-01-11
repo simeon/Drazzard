@@ -34,6 +34,7 @@ function love.load(arg)
 	-- sounds
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
 	click_sound = love.audio.newSource("audio/click.wav", "static")
+	cast_sound = love.audio.newSource("audio/swish.wav", "static")
 
 	game_music = love.audio.newSource("audio/Jaunty Gumption.mp3")
 	menu_music = love.audio.newSource("audio/Rhinoceros.mp3")
@@ -41,7 +42,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "splashscreen"
+	gamestate = "game"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
@@ -54,7 +55,7 @@ function love.load(arg)
 	timer = 0
 	timerEnd = .5
 	imageState1 = true
-	
+
 	-- tables
 	Tiles = {}
 	Objects = {}
@@ -71,10 +72,11 @@ function love.load(arg)
 
 
 	-- world	
-	player = Entity.create("bluemage", 1*tilesize, 1*tilesize)
-	player.demeanor = "green"
+	player = Entity.create("bluemage", 14.5*tilesize, 14.5*tilesize)
+	player.team = "green"
+	player.speed = 200
 	table.insert(Entities, player)
-	loadMap("village")
+	loadMap("arena")
 end
 
 function love.update(dt)
@@ -149,7 +151,7 @@ function love.draw()
 			love.graphics.translate(translateX, translateY)
 		end
 		----------------------------------------------------------------
-		love.graphics.draw(map_image, 0, 0)
+		love.graphics.draw(map_image, -30*tilesize, -30*tilesize)
 
 		for k,v in ipairs(LoopTables) do
 			for i,j in ipairs(v) do
@@ -187,6 +189,7 @@ function love.draw()
 		love.graphics.print(gamestate, 10, 10)
 		love.graphics.print(tostring(is_debugging), 10, 30)
 		love.graphics.print(timer, 10, 50)
+		love.graphics.print(#Objects, 10, 70)
 	end
 end
 
@@ -316,15 +319,15 @@ end
 
 function drawHUD()
 	love.graphics.setColor(200, 0, 0)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-30, player.health, 10)
+	love.graphics.rectangle("fill", 80, 10, player.health, 10)
 	love.graphics.setColor(0, 200, 200)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-50, love.graphics.getHeight()-20, player.mana, 10)
+	love.graphics.rectangle("fill", 80, 20, player.mana, 10)
 	love.graphics.setColor(255, 255, 255)
 end
 
 function loadMap(name)
 
-	if name == "village" then
+	if name == "arena" then
 		map_image = love.graphics.newImage("Village.png")
 
 		-- top wall
@@ -344,7 +347,12 @@ function loadMap(name)
 		npc2.team = "red"
 		table.insert(Entities, npc2)
 
-		table.insert(Objects, Object.create("rock", 5*tilesize, 10*tilesize))
+		-- rocks
+		table.insert(Objects, Object.create("rock", 8*tilesize, 5*tilesize))
+		table.insert(Objects, Object.create("rock", 12*tilesize, 17*tilesize))
+		table.insert(Objects, Object.create("rock", 27*tilesize, 11*tilesize))
+		table.insert(Objects, Object.create("rock", 18*tilesize, 23*tilesize))
+
 
 
 		--[[ villagers
@@ -457,7 +465,9 @@ function drawMinimap()
 		if v.is_explosive then
 			love.graphics.setColor(255, 0, 0)
 		end
-		love.graphics.rectangle("line", 10+v.x/16, 10+v.y/16, v.w/16, v.h/16)
+		if v.is_solid then
+			love.graphics.rectangle("line", 10+v.x/16, 10+v.y/16, v.w/16, v.h/16)
+		end
 	end
 	-- players
 	for k,v in ipairs(Entities) do
