@@ -42,13 +42,15 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "game"
+	gamestate = "mainmenu"
+	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
 	tilesize = 32
 	is_debugging = false
 	is_camfocused = true
 	is_paused = false
+	is_maploaded = false
 	current_round = 1
 
 	-- timer
@@ -65,33 +67,31 @@ function love.load(arg)
 	LoopTables = { Tiles, Objects, Entities, Buttons }
 
 	-- buttons
-	start_button = Button.create("play", 200, 190, "game")
+	start_button = Button.create("game", 200, 190, "game")
 	controls_button = Button.create("how to play", 200, 270, "controls")
 	credits_button = Button.create("credits", 200, 350, "credits")
 	mainmenu_button = Button.create("main menu", 10, 10, "mainmenu")
-
-
-	-- world	
-	player = Entity.create("bluemage", 14.5*tilesize, 14.5*tilesize)
-	player.team = "green"
-	player.speed = 200
-	table.insert(Entities, player)
-	loadMap("arena")
+	back_button = Button.create("back", 10, 10, "PREV_GAMESTATE")
 end
 
 function love.update(dt)
 
 	if gamestate == "game" then
+		if not is_maploaded then		
+			loadMap("arena")
+			is_maploaded = true
+		end
+
 		menu_music:stop()
 		game_music:play()
-		-- game over check
-		printvar = #Objects
+		--[[ game over check
 		if player.health <= 0 then
 			player.health = 0
 			is_paused = true
-		end
+		end]]
 
 		if not is_paused then
+			Buttons = {}
 			if love.mouse.getX()-translateX < player.x+player.w/2 then player.direction = "left" else player.direction = "right" end
 			readKeys(dt)
 
@@ -106,11 +106,18 @@ function love.update(dt)
 				timer = 0
 				imageState1 = not imageState1
 			end
+		else 
+			Buttons = {
+				mainmenu_button,
+				controls_button,
+				credits_button
+			}
+			mainmenu_button.y = 190
 		end
 	elseif gamestate == "mainmenu" then
-		-- title animation
 		timer = timer + dt
 
+		game_music:stop()
 		menu_music:play()
 
 		Buttons = {
@@ -118,14 +125,29 @@ function love.update(dt)
 			controls_button,
 			credits_button
 		}
+		start_button.y = 190
 	elseif gamestate == "controls" then
-		Buttons = {
-			mainmenu_button
-		}
+		-- where the "back button" will link
+		if prev_gamestate == "game" then
+			Buttons = { start_button }
+				start_button.x = 10
+				start_button.y = 10
+		elseif prev_gamestate == "mainmenu" then
+			Buttons = { mainmenu_button }
+				mainmenu_button.x = 10
+				mainmenu_button.y = 10
+		end
 	elseif gamestate == "credits" then
-		Buttons = {
-			mainmenu_button
-		}
+		-- where the "back button" will link
+		if prev_gamestate == "game" then
+			Buttons = { start_button }
+				start_button.x = 10
+				start_button.y = 10
+		elseif prev_gamestate == "mainmenu" then
+			Buttons = { mainmenu_button }
+				mainmenu_button.x = 10
+				mainmenu_button.y = 10
+		end
 	elseif gamestate == "splashscreen" then
 		Buttons = {}
 		timer = timer + dt
@@ -165,6 +187,7 @@ function love.draw()
 		if is_camfocused then love.graphics.pop() end
 		drawHUD()
 		drawMinimap()
+		if is_paused then drawPauseMenu() end
 	elseif gamestate == "mainmenu" then
 		drawMainMenu()
 	elseif gamestate == "controls" then
@@ -186,10 +209,17 @@ function love.draw()
 
 	love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
 	if is_debugging then
-		love.graphics.print(gamestate, 10, 10)
+		love.graphics.setColor(0, 0, 0, 100)
+		love.graphics.rectangle("fill", 0, 0, 300, 200)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print(prev_gamestate.."   "..gamestate, 10, 10)
 		love.graphics.print(tostring(is_debugging), 10, 30)
 		love.graphics.print(timer, 10, 50)
-		love.graphics.print(#Objects, 10, 70)
+		love.graphics.print(#Buttons, 10, 70)
+	end
+
+	for k,v in ipairs(Buttons) do
+		v:draw()
 	end
 end
 
@@ -217,6 +247,12 @@ function love.keypressed(key, scancode, isrepeat)
 		menu_music:stop()
 		game_music:stop()
 		love.load()
+	end
+
+	if gamestate == "game" then
+		if key == "p" then
+			is_paused = not is_paused
+		end
 	end
 end
 
@@ -251,13 +287,32 @@ function love.mousepressed(x, y, button, istouch)
 				if mouseOverlaps(v) then
 					if v.link then 
 						click_sound:play()
+						prev_gamestate = gamestate
 						gamestate = v.link
 					end
 				end
 			end
 		end
-	elseif gamestate == "game" then
-		player:launchProjectile()
+	end
+
+	if gamestate == "game" and not is_paused and is_maploaded then
+		if button == 1 then
+			player:launchProjectile()
+		end
+	end
+
+	if gamestate == "game" and is_paused and is_maploaded then
+		if button == 1 then
+			for k,v in ipairs(Buttons) do
+				if mouseOverlaps(v) then
+					if v.link then 
+						click_sound:play()
+						prev_gamestate = gamestate
+						gamestate = v.link
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -333,6 +388,11 @@ function loadMap(name)
 	if name == "arena" then
 		map_image = love.graphics.newImage("Village.png")
 
+		player = Entity.create("bluemage", 14.5*tilesize, 14.5*tilesize)
+		player.team = "green"
+		player.speed = 200
+		table.insert(Entities, player)
+
 		-- top wall
 		table.insert(Objects, Object.create("wall", 0*tilesize, 0*tilesize, 30*tilesize, 1*tilesize))
 		-- left wall
@@ -355,33 +415,6 @@ function loadMap(name)
 		table.insert(Objects, Object.create("rock", 12*tilesize, 17*tilesize))
 		table.insert(Objects, Object.create("rock", 27*tilesize, 11*tilesize))
 		table.insert(Objects, Object.create("rock", 18*tilesize, 23*tilesize))
-
-
-
-		--[[ villagers
-		table.insert(Entities, Entity.create("soldier", 20*tilesize, -7*tilesize))
-		table.insert(Entities, Entity.create("soldier", 23*tilesize, -7*tilesize))
-
-		-- upper left house
-		table.insert(Objects, Object.create("wall", 40*tilesize, 33*tilesize, 7*tilesize, 3*tilesize))
-		table.insert(Objects, Object.create("wall", 40*tilesize, 36*tilesize, 1*tilesize, 4*tilesize))
-		table.insert(Objects, Object.create("wall", 46*tilesize, 36*tilesize, 1*tilesize, 4*tilesize))
-		table.insert(Objects, Object.create("wall", 41*tilesize, 39*tilesize, 2*tilesize, 1*tilesize))
-		table.insert(Objects, Object.create("wall", 44*tilesize, 39*tilesize, 2*tilesize, 1*tilesize))
-
-		-- lower left house
-		table.insert(Objects, Object.create("wall", 40*tilesize, 45*tilesize, 9*tilesize, 9*tilesize))
-		table.insert(Objects, Object.create("wall", 36*tilesize, 54*tilesize, 13*tilesize, 7*tilesize))
-
-		-- uppper right house
-		table.insert(Objects, Object.create("wall", 70*tilesize, 33*tilesize, 23*tilesize, 8*tilesize))
-		table.insert(Objects, Object.create("wall", 84*tilesize, 41*tilesize, 9*tilesize, 8*tilesize))
-		
-		enemy = Entity.create("blueslime", 50*tilesize, 40*tilesize)
-		enemy.demeanor = "red"
-		enemy.sight_range = 20*tilesize
-		enemy.attack_range = 1.5*tilesize
-		table.insert(Entities, enemy)]]
 	end
 
 end
@@ -398,11 +431,9 @@ function drawMainMenu()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.printf("DRAZZARD", 0, 15+5*math.sin(timer), love.graphics.getWidth(),"center")
 
-	
 	-- buttons 
 	for k,v in ipairs(Buttons) do
 		centerX(v)
-		v:draw()
 	end
 	love.graphics.setFont(ui_font)
 end
@@ -412,11 +443,6 @@ function drawControlsScreen()
 	love.graphics.setFont(button_font)
 	love.graphics.printf("HOW TO PLAY", 0, 10, love.graphics.getWidth(),"center")
 	love.graphics.setColor(255, 255, 255, 255)
-
-	-- buttons 
-	for k,v in ipairs(Buttons) do
-		v:draw()
-	end
 end
 
 function drawCreditScreen()
@@ -453,13 +479,6 @@ function drawCreditScreen()
 	love.graphics.printf("Music", 0, 250, love.graphics.getWidth()/2,"center")
 	love.graphics.setFont(h4)
 	love.graphics.printf("\"Jaunty Gumption\",\"Rhinoceros\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", 0, 310, love.graphics.getWidth()/2,"center")
-
-
-
-	-- buttons 
-	for k,v in ipairs(Buttons) do
-		v:draw()
-	end
 end
 
 function drawMinimap()
@@ -483,6 +502,21 @@ function drawMinimap()
 		love.graphics.circle("line", 10+v.x/16, 10+v.y/16, 1)
 	end
 	love.graphics.setColor(255, 255, 255)
+end
+
+function drawPauseMenu()
+	love.graphics.setColor(0, 0, 0, 100)
+	love.graphics.rectangle("fill", love.graphics.getWidth()/3, love.graphics.getHeight()/8, love.graphics.getWidth()/3, 6*love.graphics.getHeight()/8)
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(title_font)
+	love.graphics.printf("Paused", 0, 70, love.graphics.getWidth(),"center")
+	love.graphics.setFont(ui_font)
+
+	-- buttons 
+	for k,v in ipairs(Buttons) do
+		centerX(v)
+		v:draw()
+	end
 end
 
 function centerX(thing)

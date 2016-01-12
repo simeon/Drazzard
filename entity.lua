@@ -66,9 +66,9 @@ function Entity:draw()
 
 	if self ~= player then
 		love.graphics.setColor(0, 0, 0, 100)
-		love.graphics.rectangle("fill", self.x, self.y-20, self.w, 5)
+		love.graphics.rectangle("fill", self.x, self.y-10, self.w, 5)
 		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", self.x, self.y-20, self.health/100*self.w, 5)
+		love.graphics.rectangle("fill", self.x, self.y-10, self.health/100*self.w, 5)
 	end
 
 	if is_debugging then
