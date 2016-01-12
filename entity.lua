@@ -15,7 +15,7 @@ function Entity.create(n, x, y)
 
 	e.attack = 10
 	
-	e.team = "green"
+	e.team = "red"
 	e.direction = "left"
 	e.looks_at_target = true
 
@@ -119,6 +119,13 @@ function Entity:update(dt)
 		grave.is_solid = false
 		grave.is_fading = true
 		table.insert(Objects, grave)
+
+		-- random drop
+		local potion = Object.create("manapotion", self.x, self.y)
+		potion.is_solid = false
+		potion.is_healing = true
+		table.insert(Objects, potion)
+
 		self:destroy()
 	end
 
@@ -159,7 +166,7 @@ function Entity:update(dt)
 
 	-- prevent movement on collision against objects
 	for k,v in ipairs(Objects) do
-		if v ~= self and v.is_solid then
+		if v.is_solid then
 			if collision(v, self.hitbox_up) then
 				self.can_move_up = false
 			end

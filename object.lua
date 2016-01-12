@@ -25,6 +25,8 @@ function Object.create(t, x, y, w, h)
 	e.collision_damage = 30
 	e.creator = nil
 
+	e.is_healing = false
+
 	e.is_highlighted = false
 
 	e.image = love.graphics.newImage("assets/"..e.type..".png")

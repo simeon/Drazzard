@@ -23,7 +23,6 @@ function love.load(arg)
 
 	love.graphics.setBackgroundColor(30, 25, 35)
 
-
 	-- visuals
 	mainmenu_image = love.graphics.newImage("DrazzardLogo.png")
 	mainmenu_image:setFilter("nearest", "nearest")
@@ -31,6 +30,7 @@ function love.load(arg)
 	innerGear:setFilter("nearest", "nearest")
 	outerGear = love.graphics.newImage("logos/outerGear.png")
 	outerGear:setFilter("nearest", "nearest")
+
 	-- sounds
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
 	click_sound = love.audio.newSource("audio/click.wav", "static")
@@ -84,11 +84,21 @@ function love.update(dt)
 
 		menu_music:stop()
 		game_music:play()
-		--[[ game over check
+		-- game over check
 		if player.health <= 0 then
 			player.health = 0
 			is_paused = true
-		end]]
+		end
+
+		-- potion check
+		for k,v in ipairs(Objects) do
+			if v.is_healing and math.distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < tilesize then
+				v:destroy()
+				local mana_amount = love.math.random(100)
+				player.mana = player.mana + mana_amount
+				if player.mana > 100 then player.mana = 100 end
+			end
+		end
 
 		if not is_paused then
 			Buttons = {}
@@ -160,11 +170,9 @@ function love.update(dt)
 	for k,v in ipairs(Buttons) do
 		v:update()
 	end
-
 end
 
 function love.draw()
-
 	if gamestate == "game" then
 		if is_camfocused then
 			love.graphics.push()
@@ -188,6 +196,7 @@ function love.draw()
 		drawHUD()
 		drawMinimap()
 		if is_paused then drawPauseMenu() end
+
 	elseif gamestate == "mainmenu" then
 		drawMainMenu()
 	elseif gamestate == "controls" then
@@ -388,7 +397,6 @@ function drawHUD()
 	love.graphics.setColor(255, 255, 255)
 
 	love.graphics.print("Lv. "..current_round, 80, 35)
-	love.graphics.print(player.gold, 80, 50)
 end
 
 function loadMap(name)
@@ -409,13 +417,10 @@ function loadMap(name)
 		-- bottom wall
 		table.insert(Objects, Object.create("wall", 0*tilesize, 29*tilesize, 30*tilesize, 1*tilesize))
 
-		npc = Entity.create("soldier", 2*tilesize, 3*tilesize)
-		npc.team = "red"
-		table.insert(Entities, npc)
-
-		npc2 = Entity.create("soldier", 5*tilesize, 5*tilesize)
-		npc2.team = "red"
-		table.insert(Entities, npc2)
+		table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 1*tilesize)) -- N
+		table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 29*tilesize))-- S
+		table.insert(Entities, Entity.create("soldier", 1*tilesize, 14.5*tilesize))	-- E
+		table.insert(Entities, Entity.create("soldier", 29*tilesize, 14.5*tilesize))-- W
 
 		-- rocks
 		table.insert(Objects, Object.create("rock", 8*tilesize, 5*tilesize))
