@@ -42,7 +42,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "splashscreen"
+	gamestate = "mainmenu"
 	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
@@ -93,7 +93,7 @@ function love.update(dt)
 		-- damage from enemies
 		for k,v in ipairs(Entities) do
 			if v ~= player and math.distance(v.x+v.w/2, v.y+v.h/2, player.x+player.w/2, player.y+player.h/2) < v.attack_range then
-				player.health = player.health - 5*dt
+				player.health = player.health - v.attack*dt
 			end
 		end
 
@@ -473,6 +473,17 @@ function drawControlsScreen()
 	love.graphics.setFont(button_font)
 	love.graphics.printf("HOW TO PLAY", 0, 10, love.graphics.getWidth(),"center")
 	love.graphics.setColor(255, 255, 255, 255)
+
+	love.graphics.setFont(button_font)
+	love.graphics.printf("wasd   ->   move", 0, 100, love.graphics.getWidth(),"center")
+	love.graphics.printf("  left click  ->  cast spell", 0, 150, love.graphics.getWidth(),"center")
+	love.graphics.printf("                   p  ->  pause game", 0, 200, love.graphics.getWidth(),"center")
+
+	love.graphics.printf("Enemies will damage you if they get close", 0, 300, love.graphics.getWidth(),"center")
+	love.graphics.printf("Explosion from spell can damage multiple enemies", 0, 350, love.graphics.getWidth(),"center")
+	love.graphics.printf("Potions will restore your mana and health", 0, 400, love.graphics.getWidth(),"center")
+
+	love.graphics.setFont(ui_font)
 end
 
 function drawCreditScreen()
@@ -509,6 +520,8 @@ function drawCreditScreen()
 	love.graphics.printf("Music", 0, 250, love.graphics.getWidth()/2,"center")
 	love.graphics.setFont(h4)
 	love.graphics.printf("\"Jaunty Gumption\",\"Rhinoceros\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", 0, 310, love.graphics.getWidth()/2,"center")
+
+	love.graphics.setFont(ui_font)
 end
 
 function drawMinimap()
@@ -539,7 +552,11 @@ function drawPauseMenu()
 	love.graphics.rectangle("fill", love.graphics.getWidth()/3, love.graphics.getHeight()/8, love.graphics.getWidth()/3, 6*love.graphics.getHeight()/8)
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(title_font)
-	love.graphics.printf("Paused", 0, 70, love.graphics.getWidth(),"center")
+	if player.health <= 0 then
+		love.graphics.printf("game over", 0, 70, love.graphics.getWidth(),"center")
+	else
+		love.graphics.printf("Paused", 0, 70, love.graphics.getWidth(),"center")
+	end
 	love.graphics.setFont(ui_font)
 
 	-- buttons 

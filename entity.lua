@@ -13,7 +13,7 @@ function Entity.create(n, x, y)
 	e.dx = 0
 	e.dy = 0
 
-	e.attack = 10
+	e.attack = 5 + current_round
 	
 	e.team = "red"
 	e.direction = "left"
