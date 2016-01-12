@@ -67,12 +67,12 @@ function Object:update(dt)
 	end
 
 	-- damage against entities
-	if self.is_damaging then
+	if self.is_damaging and self.is_solid then
 		for k,v in ipairs(Entities) do
 			if collision(v, self) and v ~= self.creator then
 				self.dx = 0
 				self.dy = 0
-				v.health = v.health - 1
+				v.health = v.health - 10
 				self:explode()
 			end
 		end

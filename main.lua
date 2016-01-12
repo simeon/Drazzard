@@ -49,7 +49,7 @@ function love.load(arg)
 	is_debugging = false
 	is_camfocused = true
 	is_paused = false
-
+	current_round = 1
 
 	-- timer
 	timer = 0
@@ -323,6 +323,9 @@ function drawHUD()
 	love.graphics.setColor(0, 200, 200)
 	love.graphics.rectangle("fill", 80, 20, player.mana, 10)
 	love.graphics.setColor(255, 255, 255)
+
+	love.graphics.print("Lv. "..current_round, 80, 35)
+	love.graphics.print(player.gold, 80, 50)
 end
 
 function loadMap(name)

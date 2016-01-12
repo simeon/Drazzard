@@ -23,7 +23,7 @@ end
 function Button:draw()
 
 	if self.is_highlighted then
-		love.graphics.setColor(0, 255, 0)
+		love.graphics.setColor(200, 200, 200)
 	end
 
 	love.graphics.draw(self.image, self.x, self.y, 0, 2, 2)

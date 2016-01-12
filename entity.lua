@@ -21,8 +21,9 @@ function Entity.create(n, x, y)
 
 	e.health = 100
 	e.mana = 100
-	e.health_regen_rate = 1
-	e.mana_regen_rate = 5
+	e.health_regen_rate = 5
+	e.mana_regen_rate = 10
+	e.gold = 999999
 
 	e.sight_range = 35*tilesize
 	e.attack_range = 0*tilesize
@@ -63,12 +64,17 @@ function Entity:draw()
 		end
 	end
 
+	if self ~= player then
+		love.graphics.setColor(0, 0, 0, 100)
+		love.graphics.rectangle("fill", self.x, self.y-20, self.w, 5)
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.rectangle("fill", self.x, self.y-20, self.health/100*self.w, 5)
+	end
+
 	if is_debugging then
 		-- draws statbars
 		love.graphics.setColor(0, 0, 0)
 		love.graphics.rectangle("fill", self.x, self.y-20, self.w, 10)
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", self.x, self.y-20, self.health/100*self.w, 5)
 		love.graphics.setColor(0, 200, 255)
 		love.graphics.rectangle("fill", self.x, self.y-15, self.mana/100*self.w, 5)
 		love.graphics.setColor(255, 255, 255)
