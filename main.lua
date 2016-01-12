@@ -42,7 +42,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "mainmenu"
+	gamestate = "splashscreen"
 	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
@@ -215,7 +215,9 @@ function love.draw()
 		love.graphics.print(prev_gamestate.."   "..gamestate, 10, 10)
 		love.graphics.print(tostring(is_debugging), 10, 30)
 		love.graphics.print(timer, 10, 50)
-		love.graphics.print(#Buttons, 10, 70)
+		love.graphics.print(#Buttons.." buttons", 10, 70)
+		love.graphics.print(#Entities.." entities", 10, 90)
+		love.graphics.print(#Objects.." objects", 10, 110)
 	end
 
 	for k,v in ipairs(Buttons) do
@@ -309,6 +311,12 @@ function love.mousepressed(x, y, button, istouch)
 						click_sound:play()
 						prev_gamestate = gamestate
 						gamestate = v.link
+						if v.link == "mainmenu" then -- the user is quitting game
+							game_music:stop()
+							love.load()
+							gamestate = "mainmenu"
+							prev_gamestate = "splashscreen"
+						end
 					end
 				end
 			end
@@ -384,7 +392,6 @@ function drawHUD()
 end
 
 function loadMap(name)
-
 	if name == "arena" then
 		map_image = love.graphics.newImage("Village.png")
 
