@@ -102,8 +102,8 @@ function Object:explode( )
 		self.is_fading = true
 		self.fade_rate = 180
 		for k,v in ipairs(Entities) do
-			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < 1.5*tilesize then
-				v.health = v.health - 5
+			if math.distance(v.x+v.w/2, v.y+v.h/2, self.x+self.w/2, self.y+self.h/2) < 3*tilesize  and v ~= self.creator then
+				v.health = v.health - 10
 			end
 		end
 	end

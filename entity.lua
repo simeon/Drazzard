@@ -29,7 +29,7 @@ function Entity.create(n, x, y)
 	e.attack_range = 0*tilesize
 	e.target = player
 
-	e.speed = 100
+	e.speed = 70 + love.math.random(70)
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -127,6 +127,14 @@ function Entity:update(dt)
 		table.insert(Objects, potion)
 
 		self:destroy()
+
+		-- spawns next soldier(s) if all are eliminated
+		if #Entities == 1 then
+			for i=1,current_round do
+				table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 1*tilesize))
+			end
+			current_round = current_round + 1
+		end
 	end
 
 	-- updates direction
@@ -227,7 +235,7 @@ function Entity:launchProjectile()
 		
 		cast_sound:stop()
 		cast_sound:play()
-		self.mana = self.mana - 10
+		self.mana = self.mana - 5
 	end
 end
 

@@ -42,7 +42,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "splashscreen"
+	gamestate = "game"
 	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
@@ -94,7 +94,7 @@ function love.update(dt)
 		for k,v in ipairs(Objects) do
 			if v.is_healing and math.distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < tilesize then
 				v:destroy()
-				local mana_amount = love.math.random(100)
+				local mana_amount = love.math.random(30)
 				player.mana = player.mana + mana_amount
 				if player.mana > 100 then player.mana = 100 end
 			end
@@ -123,6 +123,7 @@ function love.update(dt)
 				credits_button
 			}
 			mainmenu_button.y = 190
+			mainmenu_button.text = "quit game"
 		end
 	elseif gamestate == "mainmenu" then
 		timer = timer + dt
@@ -136,6 +137,8 @@ function love.update(dt)
 			credits_button
 		}
 		start_button.y = 190
+		start_button.text = "new game"
+
 	elseif gamestate == "controls" then
 		-- where the "back button" will link
 		if prev_gamestate == "game" then
@@ -418,15 +421,16 @@ function loadMap(name)
 		table.insert(Objects, Object.create("wall", 0*tilesize, 29*tilesize, 30*tilesize, 1*tilesize))
 
 		table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 1*tilesize)) -- N
-		table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 29*tilesize))-- S
-		table.insert(Entities, Entity.create("soldier", 1*tilesize, 14.5*tilesize))	-- E
-		table.insert(Entities, Entity.create("soldier", 29*tilesize, 14.5*tilesize))-- W
 
 		-- rocks
 		table.insert(Objects, Object.create("rock", 8*tilesize, 5*tilesize))
 		table.insert(Objects, Object.create("rock", 12*tilesize, 17*tilesize))
 		table.insert(Objects, Object.create("rock", 27*tilesize, 11*tilesize))
 		table.insert(Objects, Object.create("rock", 18*tilesize, 23*tilesize))
+		
+		-- door
+		table.insert(Objects, Object.create("door", 14.5*tilesize, .1*tilesize))
+
 	end
 
 end
