@@ -42,7 +42,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "game"
+	gamestate = "splashscreen"
 	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
@@ -51,7 +51,7 @@ function love.load(arg)
 	is_camfocused = true
 	is_paused = false
 	is_maploaded = false
-	current_round = 20
+	current_round = 1
 
 	-- timer
 	timer = 0
