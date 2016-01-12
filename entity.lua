@@ -26,10 +26,10 @@ function Entity.create(n, x, y)
 	e.gold = 999999
 
 	e.sight_range = 35*tilesize
-	e.attack_range = 0*tilesize
+	e.attack_range = 1.25*tilesize
 	e.target = player
 
-	e.speed = 70 + love.math.random(70)
+	e.speed = 65 + love.math.random(65) + current_round
 	e.can_move_left = true
 	e.can_move_right = true
 	e.can_move_up = true
@@ -115,22 +115,29 @@ function Entity:update(dt)
 	-- death check
 	if self ~= player and self.health <= 0 then
 		self.health = 0
-		local grave = Object.create("skull", self.x, self.y)
-		grave.is_solid = false
-		grave.is_fading = true
-		table.insert(Objects, grave)
+		--local grave = Object.create("skull", self.x, self.y)
+		--grave.is_solid = false
+		--grave.is_fading = true
+		--table.insert(Objects, grave)
 
 		-- random drop
-		local potion = Object.create("manapotion", self.x, self.y)
+		local rand = love.math.random()
+		local potion
+		if rand < .8 then
+			potion = Object.create("manapotion", self.x, self.y)
+		else
+			potion = Object.create("healthpotion", self.x, self.y)
+		end
 		potion.is_solid = false
 		potion.is_healing = true
+		potion.is_fading = true
 		table.insert(Objects, potion)
 
 		self:destroy()
 
 		-- spawns next soldier(s) if all are eliminated
 		if #Entities == 1 then
-			for i=1,current_round do
+			for i=1,current_round+1 do
 				table.insert(Entities, Entity.create("soldier", 14.5*tilesize, 1*tilesize))
 			end
 			current_round = current_round + 1

@@ -51,7 +51,7 @@ function love.load(arg)
 	is_camfocused = true
 	is_paused = false
 	is_maploaded = false
-	current_round = 1
+	current_round = 20
 
 	-- timer
 	timer = 0
@@ -90,13 +90,26 @@ function love.update(dt)
 			is_paused = true
 		end
 
+		-- damage from enemies
+		for k,v in ipairs(Entities) do
+			if v ~= player and math.distance(v.x+v.w/2, v.y+v.h/2, player.x+player.w/2, player.y+player.h/2) < v.attack_range then
+				player.health = player.health - 5*dt
+			end
+		end
+
 		-- potion check
 		for k,v in ipairs(Objects) do
-			if v.is_healing and math.distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < tilesize then
+			if (v.type == "manapotion" or v.type == "healthpotion") and math.distance(player.x+player.w/2, player.y+player.h/2, v.x+v.w/2, v.y+v.h/2) < tilesize then
 				v:destroy()
-				local mana_amount = love.math.random(30)
-				player.mana = player.mana + mana_amount
-				if player.mana > 100 then player.mana = 100 end
+				if v.type == "manapotion" then
+					local mana_amount = love.math.random(30)
+					player.mana = player.mana + mana_amount
+					if player.mana > 100 then player.mana = 100 end
+				elseif v.type == "healthpotion" then
+					local health_amount = love.math.random(30)
+					player.health = player.health + health_amount
+					if player.health > 100 then player.health = 100 end
+				end
 			end
 		end
 
@@ -393,7 +406,7 @@ function mouseHovers(obj)
 end
 
 function drawHUD()
-	love.graphics.setColor(200, 0, 0)
+	love.graphics.setColor(255, 0, 0)
 	love.graphics.rectangle("fill", 80, 10, player.health, 10)
 	love.graphics.setColor(0, 200, 200)
 	love.graphics.rectangle("fill", 80, 20, player.mana, 10)
@@ -409,6 +422,7 @@ function loadMap(name)
 		player = Entity.create("bluemage", 14.5*tilesize, 14.5*tilesize)
 		player.team = "green"
 		player.speed = 200
+		player.health_regen_rate = 0
 		table.insert(Entities, player)
 
 		-- top wall
