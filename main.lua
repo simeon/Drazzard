@@ -51,7 +51,7 @@ function love.load(arg)
 	is_camfocused = true
 	is_paused = false
 	is_maploaded = false
-	current_round = 1
+	current_round = 35
 
 	-- timer
 	timer = 0
@@ -130,13 +130,13 @@ function love.update(dt)
 				imageState1 = not imageState1
 			end
 		else 
-			Buttons = {
+			--[[Buttons = {
 				mainmenu_button,
 				controls_button,
 				credits_button
 			}
 			mainmenu_button.y = 190
-			mainmenu_button.text = "quit game"
+			mainmenu_button.text = "quit game"]]
 		end
 	elseif gamestate == "mainmenu" then
 		timer = timer + dt
@@ -211,7 +211,7 @@ function love.draw()
 		if is_camfocused then love.graphics.pop() end
 		drawHUD()
 		drawMinimap()
-		if is_paused then drawPauseMenu() end
+	--	if is_paused then drawPauseMenu() end
 
 	elseif gamestate == "mainmenu" then
 		drawMainMenu()
@@ -232,8 +232,8 @@ function love.draw()
 
 	end
 
-	love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
 	if is_debugging then
+		love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
 		love.graphics.setColor(0, 0, 0, 100)
 		love.graphics.rectangle("fill", 0, 0, 300, 200)
 		love.graphics.setColor(255, 255, 255, 255)

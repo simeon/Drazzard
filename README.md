@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="http://i.imgur.com/DDgdHtd.png"/>
+  <img src="https://raw.github.com/simeon/Drazzard/master/logos/GithubHeaderLogo.png"/>
 </p>
 
 # Drazzard
