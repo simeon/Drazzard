@@ -39,7 +39,7 @@ function love.load(arg)
 	game_music = love.audio.newSource("audio/Jaunty Gumption.mp3")
 	menu_music = love.audio.newSource("audio/Rhinoceros.mp3")
 
-
+ 
 
 	-- global variables
 	gamestate = "mainmenu"

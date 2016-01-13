@@ -10,7 +10,7 @@
 </p>
 
 # About
-_Drazzard_ is a round-based survival game.  You, as a mighty wizard, have the power to cast exploding boulders toward enemies!  Each wave spawns more enemies than the previous one.  Enemies get stronger and faster as the rounds progress, so you'll have to start leading the crowd while waiting for your mana to increase.
+_Drazzard_ is a round-based survival game.  You, as a mighty wizard, have the power to cast exploding boulders toward enemies!  Each wave spawns more enemies than the previous one.  Enemies get stronger and faster as the rounds progress, so the game difficulty scales up as times goes on.  Have fun!
 
 # Controls
 | Button            | Action        |
