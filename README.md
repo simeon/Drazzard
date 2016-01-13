@@ -2,9 +2,22 @@
   <img src="https://raw.github.com/simeon/Drazzard/master/logos/GithubHeaderLogo.png"/>
 </p>
 
-# Drazzard
+# Screenshots
 
+<p align="center">
+  <img src="https://raw.github.com/simeon/Drazzard/master/logos/Screenshot_1.png"/>
+  <img src="https://raw.github.com/simeon/Drazzard/master/logos/Screenshot_2.png"/>
+</p>
 
+# About
+_Drazzard_ is a round-based survival game.  You, as a mighty wizard, have the power to cast exploding boulders toward enemies!  Each wave spawns more enemies than the previous one.  Enemies get stronger and faster as the rounds progress, so you'll have to start leading the crowd while waiting for your mana to increase.
+
+# Controls
+| Button            | Action        |
+| :-----------------|:--------------|
+| Left Mouse Button | cast spell    |
+| WASD              | move player   |
+| P                 | pause/unpause |
 
 # Credits
 
