@@ -1,5 +1,4 @@
 function love.load(arg)
-	require 'tile'
 	require 'object'
 	require 'entity'
 	require 'button'
@@ -24,7 +23,7 @@ function love.load(arg)
 	love.graphics.setBackgroundColor(30, 25, 35)
 
 	-- visuals
-	mainmenu_image = love.graphics.newImage("DrazzardLogo.png")
+	mainmenu_image = love.graphics.newImage("logos/DrazzardLogo.png")
 	mainmenu_image:setFilter("nearest", "nearest")
 	innerGear = love.graphics.newImage("logos/innerGear.png")
 	innerGear:setFilter("nearest", "nearest")
@@ -271,14 +270,15 @@ function readKeys(dt)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if key == "escape" then
+	--[[if key == "escape" then
 		is_debugging = not is_debugging
 	end
+
 	if key == "r" then
 		menu_music:stop()
 		game_music:stop()
 		love.load()
-	end
+	end]]
 
 	if gamestate == "game" then
 		if key == "p" then

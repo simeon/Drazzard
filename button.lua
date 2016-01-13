@@ -15,7 +15,7 @@ function Button.create(text, x, y, link, w, h)
 	e.is_centered = false
 	e.is_highlighted = false
 
-	e.image = love.graphics.newImage("button.png")
+	e.image = love.graphics.newImage("assets/button.png")
 	e.image:setFilter("nearest", "nearest")
 	return e
 end
