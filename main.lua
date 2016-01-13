@@ -30,6 +30,8 @@ function love.load(arg)
 	innerGear:setFilter("nearest", "nearest")
 	outerGear = love.graphics.newImage("logos/outerGear.png")
 	outerGear:setFilter("nearest", "nearest")
+	love_logo = love.graphics.newImage("logos/LoveLogo.png")
+	love_logo:setFilter("nearest", "nearest")
 
 	-- sounds
 	explosion_sound = love.audio.newSource("audio/explosion.wav", "static")
@@ -42,7 +44,7 @@ function love.load(arg)
 
 
 	-- global variables
-	gamestate = "mainmenu"
+	gamestate = "splashscreen"
 	prev_gamestate = "splashscreen"
 	printvar = ""
 	translateX, translateY = 0, 0
@@ -234,8 +236,8 @@ function love.draw()
 
 	end
 
-	love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
 	if is_debugging then
+		love.graphics.printf(love.timer.getFPS(), -10, 10, love.graphics.getWidth(), "right")
 		love.graphics.setColor(0, 0, 0, 100)
 		love.graphics.rectangle("fill", 0, 0, 300, 200)
 		love.graphics.setColor(255, 255, 255, 255)
@@ -419,7 +421,7 @@ end
 
 function loadMap(name)
 	if name == "arena" then
-		map_image = love.graphics.newImage("Village.png")
+		map_image = love.graphics.newImage("assets/arena.png")
 
 		player = Entity.create("bluemage", 14.5*tilesize, 14.5*tilesize)
 		player.team = "green"
@@ -477,8 +479,8 @@ function drawControlsScreen()
 	love.graphics.setColor(255, 255, 255, 255)
 
 	love.graphics.setFont(button_font)
-	love.graphics.printf("wasd   ->   move", 0, 100, love.graphics.getWidth(),"center")
 	love.graphics.printf("  left click  ->  cast spell", 0, 150, love.graphics.getWidth(),"center")
+	love.graphics.printf("              wasd   ->   move player", 0, 100, love.graphics.getWidth(),"center")
 	love.graphics.printf("                   p  ->  pause game", 0, 200, love.graphics.getWidth(),"center")
 
 	love.graphics.printf("Enemies will damage you if they get close", 0, 300, love.graphics.getWidth(),"center")
@@ -519,9 +521,10 @@ function drawCreditScreen()
 
 	-- left column
 	love.graphics.setFont(button_font)
-	love.graphics.printf("Music", 0, 250, love.graphics.getWidth()/2,"center")
+	love.graphics.printf("Music and Sound", love.graphics.getWidth()/2, 270, love.graphics.getWidth()/2,"center")
 	love.graphics.setFont(h4)
-	love.graphics.printf("\"Jaunty Gumption\",\"Rhinoceros\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", 0, 310, love.graphics.getWidth()/2,"center")
+	love.graphics.printf("\"Jaunty Gumption\",\"Rhinoceros\"\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0", love.graphics.getWidth()/2, 330, love.graphics.getWidth()/2,"center")
+	love.graphics.printf("sound effects from bfxr.net", love.graphics.getWidth()/2, 450, love.graphics.getWidth()/2,"center")
 
 	love.graphics.setFont(ui_font)
 end
