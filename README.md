@@ -7,6 +7,7 @@
 <p align="center">
   <img src="https://raw.github.com/simeon/Drazzard/master/logos/Screenshot_1.png"/>
   <img src="https://raw.github.com/simeon/Drazzard/master/logos/Screenshot_2.png"/>
+  <img src="https://raw.github.com/simeon/Drazzard/master/logos/Screenshot_3.png"/>
 </p>
 
 # About
@@ -17,7 +18,7 @@ _Drazzard_ is a round-based survival game.  You, as a mighty wizard, have the po
 | :-----------------|:--------------|
 | Left Mouse Button | cast spell    |
 | WASD              | move player   |
-| P                 | pause/unpause |
+| Escape            | pause/unpause |
 
 # Credits
 

@@ -281,7 +281,7 @@ function love.keypressed(key, scancode, isrepeat)
 	end]]
 
 	if gamestate == "game" then
-		if key == "p" then
+		if key == "escape" then
 			is_paused = not is_paused
 		end
 	end
@@ -481,7 +481,7 @@ function drawControlsScreen()
 	love.graphics.setFont(button_font)
 	love.graphics.printf("  left click  ->  cast spell", 0, 150, love.graphics.getWidth(),"center")
 	love.graphics.printf("              wasd   ->   move player", 0, 100, love.graphics.getWidth(),"center")
-	love.graphics.printf("                   p  ->  pause game", 0, 200, love.graphics.getWidth(),"center")
+	love.graphics.printf("         escape  ->  pause game", 0, 200, love.graphics.getWidth(),"center")
 
 	love.graphics.printf("Enemies will damage you if they get close", 0, 300, love.graphics.getWidth(),"center")
 	love.graphics.printf("Explosion from spell can damage multiple enemies", 0, 350, love.graphics.getWidth(),"center")

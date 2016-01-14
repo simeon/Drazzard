@@ -13,17 +13,17 @@ function Entity.create(n, x, y)
 	e.dx = 0
 	e.dy = 0
 
-	e.attack = 5 + current_round
+	e.attack = 7 + current_round
 	
 	e.team = "red"
 	e.direction = "left"
 	e.looks_at_target = true
 
-	e.health = 100
+	e.health = 100 + current_round
 	e.mana = 100
 	e.health_regen_rate = 5
 	e.mana_regen_rate = 10
-	e.gold = 999999
+	e.gold = 0
 
 	e.sight_range = 35*tilesize
 	e.attack_range = 1.25*tilesize
