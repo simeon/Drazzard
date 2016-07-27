@@ -1,67 +1,37 @@
 body {  
-  background: url(DrazzardSword.png) no-repeat bottom center fixed; 
+  background: url(DrazzardSword.png);
+  background-size: cover;
+  background-position: center top; 
   background-color: rgb(30, 25, 35);
 }
 
-html, body {
-	height: 100%;
-    overflow: scroll;
-    color: #FFFFFF;
-    font-family: 'Lato', sans-serif;
+.bg-purple {
+	background-color: #A26FF9 !important;
+	border-color: #A26FF9 !important;
 }
+.border-purple { border-color: #A26FF9 !important; }
+.c-purple { color: #A26FF9 !important; }
 
-h2 {
-	font-weight: 900;
+.jumbo {
+	padding-top: 100px !important;
+	padding-bottom: 50px !important;
 }
-
-.topmost {
-	padding-top: 20px;
-	padding-bottom: 20px;
-	color: #FFFFFF;
+header .button {
+	width: 100%;
+	max-width: 300px;
+	margin-right: 5px;
+	margin-left: 5px;
+	font-size: 1.4rem;
 }
-
-#downloads {
-	margin-top: 100px;
+header .button:hover {
+	background-color: #9054f8 !important;
+	border-color: #9054f8 !important;
+}
+#bysimeon {
+	color: #A26FF9 !important;
+	border-color: #A26FF9 !important;
 }
 
 #screenshots {
-	margin-top: 100px;
-}
-
-a:link {
-    color: #333333;
-}
-a:visited {
-    color: #333333;
-}
-a:hover {
-    color: #333333;
-}
-a:active {
-    color: #333333;
-}
-
-.bluelink:link {
-	color: #79D8F8;
-}
-.bluelink:visited {
-	color: #79D8F8;
-}
-.bluelink:hover {
-	color: #79D8F8;
-}
-.bluelink:active {
-	color: #79D8F8;
-}
-
-.btn {
-	width: 134px;
-	font-size: 14px;
-}
-
-@media (max-width: 400px) {
-	.btn {
-		width: 100px;
-		font-size: 11px;
-	}
+	padding: 0px;
 }
