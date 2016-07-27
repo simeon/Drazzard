@@ -1,7 +1,8 @@
 body {  
   background: url(DrazzardSword.png);
   background-size: cover;
-  background-position: center top; 
+  background-position: center;
+  background-repeat: no-repeat; 
   background-color: rgb(30, 25, 35);
 }
 
