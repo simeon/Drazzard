@@ -17,22 +17,11 @@ body {
 	padding-top: 100px !important;
 	padding-bottom: 50px !important;
 }
-header .button {
-	width: 100%;
-	max-width: 300px;
-	margin-right: 5px;
-	margin-left: 5px;
-	font-size: 1.4rem;
-}
-header .button:hover {
-	background-color: #9054f8 !important;
-	border-color: #9054f8 !important;
-}
-#bysimeon, header a {
+#bysimeon {
 	color: #A26FF9 !important;
 	border-color: #A26FF9 !important;
 }
 
 #screenshots {
-	padding: 0px 0px 15px;
+	padding: 0px 0px 50px;
 }
