@@ -17,6 +17,10 @@ body {
 	padding-top: 100px !important;
 	padding-bottom: 50px !important;
 }
+.button {
+	background-color: #A26FF9 !important;
+	border-color: #A26FF9 !important;
+}
 #bysimeon {
 	color: #A26FF9 !important;
 	border-color: #A26FF9 !important;
